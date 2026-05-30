@@ -4,6 +4,7 @@ import { fetchCategories } from "../../store/slices/categorySlice";
 import { Link } from "react-router-dom";
 import { BookOpen, LayoutGrid } from "lucide-react";
 import PageLoader from "../../components/loaders/PageLoader";
+import SeoHead from "../../components/common/SeoHead";
 
 /* ─── Design tokens ───────────────────────────────────────────────────────── */
 const T = {
@@ -21,7 +22,8 @@ const CategoryItem = ({ cat }) => {
   const [hov, setHov] = useState(false);
 
   return (
-    <Link
+      <SeoHead page="Categories" />
+      <Link
       to={`/category/${cat.slug}`}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
@@ -118,7 +120,8 @@ const Categories = () => {
   if (loading) return <PageLoader label="Loading Categories" />;
 
   return (
-    <div style={{ background: T.bg, fontFamily: "system-ui, sans-serif", paddingBottom: 48 }}>
+      <SeoHead page="Categories" />
+      <div style={{ background: T.bg, fontFamily: "system-ui, sans-serif", paddingBottom: 48 }}>
 
       {/* ── Page Header — cart-header eyebrow style ── */}
       <div style={{ paddingBottom: 28, borderBottom: `1px solid ${T.border}`, marginBottom: 40 }}>

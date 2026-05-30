@@ -3,7 +3,7 @@ import { getBrandedEmailTemplate } from "../utils/emailTemplate.js";
 
 const sendEmail = async ({ to, subject, html }) => {
   const mailOptions = {
-    from: `"NBookr World" <${process.env.EMAIL_USER}>`,
+    from: `"Book World" <${process.env.EMAIL_USER}>`,
     to,
     subject,
     html,

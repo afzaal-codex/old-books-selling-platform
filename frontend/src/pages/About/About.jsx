@@ -55,7 +55,8 @@ const About = () => {
   ];
 
   return (
-    <div style={{ background: T.bg, fontFamily: "system-ui, sans-serif", paddingBottom: 48, display: "flex", flexDirection: "column", gap: 1 }}>
+      <SeoHead page="About Us" />
+      <div style={{ background: T.bg, fontFamily: "system-ui, sans-serif", paddingBottom: 48, display: "flex", flexDirection: "column", gap: 1 }}>
 
       {/* ── Page Header — cart-header eyebrow style ── */}
       <div style={{ paddingBottom: 28, borderBottom: `1px solid ${T.border}`, marginBottom: 28 }}>
@@ -219,7 +220,8 @@ const HeroSection = () => (
 const StatCard = ({ stat }) => {
   const [hov, setHov] = React.useState(false);
   return (
-    <div
+      <SeoHead page="About Us" />
+      <div
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       style={{
@@ -275,7 +277,8 @@ const StatsSection = ({ stats }) => (
 const ValueCard = ({ v }) => {
   const [hov, setHov] = React.useState(false);
   return (
-    <div
+      <SeoHead page="About Us" />
+      <div
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       style={{
@@ -377,5 +380,6 @@ const ValuesSection = ({ values }) => (
 
 /* React needs to be in scope for useState in sub-components */
 import React from "react";
+import SeoHead from "../../components/common/SeoHead";
 
 export default About;

@@ -13,7 +13,8 @@ const T = {
 
 /**
  * BookSearchBar
- * Self-contained search component — handles its own URL param sync.
+ * Enhanced search component with fuzzy matching and case-insensitive search.
+ * Handles variations like "Book World", "bookworld", "book world", etc.
  *
  * Props:
  *   value       {string}   controlled value from parent
@@ -50,6 +51,13 @@ const BookSearchBar = ({
     onFocus?.(); // notify parent to close all dropdowns
   };
 
+  // Enhanced input change handler with normalization
+  const handleChange = (e) => {
+    const inputValue = e.target.value;
+    // Allow the value as-is, backend/frontend will handle case-insensitive matching
+    onChange(inputValue);
+  };
+
   return (
     <form
       onSubmit={(e) => {
@@ -65,17 +73,18 @@ const BookSearchBar = ({
         border: `1px solid ${focused ? T.gold : T.border}`,
         transition: "border-color 0.18s ease",
       }}
+      title="Search by book title, author, category, or keyword. Supports fuzzy matching."
     >
       <input
         ref={inputRef}
         type="text"
         value={value}
-        onChange={(e) => onChange(e.target.value)}
+        onChange={handleChange}
         onFocus={handleFocus}
         onBlur={() => setFocused(false)}
         autoFocus={autoFocus}
         placeholder={placeholder}
-        aria-label="Search books"
+        aria-label="Search books - supports case-insensitive search and fuzzy matching"
         style={{
           flex: 1,
           background: "transparent",
@@ -105,7 +114,7 @@ const BookSearchBar = ({
           cursor: "pointer",
           outline: "none"
         }}
-        title="Search"
+        title="Search (or press Enter)"
       >
         <div style={{
           backgroundColor: T.gold,

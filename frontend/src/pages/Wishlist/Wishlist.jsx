@@ -5,6 +5,7 @@ import { Link } from "react-router-dom";
 import PageLoader from "../../components/loaders/PageLoader";
 import { Heart, ArrowRight, BookHeart, Package } from "lucide-react";
 import BookCard from "../../components/books/BookCard";
+import SeoHead from "../../components/common/SeoHead";
 
 /* ─── Design tokens ───────────────────────────────────────────────────────── */
 const T = {
@@ -53,7 +54,8 @@ const Spinner = () => (
 const EmptyState = () => {
   const [btnHov, setBtnHov] = useState(false);
   return (
-    <div style={{
+      <SeoHead page="Wishlist" />
+      <div style={{
       display:        "flex",
       flexDirection:  "column",
       alignItems:     "center",
@@ -125,7 +127,8 @@ const Wishlist = () => {
   const wishlistBooks = wishlist?.books || [];
 
   return (
-    <div style={{
+      <SeoHead page="Wishlist" />
+      <div style={{
       background:   T.bg,
       minHeight:    "100%",
       padding:      "0 0 48px",

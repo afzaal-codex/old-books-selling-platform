@@ -4,6 +4,7 @@ import { fetchAuthors } from "../../store/slices/authorSlice";
 import { Link } from "react-router-dom";
 import { PenLine, ChevronDown } from "lucide-react";
 import PageLoader from "../../components/loaders/PageLoader";
+import SeoHead from "../../components/common/SeoHead";
 
 /* ─────────────────────────────────────────────────────────
    STYLES — zero card borders, editorial PNG portrait grid,
@@ -375,6 +376,7 @@ const Authors = () => {
 
   if (loading) {
     return (
+      <SeoHead page="Authors" />
       <div className="authors-root">
         <PageLoader label="Loading Authors" />
       </div>
@@ -382,7 +384,8 @@ const Authors = () => {
   }
 
   return (
-    <div className="authors-root" ref={sectionRef}>
+      <SeoHead page="Authors" />
+      <div className="authors-root" ref={sectionRef}>
 
       {/* ── Page Header — cart-header system ── */}
       <div className="cart-header">
@@ -407,7 +410,8 @@ const Authors = () => {
               {authors.map((auth, index) => {
                 const isEven = index % 2 === 1;
                 return (
-                  <Link
+      <SeoHead page="Authors" />
+      <Link
                     key={auth._id}
                     to={`/author/${auth.slug}`}
                     className={`author-card ${isEven ? "author-card--reverse" : ""}`}

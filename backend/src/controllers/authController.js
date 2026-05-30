@@ -369,7 +369,7 @@ export const sendSignupOTP = async (
     `;
 
     await transporter.sendMail({
-      from: `"NBookr World" <${process.env.EMAIL_USER}>`,
+      from: `"Book World" <${process.env.EMAIL_USER}>`,
       to: email,
       subject: "Email Verification OTP",
       html: getBrandedEmailTemplate(otpBody, "Email Verification OTP"),
@@ -736,7 +736,7 @@ export const forgotPassword = async (
     `;
 
     await transporter.sendMail({
-      from: `"NBookr World" <${process.env.EMAIL_USER}>`,
+      from: `"Book World" <${process.env.EMAIL_USER}>`,
       to: user.email,
       subject: "Reset Your Password",
       html: getBrandedEmailTemplate(resetBody, "Reset Your Password"),

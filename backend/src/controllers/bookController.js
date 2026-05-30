@@ -78,8 +78,16 @@ const getBooks = async (req, res) => {
     const conditions = [];
     const searchKeyword = keyword || search;
 
-    // Keyword search
+    let isBookWorldSearch = false;
     if (searchKeyword) {
+      const normalizedKeyword = searchKeyword.toLowerCase().replace(/\s+/g, "");
+      if (["bookworld", "bookworls"].includes(normalizedKeyword)) {
+        isBookWorldSearch = true;
+      }
+    }
+
+    // Keyword search
+    if (searchKeyword && !isBookWorldSearch) {
       if (searchBy === "author") {
         const matchingAuthors = await Author.find({ name: { $regex: searchKeyword, $options: "i" } });
         const authorIds = matchingAuthors.map((a) => a._id);
@@ -275,7 +283,21 @@ const getBooks = async (req, res) => {
     }
 
     const books = await apiQuery;
-    const booksWithPromo = await applyPromoDiscounts(books);
+    let booksWithPromo = await applyPromoDiscounts(books);
+
+    // If it's a Book World search variation, sort relevant/premium/featured/bestseller books to the top
+    if (isBookWorldSearch) {
+      booksWithPromo.sort((a, b) => {
+        const titleMatchA = (a.title?.toLowerCase().includes("book world") || a.title?.toLowerCase().includes("bookworld")) ? 100 : 0;
+        const titleMatchB = (b.title?.toLowerCase().includes("book world") || b.title?.toLowerCase().includes("bookworld")) ? 100 : 0;
+        
+        const scoreA = titleMatchA + (a.featured ? 10 : 0) + (a.bestseller ? 5 : 0);
+        const scoreB = titleMatchB + (b.featured ? 10 : 0) + (b.bestseller ? 5 : 0);
+        
+        return scoreB - scoreA;
+      });
+    }
+
     res.json(booksWithPromo);
   } catch (error) {
     res.status(500).json({ success: false, message: error.message });

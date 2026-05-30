@@ -3,6 +3,7 @@ import { useDispatch } from "react-redux";
 import {
   Routes,
   Route,
+  useLocation,
 } from "react-router-dom";
 import { fetchSettings } from "../store/slices/cmsSlice";
 
@@ -113,10 +114,60 @@ const NotFound = () => {
 
 const AppRoutes = () => {
   const dispatch = useDispatch();
+  const location = useLocation();
 
   useEffect(() => {
     dispatch(fetchSettings());
   }, [dispatch]);
+
+  useEffect(() => {
+    const path = location.pathname;
+    let pageName = "";
+
+    if (path === "/") pageName = "Home";
+    else if (path.startsWith("/books")) pageName = "Books";
+    else if (path.startsWith("/book/")) pageName = "Book Details";
+    else if (path.startsWith("/categories")) pageName = "Categories";
+    else if (path.startsWith("/category/")) pageName = "Category Details";
+    else if (path.startsWith("/authors")) pageName = "Authors";
+    else if (path.startsWith("/author/")) pageName = "Author Details";
+    else if (path.startsWith("/offers")) pageName = "Offers";
+    else if (path.startsWith("/cart")) pageName = "Cart";
+    else if (path.startsWith("/checkout")) pageName = "Checkout";
+    else if (path.startsWith("/about")) pageName = "About Us";
+    else if (path.startsWith("/contact")) pageName = "Contact Us";
+    else if (path.startsWith("/sell-book")) pageName = "Sell Your Book";
+    else if (path.startsWith("/faq")) pageName = "FAQ";
+    else if (path.startsWith("/track/")) pageName = "Order Tracking";
+    else if (path.startsWith("/login")) pageName = "Login";
+    else if (path.startsWith("/signup")) pageName = "Signup";
+    else if (path.startsWith("/forgot-password")) pageName = "Forgot Password";
+    else if (path.startsWith("/reset-password/")) pageName = "Reset Password";
+    else if (path.startsWith("/verify-email/")) pageName = "Verify Email";
+    else if (path.startsWith("/orders")) pageName = "My Orders";
+    else if (path.startsWith("/wishlist")) pageName = "My Wishlist";
+    else if (path.startsWith("/profile")) pageName = "My Profile";
+    else if (path.startsWith("/admin/books/edit/")) pageName = "Admin - Edit Book";
+    else if (path.startsWith("/admin/books")) pageName = "Admin - Books";
+    else if (path.startsWith("/admin/add-book")) pageName = "Admin - Add Book";
+    else if (path.startsWith("/admin/categories")) pageName = "Admin - Categories";
+    else if (path.startsWith("/admin/authors")) pageName = "Admin - Authors";
+    else if (path.startsWith("/admin/orders")) pageName = "Admin - Orders";
+    else if (path.startsWith("/admin/users")) pageName = "Admin - Users";
+    else if (path.startsWith("/admin/payments")) pageName = "Admin - Payments";
+    else if (path.startsWith("/admin/coupons")) pageName = "Admin - Coupons";
+    else if (path.startsWith("/admin/discounts")) pageName = "Admin - Discounts";
+    else if (path.startsWith("/admin/notifications")) pageName = "Admin - Notifications";
+    else if (path.startsWith("/admin/cms")) pageName = "Admin - CMS";
+    else if (path.startsWith("/admin/emails")) pageName = "Admin - Emails";
+    else if (path.startsWith("/admin/newsletter")) pageName = "Admin - Newsletter";
+    else if (path.startsWith("/admin/security")) pageName = "Admin - Security";
+    else if (path.startsWith("/admin/requests")) pageName = "Admin - Book Requests";
+    else if (path.startsWith("/admin")) pageName = "Admin - Dashboard";
+    else pageName = "Not Found";
+
+    document.title = `Book World | ${pageName}`;
+  }, [location]);
 
   return (
     <Routes>

@@ -1,8 +1,26 @@
 import mongoose from "mongoose";
 import Book from "./models/Book.js";
 import Settings from "./models/Settings.js";
+import Author from "./models/Author.js";
+import Category from "./models/Category.js";
+import User from "./models/User.js";
+import Coupon from "./models/Coupon.js";
+import Review from "./models/Review.js";
+import Order from "./models/Order.js";
+import Newsletter from "./models/Newsletter.js";
+import Notification from "./models/Notification.js";
+import Connect from "./models/Connect.js";
+import Wishlist from "./models/Wishlist.js";
+import BookRequest from "./models/BookRequest.js";
+import Payment from "./models/Payment.js";
+import Otp from "./models/Otp.js";
+import AdminOtp from "./models/AdminOtp.js";
+import bcryptjs from "bcryptjs";
+import dotenv from "dotenv";
 
-const MONGO_URI = "mongodb://localhost:27017/oldbooksstore";
+dotenv.config();
+
+const MONGO_URI = process.env.MONGO_URI || "mongodb://localhost:27017/oldbooksstore";
 
 const newBooks = [
   // J.K. Rowling (68315d111111111111111114, Category: Fiction: 68315d222222222222222224)
@@ -330,23 +348,471 @@ const newBooks = [
   },
 ];
 
+// =========================================
+// AUTHORS DATA
+// =========================================
+const newAuthors = [
+  {
+    name: "J.K. Rowling",
+    slug: "j-k-rowling",
+    bio: "Joanne Rowling is a British author, screenwriter and producer best known as the author of the Harry Potter fantasy series.",
+    image: "https://images-na.ssl-images-amazon.com/images/S/amzn-author-media-prod/images/30cf6144-b37b-4fbe-8d6d-b45f2d2d2e7d._SX300_SY300_.jpg",
+    featured: true,
+  },
+  {
+    name: "Cal Newport",
+    slug: "cal-newport",
+    bio: "Cal Newport is a bestselling author and computer scientist known for his works on productivity and focused work.",
+    image: "https://images-na.ssl-images-amazon.com/images/S/amzn-author-media-prod/images/5d4f8e9c-3b2e-4a8b-9c1f-2e8d7c6b5a4f._SX300_SY300_.jpg",
+    featured: true,
+  },
+  {
+    name: "James Clear",
+    slug: "james-clear",
+    bio: "James Clear is a bestselling author and habit formation expert, best known for Atomic Habits.",
+    image: "https://images-na.ssl-images-amazon.com/images/S/amzn-author-media-prod/images/8e9f7d6c-5b4a-3c2d-1e0f-9a8b7c6d5e4f._SX300_SY300_.jpg",
+    featured: true,
+  },
+  {
+    name: "Robert Kiyosaki",
+    slug: "robert-kiyosaki",
+    bio: "Robert Kiyosaki is an American businessman and author known for his Rich Dad Poor Dad series on financial literacy.",
+    image: "https://images-na.ssl-images-amazon.com/images/S/amzn-author-media-prod/images/2c3d4e5f-6a7b-8c9d-0e1f-2a3b4c5d6e7f._SX300_SY300_.jpg",
+    featured: true,
+  },
+];
+
+// =========================================
+// CATEGORIES DATA
+// =========================================
+const newCategories = [
+  {
+    name: "Fiction",
+    slug: "fiction",
+    image: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1491567910p._SX300_SY300_.jpg",
+    featured: true,
+    isActive: true,
+  },
+  {
+    name: "Self-Help",
+    slug: "self-help",
+    image: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1491567910p._SX300_SY300_.jpg",
+    featured: true,
+    isActive: true,
+  },
+  {
+    name: "Business & Finance",
+    slug: "business-finance",
+    image: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1491567910p._SX300_SY300_.jpg",
+    featured: true,
+    isActive: true,
+  },
+  {
+    name: "Educational",
+    slug: "educational",
+    image: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1491567910p._SX300_SY300_.jpg",
+    featured: false,
+    isActive: true,
+  },
+  {
+    name: "Mystery & Thriller",
+    slug: "mystery-thriller",
+    image: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1491567910p._SX300_SY300_.jpg",
+    featured: true,
+    isActive: true,
+  },
+  {
+    name: "Romance",
+    slug: "romance",
+    image: "https://images-na.ssl-images-amazon.com/images/S/compressed.photo.goodreads.com/books/1491567910p._SX300_SY300_.jpg",
+    featured: false,
+    isActive: true,
+  },
+];
+
+// =========================================
+// USERS DATA - Function to generate password hashes
+// =========================================
+async function generateUserData() {
+  return [
+    {
+      name: "Ahmed Hassan",
+      email: "ahmed@example.com",
+      phone: "+92 300 1234567",
+      password: await bcryptjs.hash("password123", 10),
+      isVerified: true,
+      isBlocked: false,
+      isInactive: false,
+      lastActiveAt: new Date(),
+    },
+    {
+      name: "Fatima Khan",
+      email: "fatima@example.com",
+      phone: "+92 300 7654321",
+      password: await bcryptjs.hash("password123", 10),
+      isVerified: true,
+      isBlocked: false,
+      isInactive: false,
+      lastActiveAt: new Date(),
+    },
+    {
+      name: "Ali Raza",
+      email: "ali@example.com",
+      phone: "+92 321 9876543",
+      password: await bcryptjs.hash("password123", 10),
+      isVerified: true,
+      isBlocked: false,
+      isInactive: false,
+      lastActiveAt: new Date(),
+    },
+  ];
+}
+
+// =========================================
+// COUPONS DATA
+// =========================================
+const newCoupons = [
+  {
+    code: "RARE40",
+    discountType: "percentage",
+    discountValue: 40,
+    minOrderAmount: 500,
+    expiryDate: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000),
+    usageLimit: 100,
+    usedCount: 0,
+    isActive: true,
+  },
+  {
+    code: "NEWYEAR2024",
+    discountType: "percentage",
+    discountValue: 25,
+    minOrderAmount: 1000,
+    expiryDate: new Date(Date.now() + 60 * 24 * 60 * 60 * 1000),
+    usageLimit: 50,
+    usedCount: 0,
+    isActive: true,
+  },
+  {
+    code: "FLAT500",
+    discountType: "fixed",
+    discountValue: 500,
+    minOrderAmount: 2000,
+    expiryDate: new Date(Date.now() + 45 * 24 * 60 * 60 * 1000),
+    usageLimit: 30,
+    usedCount: 0,
+    isActive: true,
+  },
+  {
+    code: "EID30",
+    discountType: "percentage",
+    discountValue: 30,
+    minOrderAmount: 1500,
+    expiryDate: new Date(Date.now() + 20 * 24 * 60 * 60 * 1000),
+    usageLimit: 200,
+    usedCount: 15,
+    isActive: true,
+  },
+];
+
 async function seed() {
   try {
     await mongoose.connect(MONGO_URI);
     console.log("Connected to MongoDB for seeding...");
 
+    // =========================================
+    // SEED CATEGORIES
+    // =========================================
+    const categorySlugs = newCategories.map((c) => c.slug);
+    await Category.deleteMany({ slug: { $in: categorySlugs } });
+    const insertedCategories = await Category.insertMany(newCategories);
+    console.log(`Successfully seeded ${insertedCategories.length} categories!`);
+
+    // =========================================
+    // SEED AUTHORS
+    // =========================================
+    const authorSlugs = newAuthors.map((a) => a.slug);
+    await Author.deleteMany({ slug: { $in: authorSlugs } });
+    const insertedAuthors = await Author.insertMany(newAuthors);
+    console.log(`Successfully seeded ${insertedAuthors.length} authors!`);
+
+    // =========================================
+    // UPDATE BOOKS WITH REAL IDS
+    // =========================================
+    const fictionCategory = insertedCategories.find(c => c.slug === 'fiction');
+    const selfHelpCategory = insertedCategories.find(c => c.slug === 'self-help');
+    const businessCategory = insertedCategories.find(c => c.slug === 'business-finance');
+    
+    const jkRowling = insertedAuthors.find(a => a.slug === 'j-k-rowling');
+    const calNewport = insertedAuthors.find(a => a.slug === 'cal-newport');
+    const jamesClear = insertedAuthors.find(a => a.slug === 'james-clear');
+    const robertKiyosaki = insertedAuthors.find(a => a.slug === 'robert-kiyosaki');
+
+    // Update book data with real category and author IDs
+    const updatedBooks = newBooks.map(book => {
+      if (book.slug.includes('harry-potter')) {
+        return { ...book, category: fictionCategory._id, author: jkRowling._id };
+      } else if (book.slug.includes('digital-minimalism') || book.slug.includes('world-without-email') || book.slug.includes('good-they-cant')) {
+        return { ...book, category: selfHelpCategory._id, author: calNewport._id };
+      } else if (book.slug.includes('atomic-habits') || book.slug.includes('3-2-1') || book.slug.includes('mastery-tiny')) {
+        return { ...book, category: selfHelpCategory._id, author: jamesClear._id };
+      } else if (book.slug.includes('rich-dad')) {
+        return { ...book, category: businessCategory._id, author: robertKiyosaki._id };
+      } else if (book.slug.includes('retire-young')) {
+        return { ...book, category: businessCategory._id, author: robertKiyosaki._id };
+      }
+      return book;
+    });
+
     // Delete existing books with matching slugs to re-seed clean details
-    const slugs = newBooks.map((b) => b.slug);
+    const slugs = updatedBooks.map((b) => b.slug);
     const deleteRes = await Book.deleteMany({ slug: { $in: slugs } });
     console.log(`Cleaned up ${deleteRes.deletedCount} existing seeded books.`);
 
-    // Insert new books
-    const insertRes = await Book.insertMany(newBooks);
-    console.log(`Successfully seeded ${insertRes.length} books with complete specifications!`);
+    // Insert updated books
+    const insertedBooks = await Book.insertMany(updatedBooks);
+    console.log(`Successfully seeded ${insertedBooks.length} books with complete specifications!`);
 
-    // Clean and seed settings
+    // =========================================
+    // SEED USERS
+    // =========================================
+    const userEmails = ['ahmed@example.com', 'fatima@example.com', 'ali@example.com'];
+    await User.deleteMany({ email: { $in: userEmails } });
+    const newUsers = await generateUserData();
+    const insertedUsers = await User.insertMany(newUsers);
+    console.log(`Successfully seeded ${insertedUsers.length} users!`);
+
+    // =========================================
+    // SEED COUPONS
+    // =========================================
+    const couponCodes = newCoupons.map((c) => c.code);
+    await Coupon.deleteMany({ code: { $in: couponCodes } });
+    const insertedCoupons = await Coupon.insertMany(newCoupons);
+    console.log(`Successfully seeded ${insertedCoupons.length} coupons!`);
+
+    // =========================================
+    // SEED REVIEWS
+    // =========================================
+    if (insertedBooks.length > 0 && insertedUsers.length > 0) {
+      const reviewData = [
+        {
+          bookId: insertedBooks[0]._id,
+          userId: insertedUsers[0]._id,
+          rating: 5,
+          title: "Amazing book! Highly recommended.",
+          review: "One of the best fantasy novels I've read. The storytelling is captivating and the characters are well-developed.",
+          verified: true,
+        },
+        {
+          bookId: insertedBooks[1]._id,
+          userId: insertedUsers[1]._id,
+          rating: 4,
+          title: "Good read with excellent pacing.",
+          review: "Fast-paced action with interesting plot twists. Kept me engaged throughout.",
+          verified: true,
+        },
+        {
+          bookId: insertedBooks[2]._id,
+          userId: insertedUsers[2]._id,
+          rating: 5,
+          title: "Best productivity book I've read.",
+          review: "Clear, practical advice on building better habits. Changed my daily routine for the better.",
+          verified: true,
+        },
+      ];
+      
+      const bookIds = reviewData.map(r => r.bookId);
+      await Review.deleteMany({ bookId: { $in: bookIds } });
+      const insertedReviews = await Review.insertMany(reviewData);
+      console.log(`Successfully seeded ${insertedReviews.length} reviews!`);
+    }
+
+    // =========================================
+    // SEED NEWSLETTER SUBSCRIBERS
+    // =========================================
+    await Newsletter.deleteMany({});
+    const newsletterData = [
+      {
+        email: "subscriber1@example.com",
+        name: "John Subscriber",
+        isSubscribed: true,
+      },
+      {
+        email: "subscriber2@example.com",
+        name: "Jane Reader",
+        isSubscribed: true,
+      },
+      {
+        email: "subscriber3@example.com",
+        name: "Book Lover",
+        isSubscribed: true,
+      },
+    ];
+    const insertedNewsletters = await Newsletter.insertMany(newsletterData);
+    console.log(`Successfully seeded ${insertedNewsletters.length} newsletter subscribers!`);
+
+    // =========================================
+    // SEED NOTIFICATIONS
+    // =========================================
+    if (insertedUsers.length > 0) {
+      await Notification.deleteMany({});
+      const notificationData = [
+        {
+          userId: insertedUsers[0]._id,
+          title: "Welcome to Book World!",
+          message: "Thank you for joining our community of book lovers.",
+          type: "welcome",
+          read: false,
+        },
+        {
+          userId: insertedUsers[1]._id,
+          title: "New Rare Books Added",
+          message: "Check out our latest collection of rare and vintage books.",
+          type: "product",
+          read: false,
+        },
+        {
+          userId: insertedUsers[2]._id,
+          title: "Special Discount Available",
+          message: "Use code EID30 for 30% off on selected items.",
+          type: "promotion",
+          read: true,
+        },
+      ];
+      const insertedNotifications = await Notification.insertMany(notificationData);
+      console.log(`Successfully seeded ${insertedNotifications.length} notifications!`);
+    }
+
+    // =========================================
+    // SEED WISHLISTS
+    // =========================================
+    await Wishlist.deleteMany({});
+    if (insertedUsers.length > 0 && insertedBooks.length > 0) {
+      const wishlistData = [
+        {
+          user: insertedUsers[0]._id,
+          books: [insertedBooks[0]._id, insertedBooks[1]._id],
+        },
+        {
+          user: insertedUsers[1]._id,
+          books: [insertedBooks[2]._id],
+        },
+      ];
+      const insertedWishlists = await Wishlist.insertMany(wishlistData);
+      console.log(`Successfully seeded ${insertedWishlists.length} wishlists!`);
+    }
+
+    // =========================================
+    // SEED CONNECT REQUESTS
+    // =========================================
+    await Connect.deleteMany({});
+    const connectData = [
+      { email: "reader1@gmail.com" },
+      { email: "collector2@yahoo.com" },
+    ];
+    const insertedConnects = await Connect.insertMany(connectData);
+    console.log(`Successfully seeded ${insertedConnects.length} connect requests!`);
+
+    // =========================================
+    // SEED BOOK REQUESTS
+    // =========================================
+    await BookRequest.deleteMany({});
+    if (insertedUsers.length > 0) {
+      const bookRequestData = [
+        {
+          title: "The Hobbit (First Edition)",
+          author: "J.R.R. Tolkien",
+          user: insertedUsers[0]._id,
+          name: "Ahmed Hassan",
+          email: "ahmed@example.com",
+          phone: "+92 300 1234567",
+          notes: "Looking for a well-preserved hardcover from the 1930s.",
+          status: "Pending",
+        },
+        {
+          title: "Fahrenheit 451",
+          author: "Ray Bradbury",
+          user: null,
+          name: "Sajid Mahmood",
+          email: "sajid@gmail.com",
+          phone: "+92 321 4455667",
+          notes: "Any vintage paperback copy.",
+          status: "Approved",
+        },
+      ];
+      const insertedBookRequests = await BookRequest.insertMany(bookRequestData);
+      console.log(`Successfully seeded ${insertedBookRequests.length} book requests!`);
+    }
+
+    // =========================================
+    // SEED ORDERS & PAYMENTS
+    // =========================================
+    await Order.deleteMany({});
+    await Payment.deleteMany({});
+    if (insertedUsers.length > 0 && insertedBooks.length > 0) {
+      const orderData = [
+        {
+          user: insertedUsers[0]._id,
+          orderItems: [
+            {
+              book: insertedBooks[0]._id,
+              title: insertedBooks[0].title,
+              image: insertedBooks[0].images?.[0] || "",
+              quantity: 1,
+              price: insertedBooks[0].discountedPrice || insertedBooks[0].originalPrice,
+            },
+          ],
+          shippingAddress: {
+            fullName: "Ahmed Hassan",
+            city: "Lahore",
+            address: "House 45, Street 3, DHA Phase 5",
+            phone: "+92 300 1234567",
+            email: "ahmed@example.com",
+          },
+          paymentMethod: "JazzCash",
+          paymentStatus: "Pending",
+          orderStatus: "Pending Payment Verification",
+          deliveryCharges: 150,
+          subtotal: insertedBooks[0].discountedPrice || insertedBooks[0].originalPrice,
+          totalPrice: (insertedBooks[0].discountedPrice || insertedBooks[0].originalPrice) + 150,
+          orderNumber: "ORD-" + Math.floor(100000 + Math.random() * 900000),
+          transactionId: "TXN88921827",
+          timeline: [
+            {
+              status: "Pending Payment Verification",
+              notes: "Order placed, awaiting payment confirmation.",
+            },
+          ],
+        },
+      ];
+      const insertedOrders = await Order.insertMany(orderData);
+      console.log(`Successfully seeded ${insertedOrders.length} orders!`);
+
+      // Seed corresponding payment
+      const paymentData = [
+        {
+          order: insertedOrders[0]._id,
+          transactionId: "TXN88921827",
+          paymentMethod: "JazzCash",
+          verificationStatus: "Pending",
+          adminNotes: "Awaiting screenshot confirmation.",
+        },
+      ];
+      const insertedPayments = await Payment.insertMany(paymentData);
+      console.log(`Successfully seeded ${insertedPayments.length} payments!`);
+    }
+
+    // =========================================
+    // CLEANUP OTPS
+    // =========================================
+    await Otp.deleteMany({});
+    await AdminOtp.deleteMany({});
+    console.log("Cleaned up OTP and AdminOtp collections.");
+
+    // =========================================
+    // SEED SETTINGS
+    // =========================================
     await Settings.deleteMany({});
-    const bookIds = insertRes.slice(0, 5).map((b) => b._id);
+    const bookIds = insertedBooks.slice(0, 5).map((b) => b._id);
     
     await Settings.create({
       supportEmail: "support@bookworld.site",
@@ -386,7 +852,7 @@ async function seed() {
         offersThisWeek: true,
       },
       heroSection: {
-        category: "68315d222222222222222224", // Default to Fiction
+        category: fictionCategory._id,
         books: bookIds,
         button1Text: "SELL YOUR BOOK",
         button1Link: "/sell-book",
@@ -443,9 +909,19 @@ async function seed() {
     });
     console.log("Successfully seeded Settings collection!");
 
-    console.log("Seeding completed successfully!");
+    console.log("\n===========================================");
+    console.log("✅ SEEDING COMPLETED SUCCESSFULLY!");
+    console.log("===========================================");
+    console.log(`✓ ${insertedCategories.length} Categories`);
+    console.log(`✓ ${insertedAuthors.length} Authors`);
+    console.log(`✓ ${insertedBooks.length} Books`);
+    console.log(`✓ ${insertedUsers.length} Users`);
+    console.log(`✓ ${insertedCoupons.length} Coupons`);
+    console.log(`✓ Newsletter & Notifications Seeded`);
+    console.log(`✓ Settings Configured`);
+    console.log("===========================================\n");
   } catch (error) {
-    console.error("Seeding error:", error);
+    console.error("❌ Seeding error:", error);
   } finally {
     await mongoose.disconnect();
     console.log("Disconnected from MongoDB");

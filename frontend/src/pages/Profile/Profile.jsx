@@ -5,6 +5,7 @@ import { fetchMyOrders } from "../../store/slices/orderSlice";
 import { useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import {
+import SeoHead from "../../components/common/SeoHead";
   User, Mail, Phone, Bell, ShieldCheck,
   ShoppingBag, Check, Calendar, UserCircle2,
 } from "lucide-react";
@@ -40,7 +41,8 @@ const s = {
 const TabBtn = ({ active, onClick, children, badge }) => {
   const [hov, setHov] = useState(false);
   return (
-    <button
+      <SeoHead page="My Profile" />
+      <button
       onClick={onClick}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
@@ -128,7 +130,8 @@ const NotifItem = ({ notif, onMarkRead }) => {
   const unread = !notif.read;
 
   return (
-    <div style={{
+      <SeoHead page="My Profile" />
+      <div style={{
       display:       "flex",
       justifyContent:"space-between",
       alignItems:    "flex-start",
@@ -220,7 +223,8 @@ const Profile = () => {
   const totalSpent  = myOrders.reduce((sum, o) => sum + (o.totalPrice || 0), 0);
 
   return (
-    <div style={{
+      <SeoHead page="My Profile" />
+      <div style={{
       background:  T.bg,
       minHeight:   "100%",
       padding:     "0 0 48px",
@@ -602,7 +606,8 @@ const Profile = () => {
 const ViewOrdersBtn = ({ onClick }) => {
   const [hov, setHov] = useState(false);
   return (
-    <button
+      <SeoHead page="My Profile" />
+      <button
       onClick={onClick}
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}

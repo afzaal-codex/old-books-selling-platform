@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { ChevronDown, HelpCircle } from "lucide-react";
+import SeoHead from "../../components/common/SeoHead";
 
 const FAQ = () => {
   const faqs = [
@@ -36,7 +37,8 @@ const FAQ = () => {
   };
 
   return (
-    <div className="space-y-12 bg-[var(--color-bg)] text-white pb-16 max-w-4xl mx-auto">
+      <SeoHead page="FAQ" />
+      <div className="space-y-12 bg-[var(--color-bg)] text-white pb-16 max-w-4xl mx-auto">
       <div className="text-center space-y-2">
         <h1 className="text-3xl font-extrabold text-[var(--color-primary)]">Frequently Asked Questions</h1>
         <p className="text-sm text-gray-400">Everything you need to know about purchasing and selling old books on BookWorld.</p>
@@ -46,7 +48,8 @@ const FAQ = () => {
         {faqs.map((faq, index) => {
           const isOpen = openIndex === index;
           return (
-            <div
+      <SeoHead page="FAQ" />
+      <div
               key={index}
               className="bg-[var(--color-card-bg)] border border-[var(--color-border)] rounded-2xl overflow-hidden transition-all duration-300"
             >

@@ -6,6 +6,7 @@ import { setAuth } from "../../store/slices/authSlice";
 import axiosInstance from "../../utils/axiosInstance";
 import ButtonLoader from "../../components/loaders/ButtonLoader";
 import { BookOpen, Eye, EyeOff } from "lucide-react";
+import SeoHead from "../../components/common/SeoHead";
 
 /* ─── Design tokens ───────────────────────────────────────────────────────── */
 const T = {
@@ -152,7 +153,8 @@ const Register = () => {
   `;
 
   return (
-    <div style={{
+      <SeoHead page="Sign Up" />
+      <div style={{
       minHeight:      "100vh",
       background:     T.bg,
       display:        "flex",
@@ -372,7 +374,8 @@ const Register = () => {
 const SendOTPBtn = ({ loading }) => {
   const [hov, setHov] = useState(false);
   return (
-    <button
+      <SeoHead page="Sign Up" />
+      <button
       type="submit"
       disabled={loading}
       onMouseEnter={() => setHov(true)}
@@ -404,7 +407,8 @@ const SendOTPBtn = ({ loading }) => {
 const VerifyOTPBtn = ({ loading, onClick }) => {
   const [hov, setHov] = useState(false);
   return (
-    <button
+      <SeoHead page="Sign Up" />
+      <button
       type="button"
       onClick={onClick}
       disabled={loading}
