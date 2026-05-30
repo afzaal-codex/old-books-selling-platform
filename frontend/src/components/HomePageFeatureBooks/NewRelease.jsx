@@ -106,6 +106,11 @@ const styles = `
     width: 100%;
   }
 
+  /* When cards <= 3, center the track instead of left-aligning */
+  .bs-carousel-row.bs-centered {
+    justify-content: center;
+  }
+
   .bs-nav-btn {
     flex-shrink: 0;
     width: 44px;
@@ -145,11 +150,23 @@ const styles = `
     margin: 0 10px;
   }
 
+  /* When centered (<=3 cards), clip doesn't need to stretch full width */
+  .bs-carousel-row.bs-centered .bs-clip {
+    flex: unset;
+    overflow: visible;
+  }
+
   .bs-track {
     display: flex;
     gap: 14px;
     transition: transform 0.44s cubic-bezier(0.4,0,0.2,1);
     will-change: transform;
+  }
+
+  /* Centered track — no transform needed, just flex center */
+  .bs-carousel-row.bs-centered .bs-track {
+    justify-content: center;
+    transform: none !important;
   }
 
   .bs-card {
@@ -159,11 +176,10 @@ const styles = `
     border-radius: 0;
     box-shadow: 0 4px 20px rgba(0,0,0,0.16);
     display: flex;
-    background: #0f3625; /* Premium rich green color background */
+    background: #0f3625;
     border: 1px solid rgba(255, 255, 255, 0.08);
   }
 
-  /* All content sits above bg */
   .bs-card-body {
     position: relative;
     z-index: 2;
@@ -172,7 +188,6 @@ const styles = `
     height: 100%;
   }
 
-  /* Left: book cover image, 2:3 ratio, margin 3px top/left/bottom, no outline */
   .bs-img-wrap {
     flex-shrink: 0;
     margin: 3px 0 3px 3px;
@@ -194,7 +209,6 @@ const styles = `
     border-radius: 0;
   }
 
-  /* Right: fixed layout with 4 rows */
   .bs-info {
     flex: 1;
     display: flex;
@@ -205,7 +219,6 @@ const styles = `
     gap: 4px;
   }
 
-  /* Row 1: Category — golden, bold */
   .bs-category {
     font-size: 9px;
     letter-spacing: 0.15em;
@@ -218,7 +231,6 @@ const styles = `
     text-overflow: ellipsis;
   }
 
-  /* Row 2: Title */
   .bs-title {
     font-family: 'Playfair Display', serif;
     font-size: 13.5px;
@@ -232,7 +244,6 @@ const styles = `
     -webkit-box-orient: vertical;
   }
 
-  /* Row 2b: Author line */
   .bs-author-line {
     font-size: 10px;
     margin: 0;
@@ -243,7 +254,6 @@ const styles = `
     font-weight: 700;
   }
 
-  /* Row 3: Description */
   .bs-desc {
     font-size: 10px;
     line-height: 1.5;
@@ -254,7 +264,6 @@ const styles = `
     -webkit-box-orient: vertical;
   }
 
-  /* Row 4: Price + Button */
   .bs-bottom {
     display: flex;
     flex-direction: column;
@@ -262,7 +271,6 @@ const styles = `
     margin-top: auto;
   }
 
-  /* Price styling */
   .bs-price-row {
     display: flex;
     align-items: baseline;
@@ -280,7 +288,6 @@ const styles = `
     text-decoration: line-through;
   }
 
-  /* Golden Add to Cart button — no rounded corners, bold black text */
   .bs-add-btn {
     width: 100%;
     padding: 6px 0;
@@ -315,21 +322,30 @@ const styles = `
   .bs-mobile-grid {
     display: none;
   }
+
+  /* View More button wrapper — hidden by default, shown on mobile via media query */
+  .bs-view-more-wrap {
+    display: none;
+  }
+
   @media (max-width: 479px) {
     /* Hide the carousel on mobile */
-    .bs-carousel-row { display: none; }
-    /* Show the grid instead */
+    .bs-carousel-row { display: none !important; }
+
+    /* Show the 2-col grid */
     .bs-mobile-grid {
       display: grid;
       grid-template-columns: 1fr 1fr;
       gap: 10px;
     }
+
     /* Last card odd → span both columns and shrink to ~50% width, centered */
     .bs-mobile-grid .bs-mobile-card:last-child:nth-child(odd) {
       grid-column: 1 / -1;
       justify-self: center;
       width: calc(50% - 5px);
     }
+
     .bs-mobile-card {
       position: relative;
       overflow: hidden;
@@ -340,7 +356,7 @@ const styles = `
       background: #0f3625;
       border: 1px solid rgba(255,255,255,0.08);
     }
-    /* Cover image: square-ish top section */
+
     .bs-mobile-img-wrap {
       width: 100%;
       aspect-ratio: 3/4;
@@ -356,7 +372,7 @@ const styles = `
       object-fit: cover;
       display: block;
     }
-    /* Info below the cover */
+
     .bs-mobile-info {
       display: flex;
       flex-direction: column;
@@ -427,6 +443,14 @@ const styles = `
       transition: filter 0.18s;
     }
     .bs-mobile-btn:hover { filter: brightness(1.1); }
+
+    /* Show View More button on mobile only when there are >4 books */
+    .bs-view-more-wrap {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+      margin-top: 20px;
+    }
   }
 `;
 
@@ -461,7 +485,7 @@ export default function BookLeaseSection({ books }) {
     hasDiscount: b.discountedPrice > 0 && b.discountedPrice < b.originalPrice,
     cover: b.images?.[0] || "https://placehold.co/300x450?text=Book",
     image: b.newReleaseBgImage || b.images?.[0] || "https://images.unsplash.com/photo-1544716278-ca5e3f4abd8c?w=600&fit=crop",
-    overlay: "rgba(16,185,129,0.3)", // green overlay with low opacity
+    overlay: "rgba(16,185,129,0.3)",
     rawBook: b
   })) : BOOKS.map(b => ({
     ...b,
@@ -471,13 +495,22 @@ export default function BookLeaseSection({ books }) {
     overlay: "rgba(16,185,129,0.3)"
   }));
 
+  // Desktop: show arrows only when there are more than 3 books
+  const showArrows = displayBooks.length > 3;
+
+  // Desktop: center-align cards when 3 or fewer
+  const isCentered = displayBooks.length <= 3;
+
+  // Mobile: show "View More" only when there are more than 4 books
+  const showViewMore = displayBooks.length > 4;
+
   function calcLayout() {
     if (!clipRef.current) return;
     const w = clipRef.current.clientWidth;
-    const v = 3; // always 3 on carousel (mobile now uses grid)
+    const v = 3;
     const cw = Math.floor((w - GAP * (v - 1)) / v);
-    const ch = Math.floor(cw * 0.75); // height 25% less than width
-    const iw = Math.floor(ch * (2 / 3)); // 2:3 portrait ratio
+    const ch = Math.floor(cw * 0.75);
+    const iw = Math.floor(ch * (2 / 3));
     setVisCount(v);
     setCardWidth(cw);
     setCardHeight(ch);
@@ -491,7 +524,7 @@ export default function BookLeaseSection({ books }) {
     return () => ro.disconnect();
   }, []);
 
-  const maxIdx = displayBooks.length - visCount;
+  const maxIdx = Math.max(0, displayBooks.length - visCount);
 
   function prev() {
     setIdx((i) => Math.max(0, i - 1));
@@ -512,9 +545,9 @@ export default function BookLeaseSection({ books }) {
     }
   };
 
-  const translateX = idx * (cardWidth + GAP);
+  const translateX = isCentered ? 0 : idx * (cardWidth + GAP);
 
-  // Mobile: 2 cards per row. Show 2 rows initially (4 cards) if not expanded.
+  // Mobile: always show only first 4 books unless expanded
   const mobileVisibleBooks = expanded ? displayBooks : displayBooks.slice(0, 4);
 
   return (
@@ -535,15 +568,13 @@ export default function BookLeaseSection({ books }) {
           </div>
         </div>
 
-        {/* ── MOBILE GRID (< 480px): 2 cards per row, last odd card centered ── */}
+        {/* ── MOBILE GRID (< 480px): 2 cards per row, max 2 rows (4 cards) initially ── */}
         <div className="bs-mobile-grid">
           {mobileVisibleBooks.map((book) => (
             <div key={book.id} className="bs-mobile-card">
-              {/* Cover image */}
               <div className="bs-mobile-img-wrap">
                 <img src={book.cover} alt={book.title} />
               </div>
-              {/* Info */}
               <div className="bs-mobile-info">
                 <div className="bs-mobile-category">{book.category}</div>
                 <h3 className="bs-mobile-title">{book.title}</h3>
@@ -567,9 +598,9 @@ export default function BookLeaseSection({ books }) {
           ))}
         </div>
 
-        {/* Mobile View More / Less button horizontally centered */}
-        {displayBooks.length > 4 && (
-          <div className="bs-mobile-grid" style={{ display: "none", justifyContent: "center", width: "100%", marginTop: "20px" }}>
+        {/* Mobile View More / Less — only rendered when books > 4 */}
+        {showViewMore && (
+          <div className="bs-view-more-wrap">
             <button
               onClick={handleToggle}
               style={{
@@ -581,40 +612,35 @@ export default function BookLeaseSection({ books }) {
                 fontWeight: "700",
                 textTransform: "uppercase",
                 cursor: "pointer",
-                transition: "all 0.2s ease"
+                transition: "all 0.2s ease",
+                fontFamily: "'Lora', serif",
               }}
             >
               {expanded ? "View Less" : "View More"}
             </button>
           </div>
         )}
-        <style>{`
-          @media (max-width: 479px) {
-            div.bs-mobile-grid {
-              display: grid !important;
-            }
-            div.bs-mobile-grid[style*="display: none"] {
-              display: flex !important;
-            }
-          }
-        `}</style>
 
-        {/* ── CAROUSEL (≥ 480px): 3 cards visible, arrow navigation ── */}
-        <div className="bs-carousel-row">
-          <button className="bs-nav-btn" onClick={prev} aria-label="Previous books">
-            <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6" /></svg>
-          </button>
+        {/* ── DESKTOP CAROUSEL (≥ 480px) ── */}
+        <div className={`bs-carousel-row${isCentered ? " bs-centered" : ""}`}>
+          {/* Left arrow — only when more than 3 books */}
+          {showArrows && (
+            <button className="bs-nav-btn" onClick={prev} aria-label="Previous books">
+              <svg viewBox="0 0 24 24"><polyline points="15 18 9 12 15 6" /></svg>
+            </button>
+          )}
 
           <div className="bs-clip" ref={clipRef}>
-            <div className="bs-track" style={{ transform: `translateX(-${translateX}px)` }}>
+            <div
+              className="bs-track"
+              style={isCentered ? undefined : { transform: `translateX(-${translateX}px)` }}
+            >
               {displayBooks.map((book) => (
-                <div key={book.id} className="bs-card" style={{ width: cardWidth, height: cardHeight }}>
+                <div key={book.id} className="bs-card" style={{ width: cardWidth || "auto", height: cardHeight || "auto" }}>
                   <div className="bs-card-body">
-                    {/* Left: 2:3 cover */}
                     <div className="bs-img-wrap" style={{ width: imgWidth, height: cardHeight - 6 }}>
                       <img src={book.cover} alt={book.title} />
                     </div>
-                    {/* Right: info */}
                     <div className="bs-info">
                       <div className="bs-category">{book.category}</div>
                       <h3 className="bs-title">{book.title}</h3>
@@ -642,9 +668,12 @@ export default function BookLeaseSection({ books }) {
             </div>
           </div>
 
-          <button className="bs-nav-btn" onClick={next} aria-label="Next books">
-            <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6" /></svg>
-          </button>
+          {/* Right arrow — only when more than 3 books */}
+          {showArrows && (
+            <button className="bs-nav-btn" onClick={next} aria-label="Next books">
+              <svg viewBox="0 0 24 24"><polyline points="9 18 15 12 9 6" /></svg>
+            </button>
+          )}
         </div>
       </section>
     </>
