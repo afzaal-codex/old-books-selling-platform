@@ -132,7 +132,7 @@ const MobileSidebar = ({ isOpen, setIsOpen }) => {
                   className="text-gray-400 font-semibold tracking-wide"
                   style={{ fontSize: rowFs, marginTop: "10px" }}
                 >
-                  Welcome to BookCorner
+                  Welcome to BookWorld
                 </p>
               </div>
 

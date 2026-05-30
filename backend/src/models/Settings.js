@@ -196,7 +196,7 @@ const settingsSchema = new mongoose.Schema(
     },
 
     seo: {
-      title: { type: String, default: "BookCorner" },
+      title: { type: String, default: "BookWorld" },
       description: { type: String, default: "Online Old Book Store" },
       keywords: { type: String, default: "old books, used books, bookstore" },
     },

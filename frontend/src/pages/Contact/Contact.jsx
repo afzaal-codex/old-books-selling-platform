@@ -153,7 +153,7 @@ const Contact = () => {
   };
 
   const contactInfo = [
-    { icon: Mail,   title: "Email Us",    val: "support@bookcorner.com",                      desc: "For general queries & support" },
+    { icon: Mail,   title: "Email Us",    val: "support@bookworld.site",                      desc: "For general queries & support" },
     { icon: Phone,  title: "Call Us",     val: "+92 300 1234567",                             desc: "Mon – Sat (9:00 AM – 6:00 PM)" },
     { icon: MapPin, title: "Head Office", val: "Main Boulevard, Gulberg III, Lahore, Pakistan", desc: "Visit us for pickup collections" },
   ];

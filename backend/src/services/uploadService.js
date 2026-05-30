@@ -13,7 +13,7 @@ const uploadSingleImage =
     const uploadedImage =
       await uploadToCloudinary(
         file.buffer,
-        "bookcorner"
+        "bookworld"
       );
 
     return {
@@ -32,7 +32,7 @@ const uploadMultipleImages =
       const uploadedImage =
         await uploadToCloudinary(
           file.buffer,
-          "bookcorner"
+          "bookworld"
         );
 
       uploadedFiles.push({

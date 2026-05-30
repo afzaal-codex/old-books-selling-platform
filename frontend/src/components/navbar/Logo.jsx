@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 import companyData from "../../data/companyData";
 
 const Logo = () => {
-  const companyName = companyData.companyName || companyData.name || "BookCorner";
+  const companyName = companyData.companyName || companyData.name || "BookWorld";
 
   return (
     <Link

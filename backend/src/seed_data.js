@@ -349,27 +349,27 @@ async function seed() {
     const bookIds = insertRes.slice(0, 5).map((b) => b._id);
     
     await Settings.create({
-      supportEmail: "support@bookcorner.com",
+      supportEmail: "support@bookworld.site",
       supportPhone: "+92 300 1234567",
       socialLinks: {
-        facebook: "https://facebook.com/bookcorner",
-        instagram: "https://instagram.com/bookcorner",
+        facebook: "https://facebook.com/bookworld",
+        instagram: "https://instagram.com/bookworld",
         whatsapp: "https://wa.me/923001234567",
-        youtube: "https://youtube.com/bookcorner",
+        youtube: "https://youtube.com/bookworld",
       },
       paymentMethods: {
         jazzcash: {
           number: "03001234567",
-          accountTitle: "Book Corner Store",
+          accountTitle: "Book World Store",
         },
         easypaisa: {
           number: "03121234567",
-          accountTitle: "Book Corner Store",
+          accountTitle: "Book World Store",
         },
         bankTransfer: {
           bankName: "Meezan Bank Limited",
           accountNumber: "02340102030405",
-          accountTitle: "Book Corner",
+          accountTitle: "Book World",
         },
       },
       useFlatDeliveryRate: true,
@@ -417,8 +417,8 @@ async function seed() {
         isActive: true,
       },
       seo: {
-        title: "BookCorner | Online Rare & Used Books Store",
-        description: "Explore a premium collection of rare, vintage, and second-hand books at Book Corner.",
+        title: "BookWorld | Online Rare & Used Books Store",
+        description: "Explore a premium collection of rare, vintage, and second-hand books at Book World.",
         keywords: "old books, used books, bookstore, novels",
       },
       loginContent: {

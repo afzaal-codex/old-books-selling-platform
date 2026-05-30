@@ -41,7 +41,7 @@ const BookCard = ({ book, noBorder }) => {
     e?.preventDefault(); e?.stopPropagation();
     const bookUrl = `${window.location.origin}/book/${book._id}`;
     if (navigator.share) {
-      navigator.share({ title: book.title, text: `Check out "${book.title}" on BookCorner!`, url: bookUrl }).catch(console.log);
+      navigator.share({ title: book.title, text: `Check out "${book.title}" on BookWorld!`, url: bookUrl }).catch(console.log);
     } else {
       navigator.clipboard.writeText(bookUrl);
       toast.success("Link copied to clipboard!");

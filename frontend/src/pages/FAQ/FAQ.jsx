@@ -4,7 +4,7 @@ import { ChevronDown, HelpCircle } from "lucide-react";
 const FAQ = () => {
   const faqs = [
     {
-      q: "How does BookCorner assess the condition of pre-loved books?",
+      q: "How does BookWorld assess the condition of pre-loved books?",
       a: "Sellers assign condition scores to each book (e.g., 'Like New', 'Good', 'Acceptable'). We display condition notes and pictures to ensure transparency. If a book doesn't match the description, you can report it within 3 days of delivery.",
     },
     {
@@ -20,7 +20,7 @@ const FAQ = () => {
       a: "Standard delivery charges are set by the store. They are computed dynamically based on CMS configurations. If delivery configurations do not specify your region, a flat rate of Rs. 150 is applied.",
     },
     {
-      q: "How can I sell my old books on BookCorner?",
+      q: "How can I sell my old books on BookWorld?",
       a: "Once registered, navigate to the seller dashboard (or contact admin for listing permissions if applicable) to upload your books' photos, author information, categories, set prices, and list them.",
     },
     {
@@ -39,7 +39,7 @@ const FAQ = () => {
     <div className="space-y-12 bg-[var(--color-bg)] text-white pb-16 max-w-4xl mx-auto">
       <div className="text-center space-y-2">
         <h1 className="text-3xl font-extrabold text-[var(--color-primary)]">Frequently Asked Questions</h1>
-        <p className="text-sm text-gray-400">Everything you need to know about purchasing and selling old books on BookCorner.</p>
+        <p className="text-sm text-gray-400">Everything you need to know about purchasing and selling old books on BookWorld.</p>
       </div>
 
       <div className="space-y-4">

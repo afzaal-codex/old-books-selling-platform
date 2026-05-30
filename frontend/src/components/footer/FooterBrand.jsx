@@ -25,7 +25,7 @@ const normalizeSocialHref = (key, value, textMessage) => {
 };
 
 const FooterBrand = () => {
-  const companyName = companyData.companyName || companyData.name || "BookCorner";
+  const companyName = companyData.companyName || companyData.name || "BookWorld";
   const { settings } = useSelector((state) => state.cms);
   const socials = settings?.socialLinks || {};
   const activeSocials = Object.entries(socials)

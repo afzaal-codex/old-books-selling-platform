@@ -1,6 +1,6 @@
 const companyData = {
-  name: "BookCorner",
-  companyName: "BookCorner",
+  name: "BookWorld",
+  companyName: "BookWorld",
 
   logo:
     "/Company Logo/BookWorldLogo.png",
@@ -12,7 +12,7 @@ const companyData = {
     "Online Old Book Store",
 
   email:
-    "support@bookcorner.com",
+    "support@bookworld.site",
 
   phone:
     "+92 300 0000000",

@@ -77,7 +77,7 @@ const About = () => {
           lineHeight: 1.15, margin: "0 0 6px",
           letterSpacing: "-0.01em",
         }}>
-          About BookCorner
+          About BookWorld
         </h1>
         {/* Subtitle */}
         <p style={{ fontFamily: "system-ui, sans-serif", fontSize: 13, color: T.muted, margin: 0 }}>
@@ -169,7 +169,7 @@ const HeroSection = () => (
         margin:     0,
         maxWidth:   520,
       }}>
-        Welcome to BookCorner, your premium marketplace for pre-loved and rare books.
+        Welcome to BookWorld, your premium marketplace for pre-loved and rare books.
         We believe that every book has a soul, and its journey shouldn't end on a single shelf.
         Our platform provides a seamless, secure, and beautiful space to buy and sell old books,
         connecting buyers with trusted sellers.
@@ -209,7 +209,7 @@ const HeroSection = () => (
         color:         T.muted,
         textAlign:     "center",
       }}>
-        Book<br />Corner
+        Book<br />World
       </span>
     </div>
   </div>
@@ -354,7 +354,7 @@ const ValuesSection = ({ values }) => (
         lineHeight:   1.15,
         margin:       "0 0 8px",
       }}>
-        Why Choose BookCorner?
+        Why Choose BookWorld?
       </h2>
       <p style={{ fontFamily: "system-ui, sans-serif", fontSize: 13, color: T.muted, margin: 0 }}>
         Our core pillars guide everything we build and support for our users.

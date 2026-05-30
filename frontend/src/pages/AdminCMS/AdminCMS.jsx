@@ -231,7 +231,7 @@ const AdminCMS = () => {
       setPbDiscountBooks(pb.discountBooks || []);
 
       const seo = settings.seo || {};
-      setSeoTitle(seo.title || "BookCorner");
+      setSeoTitle(seo.title || "BookWorld");
       setSeoDescription(seo.description || "Online Old Book Store");
       setSeoKeywords(seo.keywords || "");
 
@@ -397,7 +397,7 @@ const AdminCMS = () => {
     <div className="space-y-8 bg-[var(--color-bg)] text-white pb-12">
       {/* HEADER */}
       <div className="border-b border-[var(--color-border)] pb-5">
-        <h1 className="text-3xl font-extrabold text-[var(--color-primary)]">Book Corner Storefront CMS Configurations</h1>
+        <h1 className="text-3xl font-extrabold text-[var(--color-primary)]">Book World Storefront CMS Configurations</h1>
         <p className="text-sm text-gray-400 mt-2">Manage contact support info, wallets, banking credentials, and delivery charges</p>
       </div>
 
@@ -506,7 +506,7 @@ const AdminCMS = () => {
               <div className="space-y-2">
                 <label className="text-gray-300">WhatsApp Pre-filled Chat Message</label>
                 <textarea
-                  placeholder="e.g. Hello BookCorner, I want to inquire about a book..."
+                  placeholder="e.g. Hello BookWorld, I want to inquire about a book..."
                   value={whatsappMessage}
                   onChange={(e) => setWhatsappMessage(e.target.value)}
                   className="w-full bg-neutral-900 border border-[var(--color-border)] rounded-xl px-4 py-3 text-white outline-none focus:border-[var(--color-primary)]"

@@ -2,7 +2,7 @@ import cloudinary from "../config/cloudinary.js";
 
 const uploadToCloudinary = async (
   fileBuffer,
-  folder = "bookcorner"
+  folder = "bookworld"
 ) => {
   return new Promise(
     (resolve, reject) => {

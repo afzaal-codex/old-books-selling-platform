@@ -388,38 +388,38 @@ const Books = () => {
   const cmsSeo = settings?.seo || {};
 
   const dynamicSeo = useMemo(() => {
-    let title = cmsSeo.title || "Search & Buy Books Online | Used & New Books | BookCorner";
-    let description = cmsSeo.description || "Find the best deals on new, used, and second-hand books at BookCorner. Fast delivery and premium collection.";
+    let title = cmsSeo.title || "Search & Buy Books Online | Used & New Books | BookWorld";
+    let description = cmsSeo.description || "Find the best deals on new, used, and second-hand books at BookWorld. Fast delivery and premium collection.";
     let keywords = cmsSeo.keywords || "old books, used books, bookstore, online books, novel, cheap books";
 
     if (filters.search) {
-      title = `Buy "${filters.search}" Books Online | Cheap Used & New Books | BookCorner`;
-      description = `Looking for "${filters.search}"? Find the cheapest prices, reader reviews, and high-quality used or new editions of "${filters.search}" books on BookCorner.`;
-      keywords = `buy ${filters.search} books, cheap ${filters.search} online, ${filters.search} used books, purchase second hand ${filters.search}, BookCorner ${filters.search}`;
+      title = `Buy "${filters.search}" Books Online | Cheap Used & New Books | BookWorld`;
+      description = `Looking for "${filters.search}"? Find the cheapest prices, reader reviews, and high-quality used or new editions of "${filters.search}" books on BookWorld.`;
+      keywords = `buy ${filters.search} books, cheap ${filters.search} online, ${filters.search} used books, purchase second hand ${filters.search}, BookWorld ${filters.search}`;
     } else if (filters.category) {
-      title = `Buy ${filters.category} Books Online | Best Used & New Novels | BookCorner`;
-      description = `Browse our extensive collection of ${filters.category} books. Get up to 80% off on second-hand, vintage, and new release ${filters.category} books at BookCorner.`;
-      keywords = `buy ${filters.category} books, cheap ${filters.category} books, used ${filters.category} novels online, purchase second hand ${filters.category}, BookCorner ${filters.category}`;
+      title = `Buy ${filters.category} Books Online | Best Used & New Novels | BookWorld`;
+      description = `Browse our extensive collection of ${filters.category} books. Get up to 80% off on second-hand, vintage, and new release ${filters.category} books at BookWorld.`;
+      keywords = `buy ${filters.category} books, cheap ${filters.category} books, used ${filters.category} novels online, purchase second hand ${filters.category}, BookWorld ${filters.category}`;
     } else if (filters.author) {
-      title = `Buy Books by ${filters.author} | Used & Rare Editions | BookCorner`;
-      description = `Explore all books written by ${filters.author}. Discover rare editions, best sellers, and cheap second-hand paperbacks and hardcovers at BookCorner.`;
-      keywords = `books by ${filters.author}, buy ${filters.author} books online, cheap ${filters.author} second hand, list of books by ${filters.author}, BookCorner ${filters.author}`;
+      title = `Buy Books by ${filters.author} | Used & Rare Editions | BookWorld`;
+      description = `Explore all books written by ${filters.author}. Discover rare editions, best sellers, and cheap second-hand paperbacks and hardcovers at BookWorld.`;
+      keywords = `books by ${filters.author}, buy ${filters.author} books online, cheap ${filters.author} second hand, list of books by ${filters.author}, BookWorld ${filters.author}`;
     } else if (filters.bestseller) {
-      title = `Best Selling Books Online | Top Rated Used & New Novels | BookCorner`;
-      description = `Shop the ultimate list of best selling books on BookCorner. Handpicked popular novels, biographies, and academic textbooks at unbeatable prices.`;
+      title = `Best Selling Books Online | Top Rated Used & New Novels | BookWorld`;
+      description = `Shop the ultimate list of best selling books on BookWorld. Handpicked popular novels, biographies, and academic textbooks at unbeatable prices.`;
       keywords = `bestsellers, best selling books online, top rated novels, most popular books, cheap bestsellers, buy popular books`;
     } else if (filters.featured) {
-      title = `Featured Books & Curated Masterpieces | Recommended | BookCorner`;
-      description = `Discover our specially curated list of featured books. Hand-selected premium quality books, top-rated literature, and must-read stories on BookCorner.`;
-      keywords = `featured books, curated books, top books online, book recommendations, buy recommended books, BookCorner picks`;
+      title = `Featured Books & Curated Masterpieces | Recommended | BookWorld`;
+      description = `Discover our specially curated list of featured books. Hand-selected premium quality books, top-rated literature, and must-read stories on BookWorld.`;
+      keywords = `featured books, curated books, top books online, book recommendations, buy recommended books, BookWorld picks`;
     } else if (filters.highDiscount) {
-      title = `High Discount Books & Special Book Offers | Cheap Reads | BookCorner`;
+      title = `High Discount Books & Special Book Offers | Cheap Reads | BookWorld`;
       description = `Incredible savings on your favorite books! Shop our high discount section for up to 90% off on used, new, and rare novels and textbooks.`;
-      keywords = `book sale, high discount books, cheap books online, book deals, used books cheap, bookstore discount, BookCorner sale`;
+      keywords = `book sale, high discount books, cheap books online, book deals, used books cheap, bookstore discount, BookWorld sale`;
     } else if (filters.promo) {
-      title = `Special Promotional Offers & Coupon Deals | Book Corner`;
-      description = `Shop exclusive time-limited book deals and rare collectible publications with 40% flat promo discounts at Book Corner.`;
-      keywords = `promo discount, coupon code books, book deals, cheap novels, second hand books sale, Book Corner promo`;
+      title = `Special Promotional Offers & Coupon Deals | Book World`;
+      description = `Shop exclusive time-limited book deals and rare collectible publications with 40% flat promo discounts at Book World.`;
+      keywords = `promo discount, coupon code books, book deals, cheap novels, second hand books sale, Book World promo`;
     }
 
     return { title, description, keywords };

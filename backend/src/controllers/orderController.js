@@ -160,7 +160,7 @@ const createOrder = async (req, res) => {
             <a href="${trackingUrl}" style="background-color: #d4af37; color: #000000; padding: 12px 28px; text-decoration: none; font-weight: bold; border-radius: 8px; border: 1px solid #d4af37; display: inline-block;">Track Your Order</a>
           </div>
           
-          <p style="font-size: 12px; color: #888888; text-align: center; margin-top: 20px;">If you have any questions, please contact support at ${process.env.ADMIN_EMAIL || 'support@bookcorner.com'}.</p>
+          <p style="font-size: 12px; color: #888888; text-align: center; margin-top: 20px;">If you have any questions, please contact support at ${process.env.ADMIN_EMAIL || 'support@bookworld.site'}.</p>
         `;
 
         await sendEmail({
@@ -413,7 +413,7 @@ const updateOrderStatus = async (req, res) => {
             <a href="${trackingUrl}" style="background-color: #d4af37; color: #000000; padding: 12px 28px; text-decoration: none; font-weight: bold; border-radius: 8px; border: 1px solid #d4af37; display: inline-block;">Track Your Order</a>
           </div>
           
-          <p style="font-size: 12px; color: #888888; text-align: center; margin-top: 20px;">If you have any questions, please contact support at ${process.env.ADMIN_EMAIL || 'support@bookcorner.com'}.</p>
+          <p style="font-size: 12px; color: #888888; text-align: center; margin-top: 20px;">If you have any questions, please contact support at ${process.env.ADMIN_EMAIL || 'support@bookworld.site'}.</p>
         `;
 
         await sendEmail({

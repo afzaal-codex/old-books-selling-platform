@@ -118,7 +118,7 @@ const WhyChooseUs = () => {
           lineHeight:   1.15,
           margin:       "0 0 8px",
         }}>
-          Why Choose BookCorner?
+          Why Choose BookWorld?
         </h2>
         <p style={{ fontFamily: "system-ui, sans-serif", fontSize: 13, color: T.muted, margin: 0 }}>
           Our core pillars guide everything we build and support for our users.

@@ -53,7 +53,7 @@ const sendAdminOtp = async (req, res) => {
     subject: purpose === "admin-password" ? "Admin Password Change Verification" : "CMS Settings Update Verification",
     bodyHtml: `
       <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 25px; border: 1px solid #c8860a; border-radius: 12px; background-color: #0c0c0e; color: #fff;">
-        <h2 style="color: #c8860a; text-align: center; margin-bottom: 20px;">BookCorner Security Verification</h2>
+        <h2 style="color: #c8860a; text-align: center; margin-bottom: 20px;">BookWorld Security Verification</h2>
         <p style="font-size: 14px; line-height: 1.6; color: #ccc;">You requested an administrative action. Please confirm this action by clicking the matching number shown on your Admin Panel to reveal your 6-digit OTP code:</p>
         
         <div style="margin: 30px 0; display: flex; gap: 12px; justify-content: center; text-align: center;">

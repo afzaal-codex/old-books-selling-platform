@@ -7,7 +7,7 @@ const SeoHead = () => {
 
   return (
     <Helmet>
-      <title>{seo.title || "BookCorner"}</title>
+      <title>{seo.title || "BookWorld"}</title>
       <meta name="description" content={seo.description || "Online Old Book Store"} />
       <meta name="keywords" content={seo.keywords || "old books, used books, bookstore"} />
     </Helmet>

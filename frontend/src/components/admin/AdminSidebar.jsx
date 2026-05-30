@@ -62,7 +62,7 @@ const AdminSidebar = () => {
           {!collapsed && (
             <div>
               <h2 className="text-sm font-bold text-white tracking-wider">
-                BookCorner
+                BookWorld
               </h2>
               <p className="text-[10px] text-gray-500 font-bold uppercase tracking-widest">
                 Admin Panel

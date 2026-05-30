@@ -24,7 +24,7 @@ const FooterContact = () => {
         color: "#8b8b92"
       }}>
         <p style={{ margin: 0 }}>
-          {settings?.supportEmail || "support@bookcorner.com"}
+          {settings?.supportEmail || "support@bookworld.site"}
         </p>
 
         <p style={{ margin: 0 }}>
