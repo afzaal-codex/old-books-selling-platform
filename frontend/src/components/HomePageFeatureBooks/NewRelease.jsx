@@ -150,9 +150,8 @@ const styles = `
     margin: 0 10px;
   }
 
-  /* When no arrows, clip doesn't need to flex-grow; track centers naturally */
+  /* No-arrows: clip still flex:1 for width measurement, but no overflow clipping needed */
   .bs-no-arrows .bs-clip {
-    flex: unset;
     overflow: visible;
     margin: 0;
   }
