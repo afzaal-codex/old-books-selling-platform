@@ -78,12 +78,10 @@ const MobileSidebar = ({ isOpen, setIsOpen }) => {
     dispatch(logout());
     setIsOpen(false);
     toast.success("Logged out successfully");
-    // Stay on same page if public; go home if on a protected route
     const isProtected = PROTECTED_PATHS.some((p) => location.pathname.startsWith(p));
     if (isProtected) navigate("/");
   };
 
-  /* 15px * 1.20 = 18px main, 12.5px * 1.20 = 15px sub */
   const rowFs  = "18px";
   const subFs  = "15px";
   const rowPad = { paddingTop: "4px", paddingBottom: "4px", paddingLeft: "3px" };
@@ -127,7 +125,6 @@ const MobileSidebar = ({ isOpen, setIsOpen }) => {
                     B
                   </div>
                 )}
-                {/* 10px gap after logo before welcome */}
                 <p
                   className="text-gray-400 font-semibold tracking-wide"
                   style={{ fontSize: rowFs, marginTop: "10px" }}
@@ -245,7 +242,7 @@ const MobileSidebar = ({ isOpen, setIsOpen }) => {
               >
                 Send Request Book
               </button>
-              
+
               <button
                 onClick={() => {
                   setIsOpen(false);
@@ -256,7 +253,7 @@ const MobileSidebar = ({ isOpen, setIsOpen }) => {
               >
                 Send Gift Card
               </button>
-              
+
               <button
                 onClick={() => go("/books?advanced=true")}
                 className="w-full text-left font-bold text-gray-300 hover:text-white transition-colors cursor-pointer"
@@ -312,7 +309,8 @@ const MobileSidebar = ({ isOpen, setIsOpen }) => {
                         exit={{ height: 0, opacity: 0 }}
                         transition={{ duration: 0.2 }}
                         className="overflow-hidden bg-neutral-900/40 border-l border-white/5"
-style={{ marginLeft: "3px", paddingLeft: "3px", paddingTop: "3px" }}                      >
+                        style={{ marginLeft: "3px", paddingLeft: "3px", paddingTop: "3px" }}
+                      >
                         <div className="flex flex-col py-1">
                           {categories.length === 0 ? (
                             <span className="pl-2 italic text-gray-500" style={{ fontSize: subFs, paddingTop: "4px", paddingBottom: "4px" }}>
@@ -322,7 +320,7 @@ style={{ marginLeft: "3px", paddingLeft: "3px", paddingTop: "3px" }}            
                             categories.map((cat) => (
                               <button
                                 key={cat._id}
-                                onClick={() => go(`/books?category=${cat._id}`)}
+                                onClick={() => go(`/category/${cat.slug}`)}
                                 className="text-left pl-2 text-gray-400 hover:text-[var(--color-primary)] transition-colors cursor-pointer truncate"
                                 style={{ fontSize: subFs, paddingTop: "4px", paddingBottom: "4px" }}
                               >
@@ -358,7 +356,8 @@ style={{ marginLeft: "3px", paddingLeft: "3px", paddingTop: "3px" }}            
                         exit={{ height: 0, opacity: 0 }}
                         transition={{ duration: 0.2 }}
                         className="overflow-hidden bg-neutral-900/40 border-l border-white/5"
-style={{ marginLeft: "3px", paddingLeft: "3px", paddingTop: "3px" }}                      >
+                        style={{ marginLeft: "3px", paddingLeft: "3px", paddingTop: "3px" }}
+                      >
                         <div className="flex flex-col py-1">
                           {authors.length === 0 ? (
                             <span className="pl-2 italic text-gray-500" style={{ fontSize: subFs, paddingTop: "4px", paddingBottom: "4px" }}>
@@ -368,7 +367,7 @@ style={{ marginLeft: "3px", paddingLeft: "3px", paddingTop: "3px" }}            
                             authors.map((auth) => (
                               <button
                                 key={auth._id}
-                                onClick={() => go(`/books?author=${auth._id}`)}
+                                onClick={() => go(`/author/${auth.slug}`)}
                                 className="text-left pl-2 text-gray-400 hover:text-[var(--color-primary)] transition-colors cursor-pointer truncate"
                                 style={{ fontSize: subFs, paddingTop: "4px", paddingBottom: "4px" }}
                               >
