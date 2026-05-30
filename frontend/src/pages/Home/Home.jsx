@@ -391,11 +391,11 @@ const Home = () => {
     ? (authorsExpanded ? finalAuthors : finalAuthors.slice(0, 4))
     : finalAuthors.slice(0, 6);
 
-  if (loadingSections) return <PageLoader label="Loading BookCorner" />;
+  if (loadingSections) return <PageLoader label="Loading BookWorld" />;
 
   const cmsSeo = settings?.seo || {};
-  const metaTitle = cmsSeo.title || "Book Corner | Online Rare & Used Books Store";
-  const metaDesc = cmsSeo.description || "Explore a premium collection of rare, vintage, and second-hand books at Book Corner. Secure payment, fast shipping across Pakistan.";
+  const metaTitle = cmsSeo.title || "BookWorld | Online Rare & Used Books Store";
+  const metaDesc = cmsSeo.description || "Explore a premium collection of rare, vintage, and second-hand books at BookWorld. Secure payment, fast shipping across Pakistan.";
   const metaKeywords = cmsSeo.keywords || "old books, used books, bookstore, novel, cheap books, second hand books Pakistan";
 
   return (
@@ -407,7 +407,7 @@ const Home = () => {
         <meta property="og:type" content="website" />
         <meta property="og:title" content={metaTitle} />
         <meta property="og:description" content={metaDesc} />
-        <meta property="og:site_name" content="Book Corner" />
+        <meta property="og:site_name" content="BookWorld" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content={metaTitle} />
         <meta name="twitter:description" content={metaDesc} />
