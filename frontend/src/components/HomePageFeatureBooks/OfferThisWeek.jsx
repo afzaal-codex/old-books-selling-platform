@@ -133,12 +133,10 @@ function DecorativeCircles({ position }) {
 }
 
 function OfferCard({ offer, onAddToCart }) {
-  const circlePos = "bottom-right";
   return (
     <div className="otw-card">
-      <DecorativeCircles position={circlePos} />
+      <DecorativeCircles position="bottom-right" />
 
-      {/* TOP / LEFT: Book Image */}
       <div className="otw-img-wrap">
         <div style={{
           position: "absolute", inset: 0,
@@ -150,8 +148,7 @@ function OfferCard({ offer, onAddToCart }) {
           alt={offer.title}
           style={{
             width: "100%", height: "100%", objectFit: "cover",
-            objectPosition: "center",
-            display: "block",
+            objectPosition: "center", display: "block",
             filter: "brightness(0.92) contrast(1.05)",
             position: "relative", zIndex: 2,
           }}
@@ -159,50 +156,24 @@ function OfferCard({ offer, onAddToCart }) {
         <div className="otw-img-mask" />
       </div>
 
-      {/* RIGHT: Content */}
       <div className="otw-content">
-        {/* Category */}
-        <div className="otw-category">
-          {offer.category}
-        </div>
-
-        {/* Title */}
-        <h2 className="otw-title">
-          {offer.title}
-        </h2>
-
-        {/* Author */}
-        <div className="otw-author">
-          By {offer.author}
-        </div>
-
-        {/* Description */}
-        <p className="otw-desc">
-          {offer.description}
-        </p>
-
-        {/* Countdown */}
+        <div className="otw-category">{offer.category}</div>
+        <h2 className="otw-title">{offer.title}</h2>
+        <div className="otw-author">By {offer.author}</div>
+        <p className="otw-desc">{offer.description}</p>
         <div className="otw-countdown-row">
           <CountdownTimer endsAt={offer.endsAt} />
         </div>
-
-        {/* Pricing + Button */}
         <div className="otw-pricing-row">
           <div className="otw-price-line" style={{ display: "flex", alignItems: "baseline", gap: "10px" }}>
-            <span style={{
-              fontSize: "24px", fontWeight: 900, color: "#c8860a", letterSpacing: "-0.02em",
-              fontFamily: "'Outfit', 'Inter', sans-serif",
-            }}>
+            <span style={{ fontSize: "24px", fontWeight: 900, color: "#c8860a", letterSpacing: "-0.02em", fontFamily: "'Outfit', 'Inter', sans-serif" }}>
               {offer.price}
             </span>
             <span style={{ fontSize: "12px", textDecoration: "line-through", color: "red", fontFamily: "'Outfit', 'Inter', sans-serif" }}>
               {offer.oldPrice}
             </span>
           </div>
-          <button
-            onClick={() => onAddToCart?.(offer.rawBook)}
-            className="otw-cart-btn"
-          >
+          <button onClick={() => onAddToCart?.(offer.rawBook)} className="otw-cart-btn">
             Add to Cart
           </button>
         </div>
@@ -218,14 +189,11 @@ function NavButton({ direction, onClick, disabled }) {
       disabled={disabled}
       className="otw-nav-arrow"
       style={{
-        position: "absolute",
-        top: "50%",
+        position: "absolute", top: "50%",
         transform: "translateY(-50%)",
         [direction === "prev" ? "left" : "right"]: "-42px",
         width: "34px", height: "54px", borderRadius: 0,
-        backdropFilter: "none",
-        background: "transparent",
-        border: "none",
+        background: "transparent", border: "none",
         cursor: disabled ? "not-allowed" : "pointer",
         display: "flex", alignItems: "center", justifyContent: "center",
         zIndex: 12, transition: "all 0.25s ease",
@@ -253,8 +221,7 @@ function DotIndicators({ total, current, onDotClick }) {
           key={i}
           onClick={() => onDotClick(i)}
           style={{
-            width: i === current ? "24px" : "6px",
-            height: "6px",
+            width: i === current ? "24px" : "6px", height: "6px",
             borderRadius: "999px",
             background: i === current ? "#c8860a" : "rgba(255,255,255,0.2)",
             border: "none", cursor: "pointer", padding: 0,
@@ -302,7 +269,15 @@ export default function OffersThisWeek({ offers }) {
     rawBook: b
   })) : OFFERS;
 
-  const maxIndex = displayOffers.length - visibleCount;
+  // Desktop: show arrows + dots only when offers exceed VISIBLE (2)
+  const showArrows = displayOffers.length > VISIBLE;
+  // Desktop: center the track when offers <= VISIBLE
+  const isCentered = displayOffers.length <= VISIBLE;
+
+  // Mobile: show "View More" only when offers > 2
+  const showViewMore = displayOffers.length > 2;
+
+  const maxIndex = Math.max(0, displayOffers.length - visibleCount);
 
   useEffect(() => {
     const mq = window.matchMedia("(max-width: 768px)");
@@ -339,10 +314,10 @@ export default function OffersThisWeek({ offers }) {
     }
   };
 
-  const translatePct = -(currentIndex * (100 / visibleCount));
+  // When centered (<=2 offers), no translation needed
+  const translatePct = isCentered ? 0 : -(currentIndex * (100 / visibleCount));
 
-  // Desktop always shows slider carousel. Mobile shows simple vertical card list.
-  // Mobile: show 2 cards initially. Click expand/View More to show all.
+  // Mobile: show only first 2 unless expanded
   const mobileVisibleOffers = expanded ? displayOffers : displayOffers.slice(0, 2);
 
   return (
@@ -355,7 +330,6 @@ export default function OffersThisWeek({ offers }) {
         @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;0,800;0,900;1,400&display=swap');
         * { box-sizing: border-box; }
 
-        /* Offer Card layout */
         .otw-card {
           position: relative;
           background: #111114;
@@ -379,7 +353,6 @@ export default function OffersThisWeek({ offers }) {
           display: flex;
           align-items: center;
           justify-content: center;
-          zIndex: 2;
         }
 
         .otw-img-mask {
@@ -394,35 +367,32 @@ export default function OffersThisWeek({ offers }) {
           flex-direction: column;
           justify-content: center;
           position: relative;
-          zIndex: 2;
         }
 
         .otw-category {
           font-size: 10px; text-transform: uppercase; letter-spacing: 0.14em;
-          fontWeight: 700; color: #c8860a; marginBottom: 14px;
+          font-weight: 700; color: #c8860a; margin-bottom: 14px;
           font-family: 'Playfair Display', Georgia, serif;
         }
 
         .otw-title {
-          font-size: clamp(22px,2.2vw,30px); fontWeight: 800; lineHeight: 1.08;
+          font-size: clamp(22px,2.2vw,30px); font-weight: 800; line-height: 1.08;
           letter-spacing: -0.025em; color: #ffffff; margin: 0 0 14px 0;
           font-family: 'Playfair Display', Georgia, serif;
           text-shadow: 0 2px 24px rgba(0,0,0,0.6);
         }
 
         .otw-author {
-          font-size: 12px; fontWeight: 700; color: "rgba(240,237,232,0.7)";
-          letter-spacing: "0.06em"; text-transform: uppercase; marginBottom: 14px;
+          font-size: 12px; font-weight: 700; color: rgba(240,237,232,0.7);
+          letter-spacing: 0.06em; text-transform: uppercase; margin-bottom: 14px;
         }
 
         .otw-desc {
           font-size: 13.5px; line-height: 1.65; color: #9a9a9f;
-          margin: 0 0 28px 0; maxWidth: "380px";
+          margin: 0 0 28px 0; max-width: 380px;
         }
 
-        .otw-countdown-row {
-          margin-bottom: 20px;
-        }
+        .otw-countdown-row { margin-bottom: 20px; }
 
         .otw-pricing-row {
           display: flex;
@@ -432,33 +402,52 @@ export default function OffersThisWeek({ offers }) {
           margin-top: auto;
         }
 
-        /* Desktop button: equal padding left/right and top/bottom */
         .otw-cart-btn {
-          background: #c8860a; color: #000000; height: auto;
-          padding: 14px 14px; fontSize: 10px; fontWeight: 800;
+          background: #c8860a; color: #000000;
+          padding: 14px 14px; font-size: 10px; font-weight: 800;
           letter-spacing: 0.09em; text-transform: uppercase; border: none;
           cursor: pointer; transition: background 0.2s ease;
           font-family: 'Playfair Display', Georgia, serif;
-          white-space: nowrap;
-          user-select: none;
+          white-space: nowrap; user-select: none;
         }
         .otw-cart-btn:hover { background: #dda020; }
 
-        .otw-mobile-grid {
-          display: none;
+        /* Desktop slider wrapper — centered when isCentered */
+        .otw-slider-inner {
+          display: flex;
+          gap: 20px;
+          transition: transform 0.6s cubic-bezier(0.42,0,0.18,1);
+          will-change: transform;
+        }
+        .otw-slider-inner.otw-slider-centered {
+          justify-content: center;
+          transform: none !important;
         }
 
-        /* ── Mobile Phone Styles ── */
+        .otw-mobile-grid { display: none; }
+
+        /* View More button wrapper — hidden on desktop, shown on mobile via media query */
+        .otw-view-more-wrap { display: none; }
+
+        /* ── Mobile Phone Styles (< 480px) ── */
         @media (max-width: 479px) {
-          .otw-slider-container {
-            display: none !important;
-          }
+          .otw-slider-container { display: none !important; }
+
           .otw-mobile-grid {
             display: flex !important;
             flex-direction: column;
             gap: 16px;
             width: 100%;
           }
+
+          /* Show View More wrapper on mobile */
+          .otw-view-more-wrap {
+            display: flex;
+            justify-content: center;
+            width: 100%;
+            margin-top: 20px;
+          }
+
           .otw-card {
             flex-direction: column;
             width: 100%;
@@ -466,119 +455,55 @@ export default function OffersThisWeek({ offers }) {
             border: none;
             background: #111114;
           }
-          /* Top Part: Image (left) & Name/Desc (right) equal height */
           .otw-img-wrap {
-            width: 100px;
-            height: 120px;
-            min-width: 100px;
-            margin: 12px;
+            width: 100px; height: 120px; min-width: 100px; margin: 12px;
             align-self: flex-start;
           }
-          .otw-img-mask {
-            display: none;
-          }
+          .otw-img-mask { display: none; }
           .otw-content {
             padding: 12px;
             display: flex;
             flex-direction: column;
             width: 100%;
           }
-          /* We create three parts horizontally on mobile */
           .otw-card-top-row {
-            display: flex;
-            flex-direction: row;
-            align-items: flex-start;
-            width: 100%;
-            height: 144px;
+            display: flex; flex-direction: row;
+            align-items: flex-start; width: 100%; height: 144px;
           }
           .otw-card-top-right {
-            flex: 1;
-            padding: 12px 12px 12px 0;
-            display: flex;
-            flex-direction: column;
-            justify-content: space-between;
-            height: 144px;
+            flex: 1; padding: 12px 12px 12px 0;
+            display: flex; flex-direction: column;
+            justify-content: space-between; height: 144px;
           }
-          .otw-title {
-            font-size: 14px;
-            margin-bottom: 4px;
-            font-weight: 700;
-          }
-          .otw-author {
-            font-size: 10px;
-            margin-bottom: 4px;
-          }
+          .otw-title { font-size: 14px; margin-bottom: 4px; font-weight: 700; }
+          .otw-author { font-size: 10px; margin-bottom: 4px; }
           .otw-desc {
-            font-size: 11px;
-            line-height: 1.4;
-            color: #9a9a9f;
-            margin-bottom: 0;
-            overflow: hidden;
-            display: -webkit-box;
-            -webkit-line-clamp: 3;
-            -webkit-box-orient: vertical;
+            font-size: 11px; line-height: 1.4; color: #9a9a9f; margin-bottom: 0;
+            overflow: hidden; display: -webkit-box;
+            -webkit-line-clamp: 3; -webkit-box-orient: vertical;
           }
-          /* Middle section: cover full width and live counter */
           .otw-card-middle-row {
-            width: 100%;
-            padding: 8px 12px;
+            width: 100%; padding: 8px 12px;
             border-top: 1px solid rgba(255,255,255,0.06);
             border-bottom: 1px solid rgba(255,255,255,0.06);
-            display: flex;
-            justify-content: center;
+            display: flex; justify-content: center;
           }
-          .otw-countdown-container {
-            width: 100% !important;
-            justify-content: space-between !important;
-            gap: 1px !important;
-          }
-          /* Reduce timer sizes so they never cut off on narrow screens */
-          .otw-ends-in-label {
-            font-size: 8px !important;
-            margin-right: 4px !important;
-          }
-          .otw-timer-unit {
-            padding: 3px 5px !important;
-            min-width: 28px !important;
-          }
-          .otw-timer-num {
-            font-size: 11px !important;
-          }
-          .otw-timer-label {
-            font-size: 6.5px !important;
-            margin-top: 1px !important;
-          }
-          .otw-timer-colon {
-            font-size: 10px !important;
-            margin: 0 1px !important;
-          }
-
-          /* Bottom section: prices stay in one row, button gets its own row on mobile */
+          .otw-countdown-container { width: 100% !important; justify-content: space-between !important; gap: 1px !important; }
+          .otw-ends-in-label { font-size: 8px !important; margin-right: 4px !important; }
+          .otw-timer-unit { padding: 3px 5px !important; min-width: 28px !important; }
+          .otw-timer-num { font-size: 11px !important; }
+          .otw-timer-label { font-size: 6.5px !important; margin-top: 1px !important; }
+          .otw-timer-colon { font-size: 10px !important; margin: 0 1px !important; }
           .otw-card-bottom-row {
-            width: 100%;
-            padding: 12px;
-            display: flex;
-            flex-direction: column;
-            justify-content: flex-start;
-            align-items: stretch;
-            gap: 10px;
+            width: 100%; padding: 12px;
+            display: flex; flex-direction: column;
+            justify-content: flex-start; align-items: stretch; gap: 10px;
           }
-          .otw-price-line {
-            width: 100%;
-            flex-wrap: nowrap;
-            white-space: nowrap;
-            justify-content: center;
-          }
-          /* Mobile button padding is equal from left/right and top/bottom */
+          .otw-price-line { width: 100%; flex-wrap: nowrap; white-space: nowrap; justify-content: center; }
           .otw-cart-btn {
-            width: 100%;
-            flex: none;
-            margin-left: 0;
-            height: auto;
+            width: 100%; flex: none; margin-left: 0;
             padding: 10px 12px !important;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
+            display: inline-flex; align-items: center; justify-content: center;
           }
         }
       `}</style>
@@ -586,7 +511,7 @@ export default function OffersThisWeek({ offers }) {
       <div style={{ maxWidth: "1200px", margin: "0 auto", padding: "0 48px" }}>
 
         {/* Section Header */}
-        <div style={{ marginBottom: "48px", display: "flex", alignItems: "flex-end", justifyContents: "space-between", flexWrap: "wrap", gap: "16px" }}>
+        <div style={{ marginBottom: "48px", display: "flex", alignItems: "flex-end", justifyContent: "space-between", flexWrap: "wrap", gap: "16px" }}>
           <div>
             <h1 style={{
               fontSize: "clamp(32px,4vw,52px)", fontWeight: 900,
@@ -610,7 +535,6 @@ export default function OffersThisWeek({ offers }) {
         <div className="otw-mobile-grid">
           {mobileVisibleOffers.map((offer) => (
             <div key={offer.id} className="otw-card">
-              {/* Part 1: Top horizontal part with image left and title/desc right */}
               <div className="otw-card-top-row">
                 <div className="otw-img-wrap">
                   <img src={offer.coverUrl} alt={offer.title} />
@@ -624,21 +548,13 @@ export default function OffersThisWeek({ offers }) {
                   <p className="otw-desc">{offer.description}</p>
                 </div>
               </div>
-
-              {/* Part 2: Middle row with full width live counter */}
               <div className="otw-card-middle-row">
                 <CountdownTimer endsAt={offer.endsAt} />
               </div>
-
-              {/* Part 3: prices in one row, add-to-cart in its own mobile row */}
               <div className="otw-card-bottom-row">
                 <div className="otw-price-line" style={{ display: "flex", alignItems: "baseline", gap: "6px" }}>
-                  <span style={{ fontSize: "18px", fontWeight: 900, color: "#c8860a", fontFamily: "'Outfit', sans-serif" }}>
-                    {offer.price}
-                  </span>
-                  <span style={{ fontSize: "11px", textDecoration: "line-through", color: "red", fontFamily: "'Outfit', sans-serif" }}>
-                    {offer.oldPrice}
-                  </span>
+                  <span style={{ fontSize: "18px", fontWeight: 900, color: "#c8860a", fontFamily: "'Outfit', sans-serif" }}>{offer.price}</span>
+                  <span style={{ fontSize: "11px", textDecoration: "line-through", color: "red", fontFamily: "'Outfit', sans-serif" }}>{offer.oldPrice}</span>
                 </div>
                 <button className="otw-cart-btn" onClick={() => handleAddToCart(offer.rawBook)}>
                   Add to Cart
@@ -648,9 +564,9 @@ export default function OffersThisWeek({ offers }) {
           ))}
         </div>
 
-        {/* Mobile View More / Less button horizontally centered */}
-        {displayOffers.length > 2 && (
-          <div className="otw-mobile-grid" style={{ display: "none", justifyContent: "center", width: "100%", marginTop: "20px" }}>
+        {/* Mobile View More / Less — only rendered in DOM when offers > 2 */}
+        {showViewMore && (
+          <div className="otw-view-more-wrap">
             <button
               onClick={handleToggle}
               style={{
@@ -662,44 +578,27 @@ export default function OffersThisWeek({ offers }) {
                 fontWeight: "700",
                 textTransform: "uppercase",
                 cursor: "pointer",
-                transition: "all 0.2s ease"
+                transition: "all 0.2s ease",
+                fontFamily: "'Playfair Display', Georgia, serif",
               }}
             >
               {expanded ? "View Less" : "View More"}
             </button>
           </div>
         )}
-        <style>{`
-          @media (max-width: 479px) {
-            div.otw-mobile-grid {
-              display: flex !important;
-              flex-direction: column !important;
-            }
-            div.otw-mobile-grid[style*="display: none"] {
-              display: flex !important;
-              justify-content: center !important;
-            }
-          }
-        `}</style>
 
-        {/* ── SLIDER CAROUSEL (≥ 480px) ── */}
+        {/* ── DESKTOP SLIDER CAROUSEL (≥ 480px) ── */}
         <div className="otw-slider-container" style={{ position: "relative" }}>
           <div
-            style={{
-              overflow: "hidden",
-              position: "relative",
-            }}
+            style={{ overflow: isCentered ? "visible" : "hidden", position: "relative" }}
             onTouchStart={handleTouchStart}
             onTouchEnd={handleTouchEnd}
           >
             <div
               ref={trackRef}
-              style={{
-                display: "flex",
-                gap: isMobile ? "0" : "20px",
-                transition: isAnimating ? "transform 0.6s cubic-bezier(0.42,0,0.18,1)" : "none",
+              className={`otw-slider-inner${isCentered ? " otw-slider-centered" : ""}`}
+              style={isCentered ? undefined : {
                 transform: `translateX(calc(${translatePct}% - ${currentIndex * (isMobile ? 0 : 20 / visibleCount)}px))`,
-                willChange: "transform",
               }}
             >
               {displayOffers.map((offer) => (
@@ -707,9 +606,7 @@ export default function OffersThisWeek({ offers }) {
                   key={offer.id}
                   style={{
                     flex: `0 0 calc(${100 / visibleCount}% - ${isMobile ? 0 : 20 * (visibleCount - 1) / visibleCount}px)`,
-                    minWidth: 0,
-                    display: "flex",
-                    flexDirection: "column",
+                    minWidth: 0, display: "flex", flexDirection: "column",
                   }}
                 >
                   <OfferCard offer={offer} onAddToCart={handleAddToCart} />
@@ -718,10 +615,18 @@ export default function OffersThisWeek({ offers }) {
             </div>
           </div>
 
-          <NavButton direction="prev" onClick={() => goTo(currentIndex - 1)} disabled={currentIndex === 0} />
-          <NavButton direction="next" onClick={() => goTo(currentIndex + 1)} disabled={currentIndex >= maxIndex} />
-          
-          <DotIndicators total={maxIndex + 1} current={currentIndex} onDotClick={goTo} />
+          {/* Arrows — only when offers > VISIBLE (2) */}
+          {showArrows && (
+            <>
+              <NavButton direction="prev" onClick={() => goTo(currentIndex - 1)} disabled={currentIndex === 0} />
+              <NavButton direction="next" onClick={() => goTo(currentIndex + 1)} disabled={currentIndex >= maxIndex} />
+            </>
+          )}
+
+          {/* Dots — only when there are multiple pages to navigate */}
+          {showArrows && (
+            <DotIndicators total={maxIndex + 1} current={currentIndex} onDotClick={goTo} />
+          )}
         </div>
 
         {/* Footer Rule */}
