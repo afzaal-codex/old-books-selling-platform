@@ -5,7 +5,7 @@ import { Search } from "lucide-react";
 import Logo from "./Logo";
 import SearchBar from "./SearchBar";
 import CartButton from "./CartButton";
-import WishlistButton from "./WishlistButton";
+import WishlistButton from "./WishListButton";
 import OrdersButton from "./OrdersButton";
 import UserMenu from "./UserMenu";
 import DesktopNavbar from "./DesktopNavbar";
