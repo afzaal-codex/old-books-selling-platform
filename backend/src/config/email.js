@@ -1,4 +1,4 @@
-```js id="bh73ks"
+js id="bh73ks"
 import dotenv from "dotenv";
 dotenv.config();
 
@@ -42,4 +42,4 @@ transporter.verify((error, success) => {
 });
 
 export default transporter;
-```
+
