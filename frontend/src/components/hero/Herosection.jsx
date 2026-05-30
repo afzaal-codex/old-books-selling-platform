@@ -300,7 +300,7 @@ export default function LuxuryBookHero() {
     const { w, h } = dims;
     const isMob = w < 768;
     const r = isMob ? Math.min(w*1.05,h*1.3) : Math.min(w*0.68,h*1.55);
-    const cx = isMob ? w*0.16 : w*0.17;
+    const cx = isMob ? w*0.36 : w*0.37;
     const cy = isMob ? h*0.04 : h*0.04;
     return { cx, cy, r };
   }, [dims]);
