@@ -4,7 +4,6 @@ import BookCard from "../../components/books/BookCard";
 import { Percent, Sparkles, ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import PageLoader from "../../components/loaders/PageLoader";
-import SeoHead from "../../components/common/SeoHead";
 
 const Offers = () => {
   const [books, setBooks] = useState([]);
@@ -35,8 +34,7 @@ const Offers = () => {
   }
 
   return (
-      <SeoHead page="Special Offers" />
-      <div className="space-y-8 bg-[var(--color-bg)] text-white pb-12">
+    <div className="space-y-8 bg-[var(--color-bg)] text-white pb-12">
       <div>
         <h1 className="text-3xl font-extrabold text-[var(--color-primary)]">Hot Offers & Discounts</h1>
         <p className="text-sm text-gray-400 mt-2">Get popular reads at unmatched bargain rates</p>

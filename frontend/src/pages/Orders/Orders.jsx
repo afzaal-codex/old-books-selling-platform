@@ -3,7 +3,6 @@ import { useDispatch, useSelector } from "react-redux";
 import { fetchMyOrders, cancelOrderAction } from "../../store/slices/orderSlice";
 import toast from "react-hot-toast";
 import { Package, Calendar, MapPin, ShieldAlert, ShoppingBag, ChevronDown } from "lucide-react";
-import SeoHead from "../../components/common/SeoHead";
 
 /* ─── Design tokens ───────────────────────────────────────────────────────── */
 const T = {
@@ -48,8 +47,7 @@ const StatusBadge = ({ status }) => {
   else if (status === "Delivered") { bg = T.successBg; bdr = T.successBdr; color = T.success; }
   else                             { bg = "#0e0e11";   bdr = T.border;     color = T.muted; }
   return (
-      <SeoHead page="My Orders" />
-      <span style={{
+    <span style={{
       background: bg, border: `1px solid ${bdr}`, color,
       fontSize: 9, fontWeight: 700, letterSpacing: "0.12em",
       textTransform: "uppercase", padding: "4px 10px",
@@ -92,8 +90,7 @@ const OrderTimeline = ({ progress }) => {
   const goldPct = (completedSegs / SEGS) * 100;
 
   return (
-      <SeoHead page="My Orders" />
-      <div>
+    <div>
       <p style={{ ...s.label, marginBottom: 16 }}>Order Progress</p>
 
       {/* Desktop horizontal */}
@@ -117,8 +114,7 @@ const OrderTimeline = ({ progress }) => {
           const done    = progress >= stage.step;
           const current = progress === stage.step;
           return (
-      <SeoHead page="My Orders" />
-      <div key={stage.step} style={{ flex: 1, zIndex: 2, display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
+            <div key={stage.step} style={{ flex: 1, zIndex: 2, display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
               <div style={{
                 width: DOT, height: DOT,
                 background: done ? T.gold : T.card,
@@ -150,8 +146,7 @@ const OrderTimeline = ({ progress }) => {
             const done    = progress >= stage.step;
             const current = progress === stage.step;
             return (
-      <SeoHead page="My Orders" />
-      <div key={stage.step} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 5, flex: "1 0 calc(33% - 8px)" }}>
+              <div key={stage.step} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 5, flex: "1 0 calc(33% - 8px)" }}>
                 <div style={{
                   width: 22, height: 22,
                   background: done ? T.gold : T.card,
@@ -228,8 +223,7 @@ const ActivityLog = ({ timeline }) => (
 const CancelButton = ({ onClick, disabled, loading }) => {
   const [hov, setHov] = useState(false);
   return (
-      <SeoHead page="My Orders" />
-      <button
+    <button
       onClick={onClick}
       disabled={disabled}
       onMouseEnter={() => setHov(true)}
@@ -261,8 +255,7 @@ const OrderCard = ({ order, isOpen, onToggle, onCancel, cancelling }) => {
     order.orderStatus === "Approved";
 
   return (
-      <SeoHead page="My Orders" />
-      <div style={{ ...s.card, overflow: "hidden" }}>
+    <div style={{ ...s.card, overflow: "hidden" }}>
 
       {/* ── Always-visible header row ── */}
       <button
@@ -472,8 +465,7 @@ const Orders = () => {
   };
 
   return (
-      <SeoHead page="My Orders" />
-      <div style={{ background: T.bg, minHeight: "100%", padding: "0 0 48px", fontFamily: "system-ui, sans-serif" }}>
+    <div style={{ background: T.bg, minHeight: "100%", padding: "0 0 48px", fontFamily: "system-ui, sans-serif" }}>
 
       {/* Page Header */}
       <div style={{ paddingBottom: 28, borderBottom: `1px solid ${T.border}`, marginBottom: 28 }}>

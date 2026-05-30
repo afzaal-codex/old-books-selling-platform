@@ -14,7 +14,6 @@ import { fetchSettings } from "../../store/slices/cmsSlice";
 import axiosInstance from "../../utils/axiosInstance";
 import toast from "react-hot-toast";
 import { Trash2, ShoppingBag, ArrowRight, Tag, X, BookOpen, Package, ChevronRight } from "lucide-react";
-import SeoHead from "../../components/common/SeoHead";
 
 const styles = `
   :root {
@@ -341,7 +340,6 @@ const Cart = () => {
   /* ═══════════════════ EMPTY STATE ═══════════════════ */
   if (cartItems.length === 0) {
     return (
-      <SeoHead page="My Cart" />
       <div className="cart-root">
         <div className="empty-state">
           <div className="empty-icon-wrap">
@@ -361,8 +359,7 @@ const Cart = () => {
 
   /* ═══════════════════ MAIN CART ═══════════════════ */
   return (
-      <SeoHead page="My Cart" />
-      <div className="cart-root">
+    <div className="cart-root">
 
       {/* ── Page Header ── */}
       <div className="cart-header">
@@ -393,8 +390,7 @@ const Cart = () => {
             const price = hasDiscount ? item.discountedPrice : item.originalPrice;
 
             return (
-      <SeoHead page="My Cart" />
-      <div key={item._id} className="cart-item">
+              <div key={item._id} className="cart-item">
 
                 {/* Book cover */}
                 <div className="cart-item__img-wrap">

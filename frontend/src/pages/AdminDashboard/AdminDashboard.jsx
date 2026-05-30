@@ -6,7 +6,6 @@ import axiosInstance from "../../utils/axiosInstance";
 import { Link } from "react-router-dom";
 import { DollarSign, ShoppingCart, Loader2, Package, CheckCircle2, RefreshCcw, BellRing, Settings } from "lucide-react";
 import { ResponsiveContainer, AreaChart, Area, XAxis, YAxis, Tooltip, CartesianGrid } from "recharts";
-import SeoHead from "../../components/common/SeoHead";
 
 const AdminDashboard = () => {
   const dispatch = useDispatch();
@@ -58,7 +57,6 @@ const AdminDashboard = () => {
 
   if (loading) {
     return (
-      <SeoHead page="Admin Dashboard" />
       <div className="flex h-96 items-center justify-center text-gray-400">
         <Loader2 className="animate-spin text-[var(--color-primary)]" size={32} />
       </div>
@@ -77,8 +75,7 @@ const AdminDashboard = () => {
   };
 
   return (
-      <SeoHead page="Admin Dashboard" />
-      <div className="space-y-8 bg-[var(--color-bg)] text-white pb-12">
+    <div className="space-y-8 bg-[var(--color-bg)] text-white pb-12">
       {/* HEADER */}
       <div className="flex justify-between items-center border-b border-[var(--color-border)] pb-5">
         <div>

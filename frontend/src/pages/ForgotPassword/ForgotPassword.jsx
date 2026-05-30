@@ -3,7 +3,6 @@ import toast from "react-hot-toast";
 import axiosInstance from "../../utils/axiosInstance";
 import { BookOpen } from "lucide-react";
 import ButtonLoader from "../../components/loaders/ButtonLoader";
-import SeoHead from "../../components/common/SeoHead";
 
 /* ─── Design tokens ───────────────────────────────────────────────────────── */
 const T = {
@@ -45,8 +44,7 @@ const ForgotPassword = () => {
   `;
 
   return (
-      <SeoHead page="Forgot Password" />
-      <div style={{
+    <div style={{
       minHeight:      "100vh",
       background:     T.bg,
       display:        "flex",
@@ -168,8 +166,7 @@ const ForgotPassword = () => {
 const SendLinkBtn = ({ loading }) => {
   const [hov, setHov] = useState(false);
   return (
-      <SeoHead page="Forgot Password" />
-      <button
+    <button
       type="submit"
       disabled={loading}
       onMouseEnter={() => setHov(true)}

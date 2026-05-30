@@ -3,7 +3,6 @@ import { BookOpen, User, Mail, Phone, Tag, DollarSign, Send, Landmark } from "lu
 import toast from "react-hot-toast";
 import axiosInstance from "../../utils/axiosInstance";
 import ButtonLoader from "../../components/loaders/ButtonLoader";
-import SeoHead from "../../components/common/SeoHead";
 
 /* ─── Design tokens ─── */
 const T = {
@@ -105,8 +104,7 @@ const SellBook = () => {
   `;
 
   return (
-      <SeoHead page="Sell a Book" />
-      <div style={{ background: T.bg, fontFamily: "system-ui, sans-serif", paddingBottom: 48 }}>
+    <div style={{ background: T.bg, fontFamily: "system-ui, sans-serif", paddingBottom: 48 }}>
       <style>{focusCss}</style>
 
       {/* Page Header */}

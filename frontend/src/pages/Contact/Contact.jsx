@@ -2,7 +2,6 @@ import { useState } from "react";
 import { Mail, Phone, MapPin, Send, MessageSquare, Headphones } from "lucide-react";
 import toast from "react-hot-toast";
 import ButtonLoader from "../../components/loaders/ButtonLoader";
-import SeoHead from "../../components/common/SeoHead";
 
 /* ─── Design tokens ───────────────────────────────────────────────────────── */
 const T = {
@@ -49,8 +48,7 @@ const inputBase = {
 const InfoCard = ({ icon: Icon, title, val, desc }) => {
   const [hov, setHov] = useState(false);
   return (
-      <SeoHead page="Contact Us" />
-      <div
+    <div
       onMouseEnter={() => setHov(true)}
       onMouseLeave={() => setHov(false)}
       style={{
@@ -108,8 +106,7 @@ const InfoCard = ({ icon: Icon, title, val, desc }) => {
 const SubmitBtn = ({ submitting }) => {
   const [hov, setHov] = useState(false);
   return (
-      <SeoHead page="Contact Us" />
-      <button
+    <button
       type="submit"
       disabled={submitting}
       onMouseEnter={() => setHov(true)}
@@ -171,8 +168,7 @@ const Contact = () => {
   `;
 
   return (
-      <SeoHead page="Contact Us" />
-      <div style={{ background: T.bg, fontFamily: "system-ui, sans-serif", paddingBottom: 48 }}>
+    <div style={{ background: T.bg, fontFamily: "system-ui, sans-serif", paddingBottom: 48 }}>
       <style>{focusCss}</style>
 
       {/* ── Page Header — cart-header eyebrow style ── */}
