@@ -1,4 +1,4 @@
-js id="bh73ks"
+
 import dotenv from "dotenv";
 dotenv.config();
 
