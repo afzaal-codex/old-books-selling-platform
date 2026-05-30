@@ -56,7 +56,31 @@ app.use(
 app.get("/", (req, res) => {
   res.send("API Running...");
 });
+app.get("/test-email", async (req, res) => {
+  try {
+    const info = await transporter.sendMail({
+      from: process.env.EMAIL_USER,
+      to: "yourgmail@gmail.com",
+      subject: "SMTP Test",
+      html: "<h1>Email Working</h1>",
+    });
 
+    console.log(info);
+
+    res.json({
+      success: true,
+      info,
+    });
+  } catch (error) {
+    console.log("EMAIL ERROR:", error);
+
+    res.status(500).json({
+      success: false,
+      error: error.message,
+      stack: error.stack,
+    });
+  }
+});
 app.use("/api/auth", authRoutes);
 app.use("/api/books", bookRoutes);
 app.use("/api/categories", categoryRoutes);
