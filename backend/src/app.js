@@ -38,6 +38,8 @@ app.use(
         "http://127.0.0.1:5173",
         "http://127.0.0.1:5174",
         "https://old-books-selling-platform.vercel.app",
+        "https://bookworld.site",
+        "https://www.bookworld.site",
         process.env.FRONTEND_URL,
       ].filter(Boolean);
 
