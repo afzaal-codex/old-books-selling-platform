@@ -71,14 +71,34 @@ const HOME_STYLES = `
     margin-bottom: 48px;
   }
 
-  /* ── Category grid — always centered ── */
-  .hs-cat-grid {
+  /* ── Centered book grid (Featured / Best Sellers / High Discounts) ── */
+  .hs-books-grid {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
     gap: 16px;
   }
-  /* Each category card: fixed width so they wrap naturally and stay centered */
+  .hs-books-grid > * {
+    flex: 0 0 calc(50% - 8px);
+    max-width: calc(50% - 8px);
+  }
+  @media (min-width: 768px) {
+    .hs-books-grid > * {
+      flex: 0 0 calc(25% - 12px);
+      max-width: calc(25% - 12px);
+    }
+  }
+
+  /* ── Category grid ── */
+  .hs-cat-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+  }
+  @media (min-width: 480px)  { .hs-cat-grid { grid-template-columns: repeat(3, 1fr); } }
+  @media (min-width: 768px)  { .hs-cat-grid { grid-template-columns: repeat(4, 1fr); } }
+  @media (min-width: 1100px) { .hs-cat-grid { grid-template-columns: repeat(6, 1fr); } }
+
   .hs-cat-item {
     display: flex;
     flex-direction: column;
@@ -91,21 +111,7 @@ const HOME_STYLES = `
     border-radius: 16px;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     gap: 12px;
-    /* 6-per-row on large screens, flexes down naturally */
-    width: calc((100% - 5 * 16px) / 6);
-    min-width: 100px;
-    box-sizing: border-box;
   }
-  @media (max-width: 1099px) {
-    .hs-cat-item { width: calc((100% - 3 * 16px) / 4); }
-  }
-  @media (max-width: 767px) {
-    .hs-cat-item { width: calc((100% - 2 * 16px) / 3); }
-  }
-  @media (max-width: 479px) {
-    .hs-cat-item { width: calc((100% - 1 * 16px) / 2); }
-  }
-
   .hs-cat-item:hover {
     background: rgba(200,134,10,0.04);
     border-color: #c8860a;
@@ -149,52 +155,49 @@ const HOME_STYLES = `
   }
   .hs-cat-item:hover .hs-cat-item__name { color: #c8860a; }
 
-  /* ── Authors grid ──
-     Desktop: 6 per row (flex-wrap, centered).
-     Mobile (<480px): 3 per row, max 2 rows shown (6 cards).
-  ── */
+  /* ── Authors row layout ── */
   .hs-authors-grid {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
+    display: grid;
+    grid-template-columns: repeat(6, 1fr);
     gap: 16px;
+    position: relative;
     padding: 16px 0;
+    height: auto;
   }
 
-  /* Each author card: fixed width for 6-per-row on desktop */
   .hs-author-item {
     display: flex;
-    flex-direction: column;  /* image on top, text below */
+    flex-direction: column;
     align-items: stretch;
     text-decoration: none;
     background: transparent;
     border: none;
-    width: calc((100% - 5 * 16px) / 6);
-    min-width: 100px;
-    box-sizing: border-box;
+    width: 100%;
+    height: auto;
     box-shadow: 0 12px 32px rgba(0,0,0,0.55);
     transition: box-shadow 0.3s ease;
-    /* Remove alternating flip — always image-top */
   }
   .hs-author-item:hover {
     box-shadow: 0 16px 44px rgba(200,134,10,0.18);
   }
-
-  /* Author image: square aspect, always on top */
-  .hs-author-item__img-wrap {
-    width: 100%;
-    aspect-ratio: 1 / 1;
-    overflow: hidden;
-    flex-shrink: 0;
-    background: #0a0a0c;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+  /* Alternating: odd index flips to text-top/image-bottom */
+  .hs-author-item.img-bottom {
+    flex-direction: column-reverse;
   }
 
-  /* Author name+bio: always below image */
+  .hs-author-item__img-wrap {
+    width: 100% !important;
+    height: unset !important;
+    border-radius: 0 !important;
+    border: none !important;
+    margin-bottom: 0 !important;
+    aspect-ratio: 1/1 !important;
+    flex-shrink: 0 !important;
+  }
+
   .hs-author-item__name-wrap {
     width: 100%;
+    aspect-ratio: 1/1;
     padding: 14px 12px;
     display: flex;
     flex-direction: column;
@@ -220,15 +223,13 @@ const HOME_STYLES = `
   .hs-author-item__img {
     width: 100%; height: 100%;
     object-fit: cover;
-    display: block;
-    transition: transform 0.25s ease;
+    display: block; transition: transform 0.25s ease;
   }
   .hs-author-item:hover .hs-author-item__img { transform: scale(1.05); }
 
   .hs-author-item__fallback {
     width: 100%; height: 100%;
     display: flex; align-items: center; justify-content: center;
-    background: #16161c;
   }
   .hs-author-item__initial {
     font-size: 28px;
@@ -243,27 +244,26 @@ const HOME_STYLES = `
   }
   .hs-author-item:hover .hs-author-item__name { color: #c8860a; }
 
-  /* View More button for authors — hidden on desktop, shown on mobile */
-  .hs-authors-view-more {
-    display: none;
-  }
-
-  /* ── Mobile overrides (<480px) ── */
   @media (max-width: 479px) {
-    /* Authors: 3 per row on mobile */
+    .hs-authors-grid {
+      display: grid !important;
+      grid-template-columns: repeat(2, 1fr) !important;
+      gap: 16px !important;
+      overflow-x: visible !important;
+      padding: 16px 8px !important;
+    }
     .hs-author-item {
-      width: calc((100% - 2 * 16px) / 3) !important;
+      width: 100% !important;
     }
-    /* Show View More button on mobile */
-    .hs-authors-view-more {
-      display: flex;
-      justify-content: center;
-      width: 100%;
-      margin-top: 24px;
+    .hs-author-item__img-wrap {
+      width: 100% !important;
+      height: unset !important;
+      aspect-ratio: 1/1 !important;
     }
-    /* Categories: 2 per row on mobile */
-    .hs-cat-item {
-      width: calc((100% - 1 * 16px) / 2) !important;
+    .hs-author-item__name-wrap {
+      width: 100% !important;
+      min-height: 120px !important;
+      aspect-ratio: unset !important;
     }
   }
 `;
@@ -325,8 +325,8 @@ const Home = () => {
   const [loadingSections, setLoadingSections] = useState(true);
 
   const authorsSectionRef = useRef(null);
+  const [windowWidth, setWindowWidth] = useState(typeof window !== "undefined" ? window.innerWidth : 1200);
 
-  // Mobile & Authors expanded states
   const [authorsExpanded, setAuthorsExpanded] = useState(false);
   const [isMobile, setIsMobile] = useState(false);
 
@@ -337,7 +337,12 @@ const Home = () => {
     return () => window.removeEventListener("resize", checkMobile);
   }, []);
 
-  // Spotlight campaign popup after 2 seconds delay
+  useEffect(() => {
+    const handleResize = () => setWindowWidth(window.innerWidth);
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
   useEffect(() => {
     if (settings?.promotionalDiscount?.isActive) {
       const timer = setTimeout(() => {
@@ -347,7 +352,6 @@ const Home = () => {
     }
   }, [settings]);
 
-  /* Inject styling */
   useEffect(() => {
     if (document.getElementById("home-styles")) return;
     const tag = document.createElement("style");
@@ -391,20 +395,14 @@ const Home = () => {
     dispatch(fetchAuthors());
   }, [dispatch]);
 
-  // Filter or slice categories and authors
   const trendingCategories = categories.filter((c) => c.featured).slice(0, 6);
   const finalCategories = trendingCategories.length > 0 ? trendingCategories : categories.slice(0, 6);
 
   const trendingAuthors = authors.filter((a) => a.featured).slice(0, 12);
   const finalAuthors = trendingAuthors.length > 0 ? trendingAuthors : authors.slice(0, 12);
-
-  // Desktop: always show all (up to 12, i.e. max 2 rows of 6).
-  // Mobile: show 6 initially (2 rows of 3), expand to show all.
-  const MOBILE_INITIAL_AUTHORS = 6; // 2 rows × 3 per row
-  const showMobileViewMore = isMobile && finalAuthors.length > MOBILE_INITIAL_AUTHORS;
   const visibleAuthors = isMobile
-    ? (authorsExpanded ? finalAuthors : finalAuthors.slice(0, MOBILE_INITIAL_AUTHORS))
-    : finalAuthors;
+    ? (authorsExpanded ? finalAuthors : finalAuthors.slice(0, 4))
+    : finalAuthors.slice(0, 6);
 
   if (loadingSections) return <PageLoader label="Loading BookWorld" />;
 
@@ -428,7 +426,7 @@ const Home = () => {
         <meta name="twitter:description" content={metaDesc} />
       </Helmet>
 
-      {/* HERO SECTION */}
+      {/* 2. HERO SECTION */}
       {settings?.homepageSections?.hero !== false && (
         <div className="w-full">
           <Hero />
@@ -437,22 +435,22 @@ const Home = () => {
 
       <div className="container-custom">
 
-        {/* NEW RELEASE BOOKS SECTION */}
+        {/* 3. NEW RELEASE BOOKS SECTION */}
         {settings?.homepageSections?.newReleases !== false && newReleases.length > 0 && (
           <NewRelease books={newReleases} />
         )}
 
-        {/* PROMO BANNER SECTION */}
+        {/* 3.5 PROMO BANNER SECTION */}
         {settings?.promoSection?.isActive !== false && (
           <PromoSection />
         )}
 
-        {/* OFFERS THIS WEEK SECTION */}
+        {/* 4. OFFERS THIS WEEK SECTION */}
         {settings?.homepageSections?.offersThisWeek !== false && offersThisWeek.length > 0 && (
           <OfferThisWeek offers={offersThisWeek} />
         )}
 
-        {/* FEATURED BOOKS SECTION */}
+        {/* 5. FEATURED BOOKS SECTION */}
         {settings?.homepageSections?.featuredBooks !== false && featuredBooks.length > 0 && (
           <section className="hs-section">
             <div className="hs-head">
@@ -464,7 +462,7 @@ const Home = () => {
                 See More <ArrowRight size={12} />
               </Link>
             </div>
-            <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+            <div className="hs-books-grid">
               {featuredBooks.map((book) => (
                 <BookCard key={book._id} book={book} />
               ))}
@@ -472,7 +470,7 @@ const Home = () => {
           </section>
         )}
 
-        {/* BEST SELLERS SECTION */}
+        {/* 6. BEST SELLERS SECTION */}
         {settings?.homepageSections?.bestSeller !== false && bestSellers.length > 0 && (
           <section className="hs-section">
             <div className="hs-head">
@@ -484,7 +482,7 @@ const Home = () => {
                 See More <ArrowRight size={12} />
               </Link>
             </div>
-            <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+            <div className="hs-books-grid">
               {bestSellers.map((book) => (
                 <BookCard key={book._id} book={book} />
               ))}
@@ -492,7 +490,7 @@ const Home = () => {
           </section>
         )}
 
-        {/* HIGH DISCOUNTS SECTION */}
+        {/* 7. HIGH DISCOUNTS SECTION */}
         {settings?.homepageSections?.highDiscount !== false && highDiscounts.length > 0 && (
           <section className="hs-section">
             <div className="hs-head">
@@ -504,7 +502,7 @@ const Home = () => {
                 See More <ArrowRight size={12} />
               </Link>
             </div>
-            <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+            <div className="hs-books-grid">
               {highDiscounts.map((book) => (
                 <BookCard key={book._id} book={book} />
               ))}
@@ -512,9 +510,7 @@ const Home = () => {
           </section>
         )}
 
-        {/* ── TRENDING CATEGORIES ──
-            flex-wrap + justify-content:center → always centered,
-            1 item or 6 items behave the same way. */}
+        {/* 8. TRENDING CATEGORIES SECTION */}
         {settings?.homepageSections?.trendingCategories !== false && finalCategories.length > 0 && (
           <section className="hs-section">
             <div className="hs-head">
@@ -526,7 +522,6 @@ const Home = () => {
                 All Categories <ArrowRight size={12} />
               </Link>
             </div>
-            {/* flex-wrap centered — items center themselves no matter the count */}
             <div className="hs-cat-grid">
               {finalCategories.map((cat) => (
                 <Link key={cat._id} to={`/category/${cat.slug}`} className="hs-cat-item">
@@ -542,9 +537,7 @@ const Home = () => {
           </section>
         )}
 
-        {/* ── TRENDING AUTHORS ──
-            Desktop: 6 per row, image on top, name+bio below, centered.
-            Mobile:  3 per row, max 2 rows (6 cards) shown, View More for rest. */}
+        {/* 9. TRENDING AUTHORS SECTION */}
         {settings?.homepageSections?.trendingAuthors !== false && finalAuthors.length > 0 && (
           <section className="hs-section" ref={authorsSectionRef}>
             <div className="hs-head">
@@ -556,41 +549,32 @@ const Home = () => {
                 All Authors <ArrowRight size={12} />
               </Link>
             </div>
-
-            {/* Authors grid: flex-wrap, centered, image always on top */}
             <div className="hs-authors-grid">
-              {visibleAuthors.map((author) => (
-                <Link
-                  key={author._id}
-                  to={`/author/${author.slug}`}
-                  className="hs-author-item"
-                >
-                  {/* IMAGE — always on top */}
-                  <div className="hs-author-item__img-wrap">
-                    {author.image ? (
-                      <img src={author.image} alt={author.name} className="hs-author-item__img" />
-                    ) : (
-                      <div className="hs-author-item__fallback">
-                        <span className="hs-author-item__initial">
-                          {author.name.charAt(0).toUpperCase()}
-                        </span>
-                      </div>
-                    )}
-                  </div>
-                  {/* NAME + BIO — always below image */}
-                  <div className="hs-author-item__name-wrap">
-                    <p className="hs-author-item__name">{author.name}</p>
-                    <p className="hs-author-item__bio">
-                      {author.bio || "Discover the compelling stories, literary philosophy, and timeless works from this legendary creator."}
-                    </p>
-                  </div>
-                </Link>
-              ))}
+              {visibleAuthors.map((author, i) => {
+                const itemClass = `hs-author-item${i % 2 !== 0 ? " img-bottom" : ""}`;
+                return (
+                  <Link key={author._id} to={`/author/${author.slug}`} className={itemClass}>
+                    <div className="hs-author-item__img-wrap">
+                      {author.image ? (
+                        <img src={author.image} alt={author.name} className="hs-author-item__img" />
+                      ) : (
+                        <div className="hs-author-item__fallback">
+                          <span className="hs-author-item__initial">{author.name.charAt(0).toUpperCase()}</span>
+                        </div>
+                      )}
+                    </div>
+                    <div className="hs-author-item__name-wrap">
+                      <p className="hs-author-item__name">{author.name}</p>
+                      <p className="hs-author-item__bio">
+                        {author.bio || "Discover the compelling stories, literary philosophy, and timeless works from this legendary creator."}
+                      </p>
+                    </div>
+                  </Link>
+                );
+              })}
             </div>
-
-            {/* View More / Less — only rendered when mobile has >6 authors */}
-            {showMobileViewMore && (
-              <div className="hs-authors-view-more">
+            {isMobile && finalAuthors.length > 4 && (
+              <div style={{ display: "flex", justifyContent: "center", width: "100%", marginTop: "24px" }}>
                 <button
                   onClick={() => {
                     if (authorsExpanded) {
@@ -608,11 +592,10 @@ const Home = () => {
                     color: "#c8860a",
                     padding: "8px 24px",
                     fontSize: "12px",
-                    fontWeight: "700",
+                    fontWeight: "750",
                     textTransform: "uppercase",
                     cursor: "pointer",
-                    transition: "all 0.2s ease",
-                    fontFamily: "'Outfit', system-ui, sans-serif",
+                    transition: "all 0.2s ease"
                   }}
                 >
                   {authorsExpanded ? "View Less" : "View More"}
@@ -622,12 +605,12 @@ const Home = () => {
           </section>
         )}
 
-        {/* CONNECT SECTION */}
+        {/* 10. CONNECT SECTION */}
         <ConnectForm />
 
       </div>
 
-      {/* SPOTLIGHT MODAL */}
+      {/* 11. SPOTLIGHT MODAL */}
       <PromoSpotlightModal showPromo={showPromo} setShowPromo={setShowPromo} settings={settings} />
     </div>
   );
@@ -764,15 +747,22 @@ function PromoSpotlightModal({ showPromo, setShowPromo, settings }) {
         ref={overlayRef}
         onClick={handleBackdrop}
         style={{
-          position: "fixed", inset: 0, zIndex: 9999,
-          display: "flex", alignItems: "center", justifyContent: "center",
+          position: "fixed",
+          inset: 0,
+          zIndex: 9999,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
           background: "rgba(6,4,2,0.82)",
-          backdropFilter: "blur(18px)", WebkitBackdropFilter: "blur(18px)",
+          backdropFilter: "blur(18px)",
+          WebkitBackdropFilter: "blur(18px)",
           animation: "pm-backdropIn 0.4s ease both",
-          padding: "clamp(16px, 4vw, 40px)", boxSizing: "border-box",
+          padding: "clamp(16px, 4vw, 40px)",
+          boxSizing: "border-box",
         }}
       >
         <div style={{ position: "relative", width: "100%", maxWidth: "clamp(300px, 90vw, 560px)", display: "flex", flexDirection: "column", alignItems: "center" }}>
+
           <button
             className="pm-close-btn"
             onClick={() => setShowPromo(false)}
@@ -784,59 +774,102 @@ function PromoSpotlightModal({ showPromo, setShowPromo, settings }) {
 
           <div
             style={{
-              position: "relative", display: "flex", flexDirection: "column",
-              alignItems: "center", textAlign: "center", width: "100%",
-              maxHeight: "70vh", overflowY: "auto", overflowX: "hidden",
-              scrollbarWidth: "none", background: "transparent", border: "none", outline: "none",
-              animation: "pm-panelIn 0.55s 0.08s cubic-bezier(0.16,1,0.3,1) both", gap: 0,
+              position: "relative",
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              textAlign: "center",
+              width: "100%",
+              maxHeight: "70vh",
+              overflowY: "auto",
+              overflowX: "hidden",
+              scrollbarWidth: "none",
+              background: "transparent",
+              border: "none",
+              outline: "none",
+              animation: "pm-panelIn 0.55s 0.08s cubic-bezier(0.16,1,0.3,1) both",
+              gap: 0,
             }}
           >
             <div style={{
-              fontFamily: "'Cinzel', serif", fontSize: "clamp(8px, 1vw, 10px)", fontWeight: 600,
-              letterSpacing: "0.3em", color: "#E8B84B", textTransform: "uppercase",
-              opacity: 0.95, marginBottom: "6px",
+              fontFamily: "'Cinzel', serif",
+              fontSize: "clamp(8px, 1vw, 10px)",
+              fontWeight: 600,
+              letterSpacing: "0.3em",
+              color: "#E8B84B",
+              textTransform: "uppercase",
+              opacity: 0.95,
+              marginBottom: "6px",
               animation: "pm-labelIn 0.55s 0.18s cubic-bezier(0.16,1,0.3,1) both",
             }}>
               ✦ &nbsp;Enjoy this Exclusive Spotlight&nbsp; ✦
             </div>
 
             <div style={{
-              width: "clamp(60px, 12vw, 100px)", height: "1px",
+              width: "clamp(60px, 12vw, 100px)",
+              height: "1px",
               background: "linear-gradient(90deg, transparent, #C8922A, transparent)",
               marginBottom: "8px",
               animation: "pm-lineGrow 0.6s 0.28s cubic-bezier(0.16,1,0.3,1) both, pm-rulePulse 3s 1s ease-in-out infinite",
               transformOrigin: "center",
             }} />
 
-            <h2 className="pm-title" style={{
-              fontFamily: "'Cinzel', serif", fontWeight: 900,
-              fontSize: "clamp(20px, 4.5vw, 34px)", lineHeight: 1.08,
-              letterSpacing: "-0.01em", color: "#ffffff", margin: 0, marginBottom: "4px",
-              textShadow: "0 4px 24px rgba(0,0,0,0.85)",
-              animation: "pm-titleIn 0.58s 0.26s cubic-bezier(0.16,1,0.3,1) both",
-            }}>
+            <h2
+              className="pm-title"
+              style={{
+                fontFamily: "'Cinzel', serif",
+                fontWeight: 900,
+                fontSize: "clamp(20px, 4.5vw, 34px)",
+                lineHeight: 1.08,
+                letterSpacing: "-0.01em",
+                color: "#ffffff",
+                margin: 0,
+                marginBottom: "4px",
+                textShadow: "0 4px 24px rgba(0,0,0,0.85)",
+                animation: "pm-titleIn 0.58s 0.26s cubic-bezier(0.16,1,0.3,1) both",
+              }}
+            >
               {title}
             </h2>
 
             {slogan && (
               <p style={{
-                fontFamily: "'Cormorant Garamond', Georgia, serif", fontStyle: "italic",
-                fontWeight: 500, fontSize: "clamp(12px, 1.5vw, 15px)", color: "#ffffff",
-                letterSpacing: "0.04em", margin: 0, marginBottom: "10px",
-                textShadow: "0 2px 12px rgba(0,0,0,0.8)", opacity: 0.92,
+                fontFamily: "'Cormorant Garamond', Georgia, serif",
+                fontStyle: "italic",
+                fontWeight: 500,
+                fontSize: "clamp(12px, 1.5vw, 15px)",
+                color: "#ffffff",
+                letterSpacing: "0.04em",
+                margin: 0,
+                marginBottom: "10px",
+                textShadow: "0 2px 12px rgba(0,0,0,0.8)",
+                opacity: 0.92,
                 animation: "pm-titleIn 0.58s 0.34s cubic-bezier(0.16,1,0.3,1) both",
               }}>
                 {slogan}
               </p>
             )}
 
-            <div className="pm-img-wrap" style={{ marginBottom: "10px", animation: "pm-imgIn 0.7s 0.38s cubic-bezier(0.16,1,0.3,1) both", lineHeight: 0 }}>
+            <div
+              className="pm-img-wrap"
+              style={{
+                marginBottom: "10px",
+                animation: "pm-imgIn 0.7s 0.38s cubic-bezier(0.16,1,0.3,1) both",
+                lineHeight: 0,
+              }}
+            >
               <img
-                src={promoImageSrc} alt={title}
+                src={promoImageSrc}
+                alt={title}
                 style={{
-                  maxHeight: "clamp(100px, 16vh, 180px)", maxWidth: "100%",
-                  objectFit: "contain", display: "block", margin: "0 auto",
-                  background: "transparent", border: "none", outline: "none",
+                  maxHeight: "clamp(100px, 16vh, 180px)",
+                  maxWidth: "100%",
+                  objectFit: "contain",
+                  display: "block",
+                  margin: "0 auto",
+                  background: "transparent",
+                  border: "none",
+                  outline: "none",
                   filter: "drop-shadow(0 12px 28px rgba(0,0,0,0.65))",
                   transition: "transform 0.4s ease",
                 }}
@@ -844,26 +877,66 @@ function PromoSpotlightModal({ showPromo, setShowPromo, settings }) {
             </div>
 
             {promo.discountValue > 0 && (
-              <div style={{ animation: "pm-discountIn 0.55s 0.5s cubic-bezier(0.34,1.56,0.64,1) both", marginBottom: "6px", lineHeight: 1 }}>
-                <div style={{ fontFamily: "'Cinzel', serif", fontSize: "clamp(7px, 0.8vw, 9px)", fontWeight: 600, letterSpacing: "0.28em", color: "#ffffff", marginBottom: "2px", textTransform: "uppercase" }}>Flat Discount</div>
-                <div className="pm-discount-num" style={{
-                  fontFamily: "'Cinzel', serif", fontWeight: 900,
-                  fontSize: "clamp(52px, 12vw, 88px)", lineHeight: 0.9, letterSpacing: "-0.05em",
-                  background: "linear-gradient(90deg, #C8922A, #E8B84B, #fff6d0, #E8B84B, #C8922A)",
-                  backgroundSize: "200% auto", WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent", backgroundClip: "text",
-                  animation: "pm-shimmer 3s linear infinite",
-                }}>
+              <div style={{
+                animation: "pm-discountIn 0.55s 0.5s cubic-bezier(0.34,1.56,0.64,1) both",
+                marginBottom: "6px",
+                lineHeight: 1,
+              }}>
+                <div style={{
+                  fontFamily: "'Cinzel', serif",
+                  fontSize: "clamp(7px, 0.8vw, 9px)",
+                  fontWeight: 600,
+                  letterSpacing: "0.28em",
+                  color: "#ffffff",
+                  marginBottom: "2px",
+                  textTransform: "uppercase",
+                }}>Flat Discount</div>
+
+                <div
+                  className="pm-discount-num"
+                  style={{
+                    fontFamily: "'Cinzel', serif",
+                    fontWeight: 900,
+                    fontSize: "clamp(52px, 12vw, 88px)",
+                    lineHeight: 0.9,
+                    letterSpacing: "-0.05em",
+                    background: "linear-gradient(90deg, #C8922A, #E8B84B, #fff6d0, #E8B84B, #C8922A)",
+                    backgroundSize: "200% auto",
+                    WebkitBackgroundClip: "text",
+                    WebkitTextFillColor: "transparent",
+                    backgroundClip: "text",
+                    animation: "pm-shimmer 3s linear infinite",
+                  }}
+                >
                   {promo.discountValue}
                   <span style={{ fontSize: "0.46em", verticalAlign: "super", lineHeight: 0 }}>%</span>
                 </div>
-                <div style={{ fontFamily: "'Cinzel', serif", fontSize: "clamp(10px, 1.2vw, 13px)", fontWeight: 700, letterSpacing: "0.45em", color: "#ffffff", marginTop: "2px", opacity: 0.9, textTransform: "uppercase" }}>OFF</div>
+
+                <div style={{
+                  fontFamily: "'Cinzel', serif",
+                  fontSize: "clamp(10px, 1.2vw, 13px)",
+                  fontWeight: 700,
+                  letterSpacing: "0.45em",
+                  color: "#ffffff",
+                  marginTop: "2px",
+                  opacity: 0.9,
+                  textTransform: "uppercase",
+                }}>OFF</div>
               </div>
             )}
 
-            <div style={{ width: "clamp(40px, 8vw, 70px)", height: "1px", background: "linear-gradient(90deg, transparent, rgba(200,146,42,0.5), transparent)", margin: "8px auto" }} />
+            <div style={{
+              width: "clamp(40px, 8vw, 70px)",
+              height: "1px",
+              background: "linear-gradient(90deg, transparent, rgba(200,146,42,0.5), transparent)",
+              margin: "8px auto",
+            }} />
 
-            <Link to={promo.buttonLink || "/offers"} onClick={() => setShowPromo(false)} className="pm-cta-btn">
+            <Link
+              to={promo.buttonLink || "/offers"}
+              onClick={() => setShowPromo(false)}
+              className="pm-cta-btn"
+            >
               {promo.buttonText || "Avail This Offer"}
               <span className="pm-arrow">
                 <svg width="16" height="10" viewBox="0 0 16 10" fill="none">
@@ -874,9 +947,14 @@ function PromoSpotlightModal({ showPromo, setShowPromo, settings }) {
             </Link>
 
             <div style={{
-              fontFamily: "'Cormorant Garamond', Georgia, serif", fontStyle: "italic",
-              fontSize: "clamp(9px, 1vw, 11px)", color: "#ffffff", letterSpacing: "0.12em",
-              marginTop: "8px", marginBottom: "4px", opacity: 0.85,
+              fontFamily: "'Cormorant Garamond', Georgia, serif",
+              fontStyle: "italic",
+              fontSize: "clamp(9px, 1vw, 11px)",
+              color: "#ffffff",
+              letterSpacing: "0.12em",
+              marginTop: "8px",
+              marginBottom: "4px",
+              opacity: 0.85,
             }}>
               Limited time · While stocks last
             </div>
