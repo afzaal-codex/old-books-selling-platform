@@ -89,15 +89,26 @@ const HOME_STYLES = `
     }
   }
 
-  /* ── Category grid ── */
+  /* ── Category grid — centered flex so fewer items stay centered ── */
   .hs-cat-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 16px;
   }
-  @media (min-width: 480px)  { .hs-cat-grid { grid-template-columns: repeat(3, 1fr); } }
-  @media (min-width: 768px)  { .hs-cat-grid { grid-template-columns: repeat(4, 1fr); } }
-  @media (min-width: 1100px) { .hs-cat-grid { grid-template-columns: repeat(6, 1fr); } }
+  .hs-cat-grid > * {
+    flex: 0 0 calc(50% - 8px);
+    max-width: calc(50% - 8px);
+  }
+  @media (min-width: 480px) {
+    .hs-cat-grid > * { flex: 0 0 calc(33.333% - 11px); max-width: calc(33.333% - 11px); }
+  }
+  @media (min-width: 768px) {
+    .hs-cat-grid > * { flex: 0 0 calc(25% - 12px); max-width: calc(25% - 12px); }
+  }
+  @media (min-width: 1100px) {
+    .hs-cat-grid > * { flex: 0 0 calc(16.666% - 14px); max-width: calc(16.666% - 14px); }
+  }
 
   .hs-cat-item {
     display: flex;
@@ -155,14 +166,17 @@ const HOME_STYLES = `
   }
   .hs-cat-item:hover .hs-cat-item__name { color: #c8860a; }
 
-  /* ── Authors row layout ── */
+  /* ── Authors grid — 6 per row desktop, always image-top/text-bottom ── */
   .hs-authors-grid {
-    display: grid;
-    grid-template-columns: repeat(6, 1fr);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
     gap: 16px;
-    position: relative;
     padding: 16px 0;
-    height: auto;
+  }
+  .hs-authors-grid > * {
+    flex: 0 0 calc(16.666% - 14px);
+    max-width: calc(16.666% - 14px);
   }
 
   .hs-author-item {
@@ -180,28 +194,20 @@ const HOME_STYLES = `
   .hs-author-item:hover {
     box-shadow: 0 16px 44px rgba(200,134,10,0.18);
   }
-  /* Alternating: odd index flips to text-top/image-bottom */
-  .hs-author-item.img-bottom {
-    flex-direction: column-reverse;
-  }
 
   .hs-author-item__img-wrap {
-    width: 100% !important;
-    height: unset !important;
-    border-radius: 0 !important;
-    border: none !important;
-    margin-bottom: 0 !important;
-    aspect-ratio: 1/1 !important;
-    flex-shrink: 0 !important;
+    width: 100%;
+    aspect-ratio: 1/1;
+    overflow: hidden;
+    flex-shrink: 0;
   }
 
   .hs-author-item__name-wrap {
     width: 100%;
-    aspect-ratio: 1/1;
-    padding: 14px 12px;
+    padding: 12px 10px;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     align-items: center;
     text-align: center;
     background: #0d0d10;
@@ -230,6 +236,7 @@ const HOME_STYLES = `
   .hs-author-item__fallback {
     width: 100%; height: 100%;
     display: flex; align-items: center; justify-content: center;
+    background: #16161c;
   }
   .hs-author-item__initial {
     font-size: 28px;
@@ -244,26 +251,22 @@ const HOME_STYLES = `
   }
   .hs-author-item:hover .hs-author-item__name { color: #c8860a; }
 
+  /* Mobile: 3 per row, 2 rows visible (6 cards) then View More */
   @media (max-width: 479px) {
-    .hs-authors-grid {
-      display: grid !important;
-      grid-template-columns: repeat(2, 1fr) !important;
-      gap: 16px !important;
-      overflow-x: visible !important;
-      padding: 16px 8px !important;
-    }
-    .hs-author-item {
-      width: 100% !important;
-    }
-    .hs-author-item__img-wrap {
-      width: 100% !important;
-      height: unset !important;
-      aspect-ratio: 1/1 !important;
+    .hs-authors-grid > * {
+      flex: 0 0 calc(33.333% - 11px) !important;
+      max-width: calc(33.333% - 11px) !important;
     }
     .hs-author-item__name-wrap {
-      width: 100% !important;
-      min-height: 120px !important;
-      aspect-ratio: unset !important;
+      min-height: unset !important;
+      padding: 8px 6px !important;
+    }
+    .hs-author-item__name {
+      font-size: 11px !important;
+    }
+    .hs-author-item__bio {
+      font-size: 9px !important;
+      -webkit-line-clamp: 3 !important;
     }
   }
 `;
@@ -401,8 +404,8 @@ const Home = () => {
   const trendingAuthors = authors.filter((a) => a.featured).slice(0, 12);
   const finalAuthors = trendingAuthors.length > 0 ? trendingAuthors : authors.slice(0, 12);
   const visibleAuthors = isMobile
-    ? (authorsExpanded ? finalAuthors : finalAuthors.slice(0, 4))
-    : finalAuthors.slice(0, 6);
+    ? (authorsExpanded ? finalAuthors : finalAuthors.slice(0, 6))
+    : finalAuthors;
 
   if (loadingSections) return <PageLoader label="Loading BookWorld" />;
 
@@ -551,9 +554,8 @@ const Home = () => {
             </div>
             <div className="hs-authors-grid">
               {visibleAuthors.map((author, i) => {
-                const itemClass = `hs-author-item${i % 2 !== 0 ? " img-bottom" : ""}`;
                 return (
-                  <Link key={author._id} to={`/author/${author.slug}`} className={itemClass}>
+                  <Link key={author._id} to={`/author/${author.slug}`} className="hs-author-item">
                     <div className="hs-author-item__img-wrap">
                       {author.image ? (
                         <img src={author.image} alt={author.name} className="hs-author-item__img" />
@@ -573,7 +575,7 @@ const Home = () => {
                 );
               })}
             </div>
-            {isMobile && finalAuthors.length > 4 && (
+            {isMobile && finalAuthors.length > 6 && (
               <div style={{ display: "flex", justifyContent: "center", width: "100%", marginTop: "24px" }}>
                 <button
                   onClick={() => {
