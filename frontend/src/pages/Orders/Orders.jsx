@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { fetchMyOrders, cancelOrderAction } from "../../store/slices/orderSlice";
 import toast from "react-hot-toast";
-import { Package, Calendar, MapPin, ShieldAlert, ShoppingBag, ChevronDown, CreditCard } from "lucide-react";
+import { Package, Calendar, MapPin, ShieldAlert, ShoppingBag, ChevronDown } from "lucide-react";
 
 /* ─── Design tokens ───────────────────────────────────────────────────────── */
 const T = {
@@ -247,51 +247,6 @@ const CancelButton = ({ onClick, disabled, loading }) => {
   );
 };
 
-/* ─── Delivery Details Block ─────────────────────────────────────────────── */
-/*
-  Layout: icon-free header label, then info rows that flex-wrap naturally.
-  Email sits on the same line as Phone; if no room it wraps to the next line.
-*/
-const DeliveryDetails = ({ addr }) => {
-  /* Each "pill" — a small label + value pair */
-  const Pill = ({ label, value }) => (
-    <span style={{
-      display: "inline-flex",
-      alignItems: "baseline",
-      gap: 4,
-      fontFamily: "system-ui, sans-serif",
-      fontSize: 10,
-      lineHeight: 1.6,
-      whiteSpace: "normal",       /* allow value to wrap if needed */
-      wordBreak: "break-all",     /* break long emails gracefully */
-    }}>
-      <span style={{ ...s.label, fontSize: 8, color: T.dim, flexShrink: 0 }}>{label}:</span>
-      <span style={{ color: T.text, fontWeight: 600 }}>{value}</span>
-    </span>
-  );
-
-  return (
-    <div style={{
-      background: "#0d0d10",
-      border: `1px solid ${T.border}`,
-      padding: "10px 14px",
-    }}>
-      {/* Header — styled like the "Order Progress" / "Activity History" labels */}
-      <p style={{ ...s.label, marginBottom: 8 }}>Delivery Details</p>
-
-      {/* Info rows — flex-wrap so Email naturally flows beside Phone or below */}
-      <div style={{ display: "flex", flexWrap: "wrap", gap: "4px 16px" }}>
-        <Pill label="Name"    value={addr.fullName} />
-        <Pill label="Address" value={`${addr.address}, ${addr.city}`} />
-        <Pill label="Phone"   value={addr.phone} />
-        {addr.email && (
-          <Pill label="Email" value={addr.email} />
-        )}
-      </div>
-    </div>
-  );
-};
-
 /* ─── Order Card (accordion) ─────────────────────────────────────────────── */
 const OrderCard = ({ order, isOpen, onToggle, onCancel, cancelling }) => {
   const progress    = getTimelineProgress(order.orderStatus);
@@ -380,7 +335,7 @@ const OrderCard = ({ order, isOpen, onToggle, onCancel, cancelling }) => {
         overflow: "hidden",
         transition: "max-height 0.35s ease",
       }}>
-        <div style={{ padding: "20px 2px", display: "flex", flexDirection: "column", gap: 20 }}>
+        <div style={{ padding: "20px 24px", display: "flex", flexDirection: "column", gap: 20 }}>
 
           {/* Items */}
           <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
@@ -408,8 +363,16 @@ const OrderCard = ({ order, isOpen, onToggle, onCancel, cancelling }) => {
             ))}
           </div>
 
-          {/* ── Delivery Details — no icon, label matches section labels style ── */}
-          <DeliveryDetails addr={order.shippingAddress} />
+          {/* Delivery address */}
+          <div style={{ display: "flex", alignItems: "flex-start", gap: 8, background: "#0d0d10", border: `1px solid ${T.border}`, padding: "10px 14px" }}>
+            <MapPin size={12} color={T.dim} strokeWidth={2} style={{ flexShrink: 0, marginTop: 1 }} />
+            <p style={{ fontFamily: "system-ui, sans-serif", fontSize: 10, color: T.muted, lineHeight: 1.6, margin: 0 }}>
+              Deliver to:&nbsp;
+              <strong style={{ color: T.text, fontWeight: 700 }}>{order.shippingAddress.fullName}</strong>
+              &nbsp;|&nbsp;{order.shippingAddress.address}, {order.shippingAddress.city}
+              &nbsp;|&nbsp;Phone: {order.shippingAddress.phone}
+            </p>
+          </div>
 
           {/* Timeline or cancelled */}
           {progress !== -1 ? (
@@ -447,7 +410,7 @@ const OrderCard = ({ order, isOpen, onToggle, onCancel, cancelling }) => {
 /* ─── Loading Spinner ────────────────────────────────────────────────────── */
 const Spinner = () => (
   <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: 200 }}>
-    <div style={{ width: 28, height: 28, border: `1px solid ${T.border}`, borderTop: `1px solid ${T.gold}`, borderRadius: 0, animation: "spin 0.7s linear infinite" }} />
+    <div style={{ width: 28, height: 28, border: `1px solid ${T.border}`, borderTop: `1px solid ${T.gold}`, borderRadius: "50%", animation: "spin 0.7s linear infinite" }} />
     <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
   </div>
 );
