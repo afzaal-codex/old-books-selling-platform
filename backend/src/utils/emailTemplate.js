@@ -2,13 +2,10 @@ export const getBrandedEmailTemplate = (contentHtml, title = "Book World") => {
   return `
     <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #d4af37; background-color: #000000; color: #ffffff; border-radius: 12px; box-sizing: border-box; text-align: left; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.15);">
       <div style="text-align: center; border-bottom: 2px solid #d4af37; padding-bottom: 20px; margin-bottom: 24px;">
-        <!-- High-fidelity golden book logo using client-safe styled vector elements -->
-        <table align="center" border="0" cellpadding="0" cellspacing="0" style="margin: 0 auto 8px auto; text-align: center;">
+        <table align="center" border="0" cellpadding="0" cellspacing="0" style="margin: 0 auto 12px auto; text-align: center;">
           <tr>
             <td align="center">
-              <div style="display: inline-block; width: 48px; height: 48px; line-height: 48px; border: 2px solid #d4af37; border-radius: 12px; font-size: 24px; font-weight: 900; color: #d4af37; background-color: #111111;">
-                📖
-              </div>
+              <img src="https://bookworld.site/Company%20Logo/BookWorldLogo.png" alt="Book World Logo" width="56" height="56" style="display: block; width: 56px; height: 56px; border-radius: 50%; border: 2px solid #d4af37; background-color: #111111; object-fit: cover;" />
             </td>
           </tr>
         </table>

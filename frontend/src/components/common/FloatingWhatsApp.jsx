@@ -1,4 +1,5 @@
 import { useSelector } from "react-redux";
+import companyData from "../../data/companyData";
 
 const normalizeWhatsAppLink = (value, textMessage) => {
   if (!value) return "";
@@ -24,7 +25,7 @@ const normalizeWhatsAppLink = (value, textMessage) => {
 const FloatingWhatsApp = () => {
   const { settings } = useSelector((state) => state.cms);
   const link = normalizeWhatsAppLink(
-    settings?.socialLinks?.whatsapp,
+    settings?.supportPhone || companyData.phone || "",
     settings?.socialLinks?.whatsappMessage
   );
 
