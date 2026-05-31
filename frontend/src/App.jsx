@@ -1,4 +1,5 @@
 import { useEffect, useRef } from "react";
+import ScrollToTop from "./components/common/ScrollToTop";
 import { useDispatch, useSelector } from "react-redux";
 import AppRoutes from "./routes/AppRoutes";
 import AppStartupLoader from "./components/loaders/AppStartupLoader";
@@ -48,6 +49,7 @@ const App = () => {
 
   return (
     <>
+      <ScrollToTop />
       <SeoHead />
       <AppRoutes />
       <AppStartupLoader />

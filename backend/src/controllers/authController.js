@@ -4,7 +4,7 @@ import crypto from "crypto";
 import User from "../models/User.js";
 import OTP from "../models/Otp.js";
 
-import transporter from "../config/email.js";
+import sendEmail, { sendBrandedEmail } from "../services/mailService.js";
 import { getBrandedEmailTemplate } from "../utils/emailTemplate.js";
 import { updateEnvValue } from "../utils/envHelper.js";
 
@@ -358,7 +358,7 @@ export const sendSignupOTP = async (
     const otpBody = `
       <h2 style="color: #d4af37; font-size: 20px; margin-top: 0;">Verify Your Email</h2>
       <p>Hello,</p>
-      <p>Thank you for registering with NBookr World. Your secure verification code is:</p>
+      <p>Thank you for registering with Book World. Your secure verification code is:</p>
       <div style="text-align: center; margin: 24px 0;">
         <span style="letter-spacing: 5px; font-size: 32px; font-weight: 900; color: #d4af37; background-color: #111111; padding: 12px 24px; border: 1px solid #d4af37; border-radius: 8px; display: inline-block;">
           ${otp}
@@ -368,11 +368,10 @@ export const sendSignupOTP = async (
       <p>If you did not request this verification, please ignore this email or contact support.</p>
     `;
 
-    await transporter.sendMail({
-      from: `"Book World" <${process.env.EMAIL_USER}>`,
+    await sendBrandedEmail({
       to: email,
       subject: "Email Verification OTP",
-      html: getBrandedEmailTemplate(otpBody, "Email Verification OTP"),
+      bodyHtml: otpBody,
     });
 
     res.status(200).json({
@@ -383,12 +382,12 @@ export const sendSignupOTP = async (
 
   } catch (error) {
 
-    console.log(error);
+    console.error("SendSignupOTP Error:", error.message, error.code || "");
 
     res.status(500).json({
       success: false,
       message:
-        "Failed to send OTP",
+        "Failed to send OTP. Please try again later.",
     });
   }
 };
@@ -724,7 +723,7 @@ export const forgotPassword = async (
     const resetBody = `
       <h2 style="color: #d4af37; font-size: 20px; margin-top: 0;">Reset Your Password</h2>
       <p>Hello ${user.name},</p>
-      <p>We received a request to reset your password for your account at NBookr World.</p>
+      <p>We received a request to reset your password for your account at Book World.</p>
       <p>Click the button below to set a new password:</p>
       <div style="text-align: center; margin: 24px 0;">
         <a href="${resetUrl}" style="display: inline-block; padding: 12px 28px; background-color: #d4af37; color: #000000; font-weight: bold; text-decoration: none; border-radius: 8px; border: 1px solid #d4af37; transition: background-color 0.2s;">
@@ -735,11 +734,10 @@ export const forgotPassword = async (
       <p>If you did not request a password reset, please secure your account immediately.</p>
     `;
 
-    await transporter.sendMail({
-      from: `"Book World" <${process.env.EMAIL_USER}>`,
+    await sendBrandedEmail({
       to: user.email,
       subject: "Reset Your Password",
-      html: getBrandedEmailTemplate(resetBody, "Reset Your Password"),
+      bodyHtml: resetBody,
     });
 
     res.status(200).json({
@@ -751,13 +749,13 @@ export const forgotPassword = async (
 
   } catch (error) {
 
-    console.log(error);
+    console.error("ForgotPassword Error:", error.message, error.code || "");
 
     res.status(500).json({
       success: false,
 
       message:
-        "Failed to send reset email",
+        "Failed to send reset email. Please try again later.",
     });
   }
 };
