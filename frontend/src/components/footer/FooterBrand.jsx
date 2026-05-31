@@ -10,7 +10,10 @@ const normalizeSocialHref = (key, value, textMessage) => {
     if (/^https?:\/\//i.test(value)) {
       url = value;
     } else {
-      const phone = value.replace(/[^\d]/g, "");
+      let phone = value.replace(/[^\d]/g, "");
+      if (phone.startsWith("0") && phone.length === 11) {
+        phone = "92" + phone.substring(1);
+      }
       url = phone ? `https://wa.me/${phone}` : "";
     }
     if (url && textMessage) {
@@ -112,34 +115,29 @@ const FooterBrand = () => {
 
       <style>{`
         .footer-brand-socials {
-          display: inline-grid;
-          grid-template-columns: repeat(2, 44px);
+          display: flex;
+          gap: 10px;
+          flex-wrap: wrap;
           width: max-content;
-          border: 1px solid rgba(200,134,10,0.85);
           background: transparent;
+          margin-top: 4px;
         }
         .footer-brand-social {
-          width: 44px;
+          width: 42px;
           height: 42px;
           display: inline-flex;
           align-items: center;
           justify-content: center;
-          border-right: 1px solid rgba(200,134,10,0.55);
-          border-bottom: 1px solid rgba(200,134,10,0.55);
+          border: 1.5px solid rgba(200,134,10,0.85);
           color: #c8860a;
           text-decoration: none;
           transition: all 0.2s ease;
           background: transparent;
         }
-        .footer-brand-social:nth-child(2n) {
-          border-right: 0;
-        }
-        .footer-brand-social:nth-last-child(-n + 2) {
-          border-bottom: 0;
-        }
         .footer-brand-social:hover {
           background: rgba(200,134,10,0.08);
           color: #f0ede8;
+          border-color: #f0ede8;
         }
       `}</style>
     </div>

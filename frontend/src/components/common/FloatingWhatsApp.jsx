@@ -6,7 +6,10 @@ const normalizeWhatsAppLink = (value, textMessage) => {
   if (/^https?:\/\//i.test(value)) {
     url = value;
   } else {
-    const phone = value.replace(/[^\d]/g, "");
+    let phone = value.replace(/[^\d]/g, "");
+    if (phone.startsWith("0") && phone.length === 11) {
+      phone = "92" + phone.substring(1);
+    }
     url = phone ? `https://wa.me/${phone}` : "";
   }
   if (url && textMessage) {
