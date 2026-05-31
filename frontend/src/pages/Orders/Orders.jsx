@@ -266,7 +266,7 @@ const DeliveryDetails = ({ addr, status }) => {
       whiteSpace: "normal",       /* allow value to wrap if needed */
       wordBreak: "break-all",     /* break long emails gracefully */
     }}>
-      <span style={{ ...s.label, fontSize: 8, color: isDelivered ? T.gold : T.dim, flexShrink: 0 }}>{label}:</span>
+      <span style={{ ...s.label, fontSize: 8, color: T.gold, flexShrink: 0 }}>{label}:</span>
       <span style={{ color: T.text, fontWeight: 600 }}>{value}</span>
     </span>
   );

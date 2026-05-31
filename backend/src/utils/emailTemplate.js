@@ -7,8 +7,8 @@ export const getBrandedEmailTemplate = (contentHtml, title = "Book World", suppo
       <div style="text-align: center; border-bottom: 2px solid #d4af37; padding-bottom: 20px; margin-bottom: 24px;">
         <table align="center" border="0" cellpadding="0" cellspacing="0" style="margin: 0 auto 12px auto; text-align: center;">
           <tr>
-            <td align="center">
-              <img src="${logoUrl}" alt="Book World Logo" width="56" height="56" style="display: block; width: 56px; height: 56px; border-radius: 50%; border: 2px solid #d4af37; background-color: #111111; object-fit: cover;" />
+            <td align="center" style="width: 56px; height: 56px; vertical-align: middle; text-align: center;">
+              <img src="${logoUrl}" alt="Book World Logo" width="45" height="45" style="display: inline-block; width: 45px; height: 45px; border-radius: 50%; border: 2px solid #d4af37; background-color: #111111; object-fit: cover; vertical-align: middle;" />
             </td>
           </tr>
         </table>
