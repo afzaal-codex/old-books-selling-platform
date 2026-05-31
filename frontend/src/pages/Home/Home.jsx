@@ -37,7 +37,7 @@ const HOME_STYLES = `
   }
   .hs-head__sub {
     font-size: 13px;
-    color: #8c8994;
+    color: #DCDCDC;
     margin: 0;
     font-family: system-ui, sans-serif;
   }
@@ -218,7 +218,7 @@ const HOME_STYLES = `
   .hs-author-item__bio {
     font-size: 10px;
     line-height: 1.5;
-    color: #8c8994;
+    color: #DCDCDC;
     margin-top: 6px;
     overflow: hidden;
     display: -webkit-box;

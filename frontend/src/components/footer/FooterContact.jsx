@@ -43,7 +43,7 @@ const FooterContact = () => {
           </a>
         </p>
 
-        <p style={{ margin: 0, color: "#6b6870" }}>
+        <p style={{ margin: 0, color: "#DCDCDC" }}>
           Customer Support Available 24/7
         </p>
       </div>

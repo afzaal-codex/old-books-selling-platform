@@ -34,7 +34,7 @@ const FooterLinks = () => {
             style={{
               fontSize: "13px",
               fontWeight: "500",
-              color: "#6b6870",
+              color: "#DCDCDC",
               textDecoration: "none",
               display: "inline-block",
               transition: "all 0.18s ease"

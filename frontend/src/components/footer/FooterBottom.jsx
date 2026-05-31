@@ -22,7 +22,7 @@ const FooterBottom = () => {
 
         .footer-bottom-text {
           font-size: 12px;
-          color: #6b6870;
+          color: #DCDCDC;
           margin: 0;
         }
 
@@ -35,7 +35,7 @@ const FooterBottom = () => {
         .footer-bottom-link-item {
           font-size: 12px;
           fontWeight: 500;
-          color: #6b6870;
+          color: #DCDCDC;
           background: transparent;
           border: none;
           cursor: pointer;

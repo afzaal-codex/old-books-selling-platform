@@ -17,7 +17,7 @@ const STYLES = `
     --color-primary:      #c8860a;
     --color-primary-dim:  rgba(200,134,10,0.10);
     --color-text:         #f0ede8;
-    --color-muted:        #6b6870;
+    --color-muted:        #DCDCDC;
     --color-muted-2:      #44424a;
     --font-body:          system-ui, sans-serif;
     --transition:         all 0.18s ease;

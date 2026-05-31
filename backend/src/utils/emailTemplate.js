@@ -19,6 +19,7 @@ export const getBrandedEmailTemplate = (contentHtml, title = "Book World") => {
       
       <div style="border-top: 1px solid #222222; padding-top: 20px; margin-top: 30px; font-size: 11px; color: #777777; text-align: center;">
         <p style="margin: 0 0 6px 0;">This email is sent securely by <strong>Book World</strong>.</p>
+        <p style="margin: 0 0 6px 0;">Support Email: <a href="mailto:hello@bookworld.site" style="color: #d4af37; text-decoration: none;">hello@bookworld.site</a></p>
         <p style="margin: 0 0 12px 0;">&copy; ${new Date().getFullYear()} Book World. All rights reserved.</p>
         <p style="margin: 0; font-size: 10px; color: #444444;">Please do not reply directly to this automated notification.</p>
       </div>

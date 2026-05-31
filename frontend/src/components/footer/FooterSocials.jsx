@@ -68,7 +68,7 @@ const FooterSocials = () => {
                 fontSize: "13px",
                 fontWeight: "500",
                 textTransform: "capitalize",
-                color: "#6b6870",
+                color: "#DCDCDC",
                 textDecoration: "none",
                 display: "inline-block",
                 transition: "all 0.18s ease"

@@ -55,7 +55,7 @@ const styles = `
     --co-primary:     #c8860a;
     --co-primary-dim: rgba(200,134,10,0.10);
     --co-text:        #f0ede8;
-    --co-muted:       #6b6870;
+    --co-muted:       #DCDCDC;
     --co-muted-2:     #44424a;
     --co-success:     #10b981;
     --co-success-dim: rgba(16,185,129,0.10);

@@ -16,7 +16,7 @@ const STYLES = `
     --color-border:      #222228;
     --color-primary:     #c8860a;
     --color-text:        #f0ede8;
-    --color-muted:       #6b6870;
+    --color-muted:       #DCDCDC;
     --font-body:         system-ui, sans-serif;
     --transition:        all 0.18s ease;
   }

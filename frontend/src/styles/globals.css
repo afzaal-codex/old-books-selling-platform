@@ -286,7 +286,7 @@ img, picture, video, canvas, svg {
   --color-card-bg: #111114;
   --color-border: #222228;
   --color-text: #f0ede8;
-  --color-text-muted: #6b6870;
+  --color-text-muted: #DCDCDC;
 
   background-color: #0a0a0b !important;
   color: #f0ede8 !important;
@@ -316,7 +316,7 @@ img, picture, video, canvas, svg {
   font-weight: 700 !important;
   text-transform: uppercase !important;
   letter-spacing: 0.08em !important;
-  color: #6b6870 !important;
+  color: #DCDCDC !important;
   margin-bottom: 6px !important;
   display: block !important;
 }
@@ -448,7 +448,7 @@ img, picture, video, canvas, svg {
 
 .admin-layout input::placeholder,
 .admin-layout textarea::placeholder {
-  color: #6b6870 !important;
+  color: #DCDCDC !important;
 }
 
 /* Standardized Button System */

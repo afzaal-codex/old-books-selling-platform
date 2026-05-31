@@ -247,7 +247,7 @@ const styles = `
   .bs-author-line {
     font-size: 10px;
     margin: 0;
-    color: #888888;
+    color: #DCDCDC;
   }
   .bs-author-name {
     color: #c8860a;

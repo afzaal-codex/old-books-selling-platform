@@ -26,7 +26,7 @@ const styles = `
     --color-primary-dim: rgba(200,134,10,0.12);
     --color-primary-glow:rgba(200,134,10,0.06);
     --color-text:        #f0ede8;
-    --color-muted:       #6b6870;
+    --color-muted:       #DCDCDC;
     --color-muted-2:     #44424a;
     --color-success:     #10b981;
     --color-success-dim: rgba(16,185,129,0.10);

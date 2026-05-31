@@ -1,7 +1,10 @@
-import { useState } from "react";
-import { Mail, Phone, MapPin, Send, MessageSquare, Headphones } from "lucide-react";
+import { useState, useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { Mail, Phone, Send, MessageSquare, Headphones } from "lucide-react";
 import toast from "react-hot-toast";
 import ButtonLoader from "../../components/loaders/ButtonLoader";
+import { fetchSettings } from "../../store/slices/cmsSlice";
+import companyData from "../../data/companyData";
 
 /* ─── Design tokens ───────────────────────────────────────────────────────── */
 const T = {
@@ -12,7 +15,7 @@ const T = {
   border: "#222228",
   gold:   "#c8860a",
   text:   "#f0ede8",
-  muted:  "#6b6870",
+  muted:  "#DCDCDC",
   dim:    "#44424a",
 };
 
@@ -139,8 +142,14 @@ const SubmitBtn = ({ submitting }) => {
 
 /* ─── Main Component ─────────────────────────────────────────────────────── */
 const Contact = () => {
+  const dispatch = useDispatch();
+  const { settings } = useSelector((state) => state.cms);
   const [formData, setFormData] = useState({ name: "", email: "", subject: "", message: "" });
   const [submitting, setSubmitting] = useState(false);
+
+  useEffect(() => {
+    dispatch(fetchSettings());
+  }, [dispatch]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -153,9 +162,8 @@ const Contact = () => {
   };
 
   const contactInfo = [
-    { icon: Mail,   title: "Email Us",    val: "hello@bookworld.site",                      desc: "For general queries & support" },
-    { icon: Phone,  title: "Call Us",     val: "+92 300 1234567",                             desc: "Mon – Sat (9:00 AM – 6:00 PM)" },
-    { icon: MapPin, title: "Head Office", val: "Main Boulevard, Gulberg III, Lahore, Pakistan", desc: "Visit us for pickup collections" },
+    { icon: Mail,   title: "Email Us",    val: settings?.supportEmail || companyData.email || "hello@bookworld.site", desc: "For general queries & support" },
+    { icon: Phone,  title: "Call Us",     val: settings?.supportPhone || companyData.phone || "+92 300 0000000",        desc: "Mon – Sat (9:00 AM – 6:00 PM)" },
   ];
 
   const focusCss = `

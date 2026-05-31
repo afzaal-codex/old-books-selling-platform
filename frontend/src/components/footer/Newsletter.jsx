@@ -98,7 +98,7 @@ const Newsletter = () => {
 
       <style>{`
         .newsletter-input::placeholder {
-          color: #6b6870;
+          color: #DCDCDC;
         }
       `}</style>
     </form>

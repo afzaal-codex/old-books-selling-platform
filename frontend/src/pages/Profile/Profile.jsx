@@ -17,7 +17,7 @@ const T = {
   border:     "#222228",
   gold:       "#c8860a",
   text:       "#f0ede8",
-  muted:      "#6b6870",
+  muted:      "#DCDCDC",
   dim:        "#44424a",
   success:    "#10b981",
   danger:     "#ef4444",
