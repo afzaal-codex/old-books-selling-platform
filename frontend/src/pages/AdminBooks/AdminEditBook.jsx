@@ -71,6 +71,7 @@ const AdminEditBook = () => {
       bestseller: false,
       trending: false,
       newRelease: false,
+      offersThisWeek: false,
       discountExpiresAt: "",
       bindingType: "Paperback",
       totalPages: "",
@@ -159,6 +160,10 @@ const AdminEditBook = () => {
 
             newRelease:
               book.newRelease ||
+              false,
+
+            offersThisWeek:
+              book.offersThisWeek ||
               false,
 
             discountExpiresAt:
@@ -735,6 +740,21 @@ const AdminEditBook = () => {
               className="h-4 w-4"
             />
             New Release
+          </label>
+
+          <label className="flex items-center gap-3 cursor-pointer text-gray-700 font-medium">
+            <input
+              type="checkbox"
+              name="offersThisWeek"
+              checked={
+                formData.offersThisWeek
+              }
+              onChange={
+                handleChange
+              }
+              className="h-4 w-4"
+            />
+            Offer This Week
           </label>
         </div>
 

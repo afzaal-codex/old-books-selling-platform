@@ -20,7 +20,7 @@ import AdminBookFilters from "../../components/books/AdminBookFilters";
 
 import AdminBookDetailsModal from "./AdminBookDetailsModal";
 
-const AdminBooks = () => {
+const AdminBooks = ({ mode }) => {
 
   const [books, setBooks] =
     useState([]);
@@ -134,6 +134,11 @@ const AdminBooks = () => {
   useEffect(() => {
 
     let tempBooks = Array.isArray(books) ? [...books].filter(b => b && b._id) : [];
+
+    /* MODE FILTER */
+    if (mode === "offersThisWeek") {
+      tempBooks = tempBooks.filter((book) => book.offersThisWeek);
+    }
 
     /* SEARCH */
 
@@ -292,11 +297,11 @@ const AdminBooks = () => {
       <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
         <div>
           <h1 className="text-4xl font-bold">
-            Books Management
+            {mode === "offersThisWeek" ? "Offers This Week Management" : "Books Management"}
           </h1>
 
           <p className="mt-2 text-gray-500">
-            Manage inventory and analytics
+            {mode === "offersThisWeek" ? "Manage weekly promotional offers" : "Manage inventory and analytics"}
           </p>
         </div>
 

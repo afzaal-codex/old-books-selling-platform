@@ -375,11 +375,11 @@ const Home = () => {
           bestsellersRes,
           highDiscountsRes
         ] = await Promise.all([
-          axiosInstance.get("/books?sort=latest"),
-          axiosInstance.get("/books/high-discounts"),
+          axiosInstance.get("/books?newRelease=true&sort=latest"),
+          axiosInstance.get("/books?offersThisWeek=true"),
           axiosInstance.get("/books/featured"),
           axiosInstance.get("/books/bestsellers"),
-          axiosInstance.get("/books/high-discounts"),
+          axiosInstance.get("/books?trending=true"),
         ]);
         setNewReleases((newReleasesRes.data || []).slice(0, 10));
         setOffersThisWeek((offersThisWeekRes.data.books || offersThisWeekRes.data || []).slice(0, 10));
@@ -498,10 +498,10 @@ const Home = () => {
           <section className="hs-section">
             <div className="hs-head">
               <div className="hs-head__left">
-                <h2 className="hs-head__title">High Discounts</h2>
-                <p className="hs-head__sub">Great savings on our top-rated collections</p>
+                <h2 className="hs-head__title">Trending This Week</h2>
+                <p className="hs-head__sub">Most popular titles capturing readers' attention</p>
               </div>
-              <Link to="/offers" className="hs-view-all">
+              <Link to="/books?trending=true" className="hs-view-all">
                 See More <ArrowRight size={12} />
               </Link>
             </div>

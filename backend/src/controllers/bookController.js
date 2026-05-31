@@ -72,6 +72,7 @@ const getBooks = async (req, res) => {
       filterMode, // "all" (AND) or "any" (OR)
       highDiscount,
       promo,
+      offersThisWeek,
     } = req.query;
 
     const query = {};
@@ -178,6 +179,9 @@ const getBooks = async (req, res) => {
     }
     if (recommended === "true") {
       conditions.push({ recommended: true });
+    }
+    if (offersThisWeek === "true") {
+      conditions.push({ offersThisWeek: true });
     }
     if (highDiscount === "true") {
       conditions.push({

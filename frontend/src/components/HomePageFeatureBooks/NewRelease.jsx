@@ -389,11 +389,17 @@ const styles = `
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
+      height: 2.4em; /* Allocate exactly 2 lines of space */
     }
     .bs-mobile-author {
       font-size: 9px;
       color: #888;
       margin: 0;
+      line-height: 1.2;
+      height: 1.2em;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
     }
     .bs-mobile-author span { color: #c8860a; font-weight: 700; }
     .bs-mobile-desc {
@@ -405,6 +411,7 @@ const styles = `
       -webkit-line-clamp: 3;
       -webkit-box-orient: vertical;
       margin: 0;
+      height: 4.35em; /* Allocate exactly 3 lines of space */
     }
     .bs-mobile-price {
       font-size: 12px;

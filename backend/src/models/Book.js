@@ -184,6 +184,11 @@ const bookSchema = new mongoose.Schema(
       default: false,
     },
 
+    offersThisWeek: {
+      type: Boolean,
+      default: false,
+    },
+
     /* =========================
        RATINGS
     ========================= */

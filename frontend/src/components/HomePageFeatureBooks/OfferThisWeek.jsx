@@ -353,6 +353,7 @@ export default function OffersThisWeek({ offers }) {
           display: flex;
           align-items: center;
           justify-content: center;
+          align-self: center;
         }
 
         .otw-img-wrap img {

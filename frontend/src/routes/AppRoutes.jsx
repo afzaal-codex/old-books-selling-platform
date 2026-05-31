@@ -148,6 +148,7 @@ const AppRoutes = () => {
     else if (path.startsWith("/wishlist")) pageName = "My Wishlist";
     else if (path.startsWith("/profile")) pageName = "My Profile";
     else if (path.startsWith("/admin/books/edit/")) pageName = "Admin - Edit Book";
+    else if (path.startsWith("/admin/offers-this-week")) pageName = "Admin - Offers This Week";
     else if (path.startsWith("/admin/books")) pageName = "Admin - Books";
     else if (path.startsWith("/admin/add-book")) pageName = "Admin - Add Book";
     else if (path.startsWith("/admin/categories")) pageName = "Admin - Categories";
@@ -335,6 +336,11 @@ const AppRoutes = () => {
           <Route
             path="/admin/books"
             element={<AdminBooks />}
+          />
+
+          <Route
+            path="/admin/offers-this-week"
+            element={<AdminBooks mode="offersThisWeek" />}
           />
 
           {/* ADD BOOK */}

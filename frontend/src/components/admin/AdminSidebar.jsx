@@ -105,6 +105,13 @@ const AdminSidebar = () => {
         />
 
         <AdminSidebarItem
+          to="/admin/offers-this-week"
+          icon={<Percent size={18} />}
+          label="Offers This Week"
+          collapsed={collapsed}
+        />
+
+        <AdminSidebarItem
           to="/admin/add-book"
           icon={<PlusCircle size={18} />}
           label="Add Book"
