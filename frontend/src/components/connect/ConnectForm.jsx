@@ -116,46 +116,21 @@ const ConnectForm = () => {
         .cf-left {
           position: relative;
           z-index: 2;
-          /* width = height * (2/3) — set via JS-free CSS trick:
-             we fix the column to a % of the card,
-             and the image inside uses 2:3 aspect via padding trick */
           flex: 0 0 0px; /* hidden on mobile, overridden below */
           display: none;
         }
 
         .cf-img-wrap {
           position: absolute;
-          top: 15%; bottom: 15%;
-          left: 10%; right: 10%;
+          inset: 0;
           overflow: hidden;
         }
 
-        /* 2:3 ratio enforced: width = (2/3) * height.
-           Since height = 70% of card, we compute width from that.
-           We let the column width be driven by the image's 2:3 ratio. */
         .cf-img-wrap img {
           width: 100%; height: 100%;
           object-fit: cover;
           display: block;
           border: none; outline: none;
-        }
-
-        .cf-img-spine {
-          position: absolute;
-          left: 0; top: 0;
-          width: 10px; height: 100%;
-          background: linear-gradient(90deg, #c8860a55, transparent);
-        }
-
-        /* Vertical divider */
-        .cf-divider {
-          display: none;
-          position: absolute;
-          top: 12%; bottom: 12%;
-          width: 1px;
-          background: linear-gradient(180deg, transparent, #c8860a44 30%, #c8860a44 70%, transparent);
-          z-index: 3;
-          pointer-events: none;
         }
 
         /* ── RIGHT CONTENT COLUMN ── */
@@ -271,33 +246,11 @@ const ConnectForm = () => {
         @media (min-width: 640px) {
           .cf-left {
             display: flex;
-            /* column width = image width + 20% padding each side
-               image is 2:3 ratio; card min-height ~340px
-               img height = 70% of 340 = 238px → width = 238*(2/3) ≈ 159px
-               col width = 159 / 0.8 = ~199px; we use a fixed flex-basis */
-            flex: 0 0 220px;
+            flex: 0 0 260px;
           }
 
-          /* Image is 2:3: width = (2/3)*height.
-             height = (bottom15% to top15%) = 70% of card.
-             We enforce 2:3 by setting the wrap width relative to its own height. */
           .cf-img-wrap {
-            /* Use aspect-ratio approach: width = 66.66% of height.
-               Since position:absolute fills top15%–bottom15%,
-               we clamp the width to be 2/3 of available height. */
-            left: 10%; right: auto;
-            /* width = 2/3 of (card_height * 0.7).
-               We use a CSS variable fallback with vw approximation.
-               In practice the column is 220px wide, wrap is 80% = 176px wide,
-               height = 70% of card ≈ 238px.
-               2:3 ratio: want width = 159px out of 176px available. Close enough.
-               We just let object-fit:cover handle the rest. */
-            width: calc(80%);
-          }
-
-          .cf-divider {
-            display: block;
-            left: 220px;
+            width: 100%;
           }
 
           .cf-right {
@@ -310,7 +263,6 @@ const ConnectForm = () => {
         <div className="cf-card">
           <div className="cf-bg" style={{ backgroundImage: `url(${bgImage})` }} />
           <div className="cf-backdrop" />
-          <div className="cf-divider" />
 
           {/* LEFT: book image — desktop only */}
           <div className="cf-left">
@@ -319,7 +271,6 @@ const ConnectForm = () => {
                 src={cardImage}
                 alt="Rare book"
               />
-              <div className="cf-img-spine" />
             </div>
           </div>
 
