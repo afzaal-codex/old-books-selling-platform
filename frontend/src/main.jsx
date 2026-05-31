@@ -33,8 +33,14 @@ ReactDOM.createRoot(
             <App />
 
             <Toaster
-              position="top-right"
+              position="bottom-right"
               reverseOrder={false}
+              toastOptions={{
+                error: {
+                  style: { display: 'none' },
+                  duration: 1,
+                },
+              }}
             />
           </GoogleOAuthProvider>
         </BrowserRouter>

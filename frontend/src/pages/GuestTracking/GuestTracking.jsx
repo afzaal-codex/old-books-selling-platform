@@ -85,7 +85,7 @@ const GuestTracking = () => {
         </div>
         <button
           onClick={() => navigate("/")}
-          className="flex items-center gap-2 px-6 py-3 bg-[var(--color-primary)] text-black font-bold rounded-xl hover:opacity-90 transition cursor-pointer"
+          className="flex items-center gap-2 px-6 py-3 bg-[var(--color-primary)] text-black font-bold rounded-none hover:opacity-90 transition cursor-pointer"
         >
           <ArrowLeft size={16} /> Return to Storefront
         </button>
@@ -101,7 +101,7 @@ const GuestTracking = () => {
       <div className="flex items-center gap-3">
         <button
           onClick={() => navigate("/")}
-          className="p-2 bg-neutral-900 border border-[var(--color-border)] rounded-xl cursor-pointer hover:border-gray-500 transition"
+          className="p-2 bg-neutral-900 border border-[var(--color-border)] rounded-none cursor-pointer hover:border-gray-500 transition"
         >
           <ArrowLeft size={16} />
         </button>
@@ -114,7 +114,7 @@ const GuestTracking = () => {
       <div className="grid gap-8 md:grid-cols-3">
         {/* Main Details */}
         <div className="md:col-span-2 space-y-6">
-          <div className="bg-[var(--color-card-bg)] border border-[var(--color-border)] rounded-3xl p-6 space-y-6 shadow-md">
+          <div className="bg-[var(--color-card-bg)] border border-[var(--color-border)] rounded-none py-6 px-[2px] md:px-6 space-y-6 shadow-md">
             {/* Status Header */}
             <div className="flex justify-between items-center border-b border-neutral-900 pb-4">
               <div>
@@ -155,13 +155,12 @@ const GuestTracking = () => {
 
             {/* Shipping Info */}
             <div className="pt-4 border-t border-neutral-900 space-y-3">
-              <h3 className="font-bold text-sm text-[var(--color-primary)] uppercase tracking-wider">Delivery Details</h3>
-              <div className="flex items-start gap-3 bg-neutral-900/40 border border-neutral-900 rounded-2xl p-4 text-xs text-gray-300">
-                <MapPin size={18} className="text-gray-500 flex-shrink-0" />
+              <h3 className="font-bold text-sm text-[var(--color-primary)] uppercase tracking-wider flex items-center gap-2"><MapPin size={16} /> Delivery Details</h3>
+              <div className="flex items-start gap-3 bg-neutral-900/40 border border-neutral-900 rounded-none py-4 px-[2px] md:px-4 text-xs text-gray-300">
                 <div className="space-y-1">
                   <p><strong>Name:</strong> {order.shippingAddress.fullName}</p>
                   <p><strong>Phone:</strong> {order.shippingAddress.phone}</p>
-                  <p><strong>Email:</strong> {order.shippingAddress.email}</p>
+                  <p className="break-all"><strong>Email:</strong> {order.shippingAddress.email}</p>
                   <p><strong>Address:</strong> {order.shippingAddress.address}, {order.shippingAddress.city}</p>
                 </div>
               </div>
@@ -199,7 +198,7 @@ const GuestTracking = () => {
                 </div>
               </div>
             ) : (
-              <div className="flex items-center gap-2 bg-red-950/20 border border-red-900/40 rounded-2xl p-4 text-xs text-red-400 font-semibold border-t border-neutral-900">
+              <div className="flex items-center gap-2 bg-red-950/20 border border-red-900/40 rounded-none py-4 px-[2px] md:px-4 text-xs text-red-400 font-semibold border-t border-neutral-900">
                 <ShieldAlert size={16} />
                 <span>This order has been cancelled or has entered a special state. Please contact customer support for further information.</span>
               </div>
@@ -210,7 +209,7 @@ const GuestTracking = () => {
         {/* Sidebar Info */}
         <div className="space-y-6">
           {/* Payment Card */}
-          <div className="bg-[var(--color-card-bg)] border border-[var(--color-border)] rounded-3xl p-6 space-y-4 shadow-md text-xs text-gray-300">
+          <div className="bg-[var(--color-card-bg)] border border-[var(--color-border)] rounded-none py-6 px-[2px] md:px-6 space-y-4 shadow-md text-xs text-gray-300">
             <h3 className="font-bold text-sm text-[var(--color-primary)] uppercase tracking-wider flex items-center gap-2">
               <CreditCard size={16} /> Payment Summary
             </h3>
@@ -256,7 +255,7 @@ const GuestTracking = () => {
           </div>
 
           {/* Detailed Activity Logs */}
-          <div className="bg-[var(--color-card-bg)] border border-[var(--color-border)] rounded-3xl p-6 space-y-4 shadow-md text-xs">
+          <div className="bg-[var(--color-card-bg)] border border-[var(--color-border)] rounded-none py-6 px-[2px] md:px-6 space-y-4 shadow-md text-xs">
             <h3 className="font-bold text-sm text-[var(--color-primary)] uppercase tracking-wider flex items-center gap-2">
               <Clock size={16} /> Status History
             </h3>

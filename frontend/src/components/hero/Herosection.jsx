@@ -483,7 +483,7 @@ export default function LuxuryBookHero() {
   if (isMobile) {
     return (
       <div ref={containerRef} style={{
-        position:"relative", width:"100%", height:"calc(100svh - var(--site-header-height, 0px))",
+        position:"relative", width:"100%", height:"auto",
         background:"#0C0B0F", overflow:"hidden",
         fontFamily:"'Satoshi',system-ui,sans-serif",
         display:"flex", flexDirection:"column",
@@ -514,11 +514,11 @@ export default function LuxuryBookHero() {
         </div>
 
         {/* Row — 24px below counter */}
-        <div style={{ marginTop:"24px",paddingBottom:"16px",display:"flex",justifyContent:"center",position:"relative",zIndex:10,flex:"0 0 auto" }}>
+        <div style={{ marginTop:"24px",paddingBottom:"5px",display:"flex",justifyContent:"center",position:"relative",zIndex:10,flex:"0 0 auto" }}>
           <BookRow />
         </div>
 
-        <div style={{ flex:"1 1 0",minHeight:"8px" }} />
+        <div style={{ height:"0px" }} />
         <h2 style={{ position:"absolute",width:"1px",height:"1px",overflow:"hidden",clip:"rect(0,0,0,0)",whiteSpace:"nowrap" }}>Luxury rare books marketplace hero</h2>
       </div>
     );

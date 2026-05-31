@@ -25,32 +25,17 @@ const ScrollToTop = () => {
     return () => window.removeEventListener("popstate", handlePopState);
   }, []);
 
-  // Save scroll position before leaving the current page
+  // Handle scroll on route change
   useEffect(() => {
-    const saveScroll = () => {
+    // 1. Save scroll position of the previous page
+    if (prevKeyRef.current) {
       const scrollKey = `scroll_${prevKeyRef.current}`;
       sessionStorage.setItem(
         scrollKey,
         JSON.stringify({ x: window.scrollX, y: window.scrollY })
       );
-    };
+    }
 
-    // Save on every scroll (debounced)
-    let timer;
-    const onScroll = () => {
-      clearTimeout(timer);
-      timer = setTimeout(saveScroll, 150);
-    };
-
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => {
-      clearTimeout(timer);
-      window.removeEventListener("scroll", onScroll);
-    };
-  }, []);
-
-  // Handle scroll on route change
-  useEffect(() => {
     if (isPopState.current) {
       // Browser back/forward: restore saved position
       const scrollKey = `scroll_${key}`;
@@ -59,10 +44,18 @@ const ScrollToTop = () => {
       if (saved) {
         try {
           const { x, y } = JSON.parse(saved);
-          // Use requestAnimationFrame to ensure the DOM has rendered
-          requestAnimationFrame(() => {
+          let attempts = 0;
+          const maxAttempts = 40; // retry for up to 2 seconds for async content
+          const tryScroll = () => {
             window.scrollTo(x, y);
-          });
+            const reachedTarget = Math.abs(window.scrollY - y) < 5;
+            const reachedBottom = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 5;
+            if (!reachedTarget && !reachedBottom && attempts < maxAttempts) {
+              attempts++;
+              setTimeout(tryScroll, 50);
+            }
+          };
+          tryScroll();
         } catch {
           window.scrollTo(0, 0);
         }
@@ -72,19 +65,24 @@ const ScrollToTop = () => {
 
       isPopState.current = false;
     } else if (hash) {
-      // Hash link: scroll to the element
+      // Hash link: scroll to the element with retry for async elements
       const id = hash.replace("#", "");
-      // Wait for DOM to render the target element
-      requestAnimationFrame(() => {
+      let attempts = 0;
+      const maxAttempts = 40;
+      const tryScroll = () => {
         const element = document.getElementById(id);
         if (element) {
           element.scrollIntoView({ behavior: "smooth" });
+        } else if (attempts < maxAttempts) {
+          attempts++;
+          setTimeout(tryScroll, 50);
         } else {
           window.scrollTo(0, 0);
         }
-      });
+      };
+      tryScroll();
     } else {
-      // Forward navigation (link click): scroll to top
+      // Forward navigation: scroll to top immediately
       window.scrollTo(0, 0);
     }
 

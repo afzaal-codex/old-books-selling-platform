@@ -247,6 +247,57 @@ const CancelButton = ({ onClick, disabled, loading }) => {
   );
 };
 
+/* ─── Delivery Details Block ─────────────────────────────────────────────── */
+/*
+  Layout: icon-free header label, then info rows that flex-wrap naturally.
+  Email sits on the same line as Phone; if no room it wraps to the next line.
+*/
+const DeliveryDetails = ({ addr }) => {
+  /* Each "pill" — a small label + value pair */
+  const Pill = ({ label, value }) => (
+    <span style={{
+      display: "inline-flex",
+      alignItems: "baseline",
+      gap: 4,
+      fontFamily: "system-ui, sans-serif",
+      fontSize: 10,
+      lineHeight: 1.6,
+      whiteSpace: "normal",       /* allow value to wrap if needed */
+      wordBreak: "break-all",     /* break long emails gracefully */
+    }}>
+      <span style={{ ...s.label, fontSize: 8, color: T.dim, flexShrink: 0 }}>{label}:</span>
+      <span style={{ color: T.text, fontWeight: 600 }}>{value}</span>
+    </span>
+  );
+
+  return (
+    <div
+      className="px-[2px] md:px-[14px]"
+      style={{
+        background: "#0d0d10",
+        border: `1px solid ${T.border}`,
+        paddingTop: 10,
+        paddingBottom: 10,
+      }}
+    >
+      {/* Header — styled like the "Order Progress" / "Activity History" labels */}
+      <p style={{ ...s.label, marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}>
+        <MapPin size={11} color={T.gold} strokeWidth={2} style={{ flexShrink: 0 }} />
+        Delivery Details
+      </p>
+
+      {/* Info rows — flex-wrap so Email naturally flows beside Phone or below */}
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "4px 16px" }}>
+        <Pill label="Name"    value={addr.fullName} />
+        <Pill label="Address" value={`${addr.address}, ${addr.city}`} />
+        <Pill label="Phone"   value={addr.phone} />
+        {addr.email && (
+          <Pill label="Email" value={addr.email} />
+        )}
+      </div>
+    </div>
+  );
+};
 /* ─── Order Card (accordion) ─────────────────────────────────────────────── */
 const OrderCard = ({ order, isOpen, onToggle, onCancel, cancelling }) => {
   const progress    = getTimelineProgress(order.orderStatus);
@@ -260,12 +311,14 @@ const OrderCard = ({ order, isOpen, onToggle, onCancel, cancelling }) => {
       {/* ── Always-visible header row ── */}
       <button
         onClick={onToggle}
+        className="px-[2px] md:px-6"
         style={{
           width: "100%",
           background: isOpen ? T.hover : "transparent",
           border: "none",
           borderBottom: isOpen ? `1px solid ${T.border}` : "none",
-          padding: "16px 24px",
+          paddingTop: 16,
+          paddingBottom: 16,
           cursor: "pointer",
           display: "flex",
           flexWrap: "wrap",

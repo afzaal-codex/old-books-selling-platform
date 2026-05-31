@@ -8,15 +8,14 @@ import nodemailer from "nodemailer";
 // =========================================
 
 const EMAIL_HOST = process.env.EMAIL_HOST || "smtp.hostinger.com";
-const EMAIL_PORT = 465;
-const EMAIL_USER = process.env.EMAIL_USER;
-const EMAIL_PASS = process.env.EMAIL_PASS;
+const EMAIL_PORT = parseInt(process.env.EMAIL_PORT, 10) || 465;
+const EMAIL_SECURE = EMAIL_PORT === 465;
 
 console.log("===========================================");
 console.log("EMAIL CONFIGURATION VERIFICATION");
 console.log("===========================================");
 console.log("Email Host:", EMAIL_HOST);
-console.log("Email Port:", EMAIL_PORT, "(SSL - hardcoded)");
+console.log("Email Port:", EMAIL_PORT, `(${EMAIL_SECURE ? "SSL" : "STARTTLS"} - dynamic)`);
 console.log("Email User:", EMAIL_USER ? `✓ Set (${EMAIL_USER})` : "✗ Missing");
 console.log("Email Password:", EMAIL_PASS ? "✓ Set" : "✗ Missing");
 console.log("===========================================\n");
@@ -29,7 +28,7 @@ const createTransporter = () => {
   return nodemailer.createTransport({
     host: EMAIL_HOST,
     port: EMAIL_PORT,
-    secure: true,
+    secure: EMAIL_SECURE,
     family: 4,
     auth: {
       user: EMAIL_USER,
@@ -59,7 +58,7 @@ let transporter = createTransporter();
 const verifyConnection = async () => {
   try {
     await transporter.verify();
-    console.log("✅ SMTP READY - Email service is working on port 465 (SSL)");
+    console.log(`✅ SMTP READY - Email service is working on port ${EMAIL_PORT} (${EMAIL_SECURE ? "SSL" : "STARTTLS"})`);
     return true;
   } catch (error) {
     console.log("❌ SMTP ERROR:", error.message);
