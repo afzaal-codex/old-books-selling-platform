@@ -10,6 +10,8 @@ import nodemailer from "nodemailer";
 const EMAIL_HOST = process.env.EMAIL_HOST || "smtp.hostinger.com";
 const EMAIL_PORT = parseInt(process.env.EMAIL_PORT, 10) || 465;
 const EMAIL_SECURE = EMAIL_PORT === 465;
+const EMAIL_USER = process.env.EMAIL_USER;
+const EMAIL_PASS = process.env.EMAIL_PASS;
 
 console.log("===========================================");
 console.log("EMAIL CONFIGURATION VERIFICATION");
