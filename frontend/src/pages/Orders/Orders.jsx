@@ -380,7 +380,7 @@ const OrderCard = ({ order, isOpen, onToggle, onCancel, cancelling }) => {
         overflow: "hidden",
         transition: "max-height 0.35s ease",
       }}>
-        <div style={{ padding: "20px 24px", display: "flex", flexDirection: "column", gap: 20 }}>
+        <div style={{ padding: "20px 2px", display: "flex", flexDirection: "column", gap: 20 }}>
 
           {/* Items */}
           <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
@@ -447,7 +447,7 @@ const OrderCard = ({ order, isOpen, onToggle, onCancel, cancelling }) => {
 /* ─── Loading Spinner ────────────────────────────────────────────────────── */
 const Spinner = () => (
   <div style={{ display: "flex", alignItems: "center", justifyContent: "center", height: 200 }}>
-    <div style={{ width: 28, height: 28, border: `1px solid ${T.border}`, borderTop: `1px solid ${T.gold}`, borderRadius: "50%", animation: "spin 0.7s linear infinite" }} />
+    <div style={{ width: 28, height: 28, border: `1px solid ${T.border}`, borderTop: `1px solid ${T.gold}`, borderRadius: 0, animation: "spin 0.7s linear infinite" }} />
     <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
   </div>
 );
