@@ -1,11 +1,14 @@
 export const getBrandedEmailTemplate = (contentHtml, title = "Book World", supportEmail = "hello@bookworld.site") => {
+  const clientUrl = (process.env.CLIENT_URL || "https://www.bookworld.site").replace(/\/$/, "");
+  const logoUrl = `${clientUrl}/Company%20Logo/BookWorldLogo.png`;
+
   return `
     <div style="font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; max-width: 600px; margin: 0 auto; padding: 24px; border: 1px solid #d4af37; background-color: #000000; color: #ffffff; border-radius: 12px; box-sizing: border-box; text-align: left; box-shadow: 0 4px 15px rgba(212, 175, 55, 0.15);">
       <div style="text-align: center; border-bottom: 2px solid #d4af37; padding-bottom: 20px; margin-bottom: 24px;">
         <table align="center" border="0" cellpadding="0" cellspacing="0" style="margin: 0 auto 12px auto; text-align: center;">
           <tr>
             <td align="center">
-              <img src="https://bookworld.site/Company%20Logo/BookWorldLogo.png" alt="Book World Logo" width="56" height="56" style="display: block; width: 56px; height: 56px; border-radius: 50%; border: 2px solid #d4af37; background-color: #111111; object-fit: cover;" />
+              <img src="${logoUrl}" alt="Book World Logo" width="56" height="56" style="display: block; width: 56px; height: 56px; border-radius: 50%; border: 2px solid #d4af37; background-color: #111111; object-fit: cover;" />
             </td>
           </tr>
         </table>

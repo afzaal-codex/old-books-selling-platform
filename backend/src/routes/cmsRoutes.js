@@ -9,6 +9,7 @@ import {
   verifyMatchClick,
   changeAdminPassword,
   changeAdminEmail,
+  updateAdminProfile,
 } from "../controllers/adminSecurityController.js";
 
 import {
@@ -44,6 +45,13 @@ router.put(
   protect,
   adminProtect,
   changeAdminEmail
+);
+
+router.put(
+  "/admin-profile",
+  protect,
+  adminProtect,
+  updateAdminProfile
 );
 
 router.put(

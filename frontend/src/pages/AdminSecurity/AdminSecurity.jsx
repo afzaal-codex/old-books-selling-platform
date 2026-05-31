@@ -1,10 +1,15 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { useSelector, useDispatch } from "react-redux";
 import toast from "react-hot-toast";
-import { Lock, Mail } from "lucide-react";
+import { Lock, Mail, User } from "lucide-react";
 import axiosInstance from "../../utils/axiosInstance";
 import ButtonLoader from "../../components/loaders/ButtonLoader";
+import { updateUserProfile } from "../../store/slices/authSlice";
 
 const AdminSecurity = () => {
+  const dispatch = useDispatch();
+  const { user } = useSelector((state) => state.auth);
+
   // Password form state
   const [pwdForm, setPwdForm] = useState({
     currentPassword: "",
@@ -24,6 +29,22 @@ const AdminSecurity = () => {
   });
   const [emailLoading, setEmailLoading] = useState(false);
 
+  // Profile form state
+  const [profileForm, setProfileForm] = useState({
+    name: "",
+    phone: "",
+  });
+  const [profileLoading, setProfileLoading] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      setProfileForm({
+        name: user.name || "",
+        phone: user.phone || "",
+      });
+    }
+  }, [user]);
+
   const requestPwdOtp = async () => {
     try {
       const response = await axiosInstance.post("/cms/request-otp", { purpose: "admin-password" });
@@ -35,22 +56,10 @@ const AdminSecurity = () => {
   };
 
   const requestEmailOtp = async () => {
-    if (!emailForm.newEmail || !emailForm.confirmEmail) {
-      toast.error("Please fill in New Email and Confirm Email first");
-      return;
-    }
-    if (emailForm.newEmail.toLowerCase().trim() !== emailForm.confirmEmail.toLowerCase().trim()) {
-      toast.error("New Email and Confirm Email do not match");
-      return;
-    }
     try {
-      const targetEmail = emailForm.newEmail.toLowerCase().trim();
-      const response = await axiosInstance.post("/cms/request-otp", {
-        purpose: "cms-update",
-        targetEmail
-      });
+      const response = await axiosInstance.post("/cms/request-otp", { purpose: "cms-update" });
       setEmailForm((prev) => ({ ...prev, matchNumber: response.data.matchNumber || "" }));
-      toast.success(`OTP request sent to ${targetEmail}`);
+      toast.success("OTP request sent to admin email");
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to send OTP");
     }
@@ -93,15 +102,81 @@ const AdminSecurity = () => {
     }
   };
 
+  const handleProfileSubmit = async (e) => {
+    e.preventDefault();
+    if (!profileForm.name) {
+      toast.error("Name is required");
+      return;
+    }
+    try {
+      setProfileLoading(true);
+      const response = await axiosInstance.put("/cms/admin-profile", {
+        name: profileForm.name,
+        phone: profileForm.phone,
+      });
+      toast.success(response.data.message || "Profile updated successfully");
+      dispatch(updateUserProfile({ name: profileForm.name, phone: profileForm.phone }));
+    } catch (error) {
+      toast.error(error.response?.data?.message || "Failed to update profile");
+    } finally {
+      setProfileLoading(false);
+    }
+  };
+
   return (
     <div className="space-y-8 bg-[var(--color-bg)] text-white pb-12">
       {/* HEADER */}
       <div className="border-b border-[var(--color-border)] pb-5">
-        <h1 className="text-3xl font-extrabold text-[var(--color-primary)]">Admin Security Configurations</h1>
-        <p className="text-sm text-gray-400 mt-2">Update administrative login credentials (email and password) after security matching verification</p>
+        <h1 className="text-3xl font-extrabold text-[var(--color-primary)]">Admin Security & Profile</h1>
+        <p className="text-sm text-gray-400 mt-2">Update administrative credentials (email and password) and profile details</p>
       </div>
 
-      <div className="grid gap-8 md:grid-cols-2">
+      <div className="grid gap-8 lg:grid-cols-3">
+        {/* PROFILE FORM */}
+        <form onSubmit={handleProfileSubmit} className="space-y-6">
+          <div className="bg-[#111114] border border-[var(--color-border)] rounded-3xl p-6 space-y-6 shadow-md">
+            <h3 className="font-bold text-lg text-white border-b border-neutral-900 pb-3 flex items-center gap-2">
+              <User size={18} className="text-[var(--color-primary)]" />
+              Update Admin Profile
+            </h3>
+
+            <div className="space-y-4 text-sm">
+              <div className="space-y-2">
+                <label className="text-gray-300 font-semibold block">Full Name *</label>
+                <input
+                  type="text"
+                  required
+                  placeholder="Enter full name"
+                  value={profileForm.name}
+                  onChange={(e) => setProfileForm((prev) => ({ ...prev, name: e.target.value }))}
+                  className="w-full bg-neutral-900 border border-[var(--color-border)] rounded-xl px-4 py-3 text-white outline-none focus:border-[var(--color-primary)]"
+                />
+              </div>
+
+              <div className="space-y-2">
+                <label className="text-gray-300 font-semibold block">Phone Number</label>
+                <input
+                  type="text"
+                  placeholder="Enter phone number"
+                  value={profileForm.phone}
+                  onChange={(e) => setProfileForm((prev) => ({ ...prev, phone: e.target.value }))}
+                  className="w-full bg-neutral-900 border border-[var(--color-border)] rounded-xl px-4 py-3 text-white outline-none focus:border-[var(--color-primary)]"
+                />
+              </div>
+
+              <div className="pt-4 border-t border-neutral-900">
+                <button
+                  type="submit"
+                  disabled={profileLoading}
+                  className="w-full flex items-center justify-center gap-2 rounded-xl bg-[var(--color-primary)] text-black font-extrabold py-3.5 hover:opacity-90 transition cursor-pointer shadow-lg text-sm disabled:opacity-50"
+                >
+                  {profileLoading ? <ButtonLoader label="Saving..." /> : "Save Profile Details"}
+                </button>
+              </div>
+            </div>
+          </div>
+        </form>
+
         {/* PASSWORD FORM */}
         <form onSubmit={handlePwdSubmit} className="space-y-6">
           <div className="bg-[#111114] border border-[var(--color-border)] rounded-3xl p-6 space-y-6 shadow-md">

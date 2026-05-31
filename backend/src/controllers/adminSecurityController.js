@@ -15,14 +15,7 @@ const sendAdminOtp = async (req, res) => {
     return res.status(400).json({ success: false, message: "Invalid OTP purpose" });
   }
 
-  let email = getAdminEmail(req);
-  if (purpose === "cms-update" && req.body.targetEmail) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(req.body.targetEmail)) {
-      return res.status(400).json({ success: false, message: "Invalid email format" });
-    }
-    email = req.body.targetEmail.toLowerCase().trim();
-  }
+  const email = getAdminEmail(req);
   const otp = createSixDigits();
   const matchNumber = createMatchNumber();
 
@@ -198,18 +191,17 @@ const changeAdminEmail = async (req, res) => {
     return res.status(400).json({ success: false, message: "Emails do not match" });
   }
 
-  const targetEmail = newEmail.toLowerCase().trim();
+  const email = getAdminEmail(req);
   try {
-    await verifyAdminOtp({ email: targetEmail, purpose: "cms-update", otp });
+    await verifyAdminOtp({ email, purpose: "cms-update", otp });
   } catch (error) {
     return res.status(401).json({ success: false, message: error.message });
   }
 
-  const currentEmail = getAdminEmail(req);
-  const admin = await User.findOne({ email: currentEmail });
+  const admin = await User.findOne({ email });
   if (!admin) return res.status(404).json({ success: false, message: "Admin user not found" });
 
-  admin.email = targetEmail;
+  admin.email = newEmail.toLowerCase().trim();
   await admin.save();
 
   // Sync email change to .env
@@ -218,4 +210,30 @@ const changeAdminEmail = async (req, res) => {
   res.json({ success: true, message: "Admin email changed successfully" });
 };
 
-export { sendAdminOtp, verifyAdminOtp, verifyMatchClick, changeAdminPassword, changeAdminEmail };
+const updateAdminProfile = async (req, res) => {
+  const { name, phone } = req.body;
+  if (!name) {
+    return res.status(400).json({ success: false, message: "Name is required" });
+  }
+
+  const email = getAdminEmail(req);
+  const admin = await User.findOne({ email });
+  if (!admin) return res.status(404).json({ success: false, message: "Admin user not found" });
+
+  admin.name = name;
+  if (phone !== undefined) {
+    admin.phone = phone;
+  }
+  await admin.save();
+
+  // Sync to .env
+  updateEnvValue("ADMIN_NAME", name);
+
+  res.json({
+    success: true,
+    message: "Admin profile updated successfully",
+    admin: { name: admin.name, phone: admin.phone }
+  });
+};
+
+export { sendAdminOtp, verifyAdminOtp, verifyMatchClick, changeAdminPassword, changeAdminEmail, updateAdminProfile };
