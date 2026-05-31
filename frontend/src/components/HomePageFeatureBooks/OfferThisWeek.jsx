@@ -344,15 +344,23 @@ export default function OffersThisWeek({ offers }) {
 
         .otw-img-wrap {
           position: relative;
-          width: 260px;
-          min-width: 220px;
+          width: 220px;
+          height: 330px;
           flex-shrink: 0;
-          margin: 8px 0 8px 8px;
+          margin: 8px;
           background: #0a0a0c;
           overflow: hidden;
           display: flex;
           align-items: center;
           justify-content: center;
+        }
+
+        .otw-img-wrap img {
+          width: 100%;
+          height: 100%;
+          object-fit: cover;
+          object-position: center;
+          display: block;
         }
 
         .otw-img-mask {
@@ -390,6 +398,11 @@ export default function OffersThisWeek({ offers }) {
         .otw-desc {
           font-size: 13.5px; line-height: 1.65; color: #9a9a9f;
           margin: 0 0 28px 0; max-width: 380px;
+          display: -webkit-box;
+          -webkit-line-clamp: 5;
+          -webkit-box-orient: vertical;
+          overflow: hidden;
+          text-overflow: ellipsis;
         }
 
         .otw-countdown-row { margin-bottom: 20px; }
@@ -456,7 +469,7 @@ export default function OffersThisWeek({ offers }) {
             background: #111114;
           }
           .otw-img-wrap {
-            width: 100px; height: 120px; min-width: 100px; margin: 12px;
+            width: 100px; height: 150px; min-width: 100px; margin: 12px;
             align-self: flex-start;
           }
           .otw-img-mask { display: none; }
@@ -468,19 +481,20 @@ export default function OffersThisWeek({ offers }) {
           }
           .otw-card-top-row {
             display: flex; flex-direction: row;
-            align-items: flex-start; width: 100%; height: 144px;
+            align-items: flex-start; width: 100%; height: auto;
           }
           .otw-card-top-right {
             flex: 1; padding: 12px 12px 12px 0;
             display: flex; flex-direction: column;
-            justify-content: space-between; height: 144px;
+            justify-content: space-between; min-height: 174px;
           }
           .otw-title { font-size: 14px; margin-bottom: 4px; font-weight: 700; }
           .otw-author { font-size: 10px; margin-bottom: 4px; }
           .otw-desc {
             font-size: 11px; line-height: 1.4; color: #9a9a9f; margin-bottom: 0;
             overflow: hidden; display: -webkit-box;
-            -webkit-line-clamp: 3; -webkit-box-orient: vertical;
+            -webkit-line-clamp: 5; -webkit-box-orient: vertical;
+            text-overflow: ellipsis;
           }
           .otw-card-middle-row {
             width: 100%; padding: 8px 12px;
