@@ -252,7 +252,8 @@ const CancelButton = ({ onClick, disabled, loading }) => {
   Layout: icon-free header label, then info rows that flex-wrap naturally.
   Email sits on the same line as Phone; if no room it wraps to the next line.
 */
-const DeliveryDetails = ({ addr }) => {
+const DeliveryDetails = ({ addr, status }) => {
+  const isDelivered = status === "Delivered";
   /* Each "pill" — a small label + value pair */
   const Pill = ({ label, value }) => (
     <span style={{
@@ -265,7 +266,7 @@ const DeliveryDetails = ({ addr }) => {
       whiteSpace: "normal",       /* allow value to wrap if needed */
       wordBreak: "break-all",     /* break long emails gracefully */
     }}>
-      <span style={{ ...s.label, fontSize: 8, color: T.dim, flexShrink: 0 }}>{label}:</span>
+      <span style={{ ...s.label, fontSize: 8, color: isDelivered ? T.gold : T.dim, flexShrink: 0 }}>{label}:</span>
       <span style={{ color: T.text, fontWeight: 600 }}>{value}</span>
     </span>
   );
@@ -417,15 +418,7 @@ const OrderCard = ({ order, isOpen, onToggle, onCancel, cancelling }) => {
           </div>
 
           {/* Delivery address */}
-          <div style={{ display: "flex", alignItems: "flex-start", gap: 8, background: "#0d0d10", border: `1px solid ${T.border}`, padding: "10px 14px" }}>
-            <MapPin size={12} color={T.dim} strokeWidth={2} style={{ flexShrink: 0, marginTop: 1 }} />
-            <p style={{ fontFamily: "system-ui, sans-serif", fontSize: 10, color: T.muted, lineHeight: 1.6, margin: 0 }}>
-              Deliver to:&nbsp;
-              <strong style={{ color: T.text, fontWeight: 700 }}>{order.shippingAddress.fullName}</strong>
-              &nbsp;|&nbsp;{order.shippingAddress.address}, {order.shippingAddress.city}
-              &nbsp;|&nbsp;Phone: {order.shippingAddress.phone}
-            </p>
-          </div>
+          <DeliveryDetails addr={order.shippingAddress} status={order.orderStatus} />
 
           {/* Timeline or cancelled */}
           {progress !== -1 ? (

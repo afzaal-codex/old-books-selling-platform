@@ -1,5 +1,6 @@
 import { sendMailWithRetry } from "../config/email.js";
 import { getBrandedEmailTemplate } from "../utils/emailTemplate.js";
+import Settings from "../models/Settings.js";
 
 /**
  * Send a raw HTML email using the retry-capable sender.
@@ -21,7 +22,17 @@ const sendEmail = async ({ to, subject, html }) => {
  * @param {{ to: string, subject: string, bodyHtml: string }} options
  */
 const sendBrandedEmail = async ({ to, subject, bodyHtml }) => {
-  const brandedHtml = getBrandedEmailTemplate(bodyHtml, subject);
+  let supportEmail = "hello@bookworld.site";
+  try {
+    const settings = await Settings.findOne();
+    if (settings && settings.supportEmail) {
+      supportEmail = settings.supportEmail;
+    }
+  } catch (err) {
+    console.error("Failed to query supportEmail from CMS Settings:", err.message);
+  }
+
+  const brandedHtml = getBrandedEmailTemplate(bodyHtml, subject, supportEmail);
   return await sendEmail({ to, subject, html: brandedHtml });
 };
 

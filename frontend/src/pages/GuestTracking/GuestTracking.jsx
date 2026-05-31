@@ -219,7 +219,8 @@ const ActivityLog = ({ timeline }) => (
 );
 
 /* ─── Delivery Details Block ─────────────────────────────────────────────── */
-const DeliveryDetails = ({ addr }) => {
+const DeliveryDetails = ({ addr, status }) => {
+  const isDelivered = status === "Delivered";
   const Pill = ({ label, value }) => (
     <span style={{
       display: "inline-flex",
@@ -231,7 +232,7 @@ const DeliveryDetails = ({ addr }) => {
       whiteSpace: "normal",
       wordBreak: "break-all",
     }}>
-      <span style={{ ...s.label, fontSize: 8, color: T.dim, flexShrink: 0 }}>{label}:</span>
+      <span style={{ ...s.label, fontSize: 8, color: isDelivered ? T.gold : T.dim, flexShrink: 0 }}>{label}:</span>
       <span style={{ color: T.text, fontWeight: 600 }}>{value}</span>
     </span>
   );
@@ -503,7 +504,7 @@ const GuestTracking = () => {
             </div>
 
             {/* Delivery address */}
-            <DeliveryDetails addr={order.shippingAddress} />
+            <DeliveryDetails addr={order.shippingAddress} status={order.orderStatus} />
 
             {/* Timeline or cancelled */}
             {progress !== -1 ? (

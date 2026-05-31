@@ -182,4 +182,32 @@ const changeAdminPassword = async (req, res) => {
   res.json({ success: true, message: "Admin password changed successfully" });
 };
 
-export { sendAdminOtp, verifyAdminOtp, verifyMatchClick, changeAdminPassword };
+const changeAdminEmail = async (req, res) => {
+  const { newEmail, confirmEmail, otp } = req.body;
+  if (!newEmail || !confirmEmail || !otp) {
+    return res.status(400).json({ success: false, message: "All fields are required" });
+  }
+  if (newEmail.toLowerCase().trim() !== confirmEmail.toLowerCase().trim()) {
+    return res.status(400).json({ success: false, message: "Emails do not match" });
+  }
+
+  const email = getAdminEmail(req);
+  try {
+    await verifyAdminOtp({ email, purpose: "cms-update", otp });
+  } catch (error) {
+    return res.status(401).json({ success: false, message: error.message });
+  }
+
+  const admin = await User.findOne({ email });
+  if (!admin) return res.status(404).json({ success: false, message: "Admin user not found" });
+
+  admin.email = newEmail.toLowerCase().trim();
+  await admin.save();
+
+  // Sync email change to .env
+  updateEnvValue("ADMIN_EMAIL", newEmail.toLowerCase().trim());
+
+  res.json({ success: true, message: "Admin email changed successfully" });
+};
+
+export { sendAdminOtp, verifyAdminOtp, verifyMatchClick, changeAdminPassword, changeAdminEmail };

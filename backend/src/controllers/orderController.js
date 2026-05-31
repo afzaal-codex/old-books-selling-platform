@@ -166,7 +166,7 @@ const createOrder = async (req, res) => {
         await sendEmail({
           to: recipientEmail,
           subject: subjectText,
-          html: getBrandedEmailTemplate(orderContent, subjectText)
+          html: getBrandedEmailTemplate(orderContent, subjectText, settings.supportEmail || "hello@bookworld.site")
         });
       }
     } catch (emailErr) {
@@ -419,7 +419,7 @@ const updateOrderStatus = async (req, res) => {
         await sendEmail({
           to: recipientEmail,
           subject: subjectText,
-          html: getBrandedEmailTemplate(emailContent, subjectText)
+          html: getBrandedEmailTemplate(emailContent, subjectText, settings.supportEmail || "hello@bookworld.site")
         });
       }
     } catch (emailErr) {

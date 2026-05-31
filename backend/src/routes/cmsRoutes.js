@@ -8,6 +8,7 @@ import {
   sendAdminOtp,
   verifyMatchClick,
   changeAdminPassword,
+  changeAdminEmail,
 } from "../controllers/adminSecurityController.js";
 
 import {
@@ -36,6 +37,13 @@ router.put(
   protect,
   adminProtect,
   changeAdminPassword
+);
+
+router.put(
+  "/admin-email",
+  protect,
+  adminProtect,
+  changeAdminEmail
 );
 
 router.put(
