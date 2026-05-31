@@ -58,6 +58,15 @@ let transporter = createTransporter();
 // =========================================
 
 const verifyConnection = async () => {
+  if (process.env.RESEND_API_KEY) {
+    console.log("✅ EMAIL API READY - Using Resend HTTP API (port 443)");
+    return true;
+  }
+  if (process.env.SENDGRID_API_KEY) {
+    console.log("✅ EMAIL API READY - Using SendGrid HTTP API (port 443)");
+    return true;
+  }
+
   try {
     await transporter.verify();
     console.log(`✅ SMTP READY - Email service is working on port ${EMAIL_PORT} (${EMAIL_SECURE ? "SSL" : "STARTTLS"})`);
@@ -83,11 +92,78 @@ const delay = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
 
 /**
  * Sends an email with automatic retry on transient failures.
- * Retries once after 3 seconds if the first attempt fails with
- * a connection/timeout error. Recreates the transporter on
- * connection-level failures before retrying.
+ * If RESEND_API_KEY or SENDGRID_API_KEY is configured in the env,
+ * it sends via HTTP API on port 443 to bypass firewall blocks.
  */
 const sendMailWithRetry = async (mailOptions, maxRetries = 1) => {
+  // If Resend API Key is configured, send via HTTP API on port 443
+  if (process.env.RESEND_API_KEY) {
+    console.log(`📡 Sending email to ${mailOptions.to} via Resend API (HTTPS)...`);
+    try {
+      const response = await fetch("https://api.resend.com/emails", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${process.env.RESEND_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          from: mailOptions.from || `"Book World" <onboarding@resend.dev>`,
+          to: [mailOptions.to],
+          subject: mailOptions.subject,
+          html: mailOptions.html,
+        }),
+      });
+      const data = await response.json();
+      if (!response.ok) {
+        throw new Error(data.message || JSON.stringify(data));
+      }
+      console.log(`✅ Email sent via Resend API | Id: ${data.id}`);
+      return { messageId: data.id };
+    } catch (apiError) {
+      console.error(`❌ Resend API failed:`, apiError.message);
+      throw apiError;
+    }
+  }
+
+  // If SendGrid API Key is configured, send via HTTP API on port 443
+  if (process.env.SENDGRID_API_KEY) {
+    console.log(`📡 Sending email to ${mailOptions.to} via SendGrid API (HTTPS)...`);
+    try {
+      let fromEmail = process.env.EMAIL_USER || "hello@bookworld.site";
+      let fromName = "Book World";
+      if (mailOptions.from) {
+        const match = mailOptions.from.match(/"([^"]+)"\s*<([^>]+)>/);
+        if (match) {
+          fromName = match[1];
+          fromEmail = match[2];
+        }
+      }
+      const response = await fetch("https://api.sendgrid.com/v3/mail/send", {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${process.env.SENDGRID_API_KEY}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          personalizations: [{ to: [{ email: mailOptions.to }] }],
+          from: { email: fromEmail, name: fromName },
+          subject: mailOptions.subject,
+          content: [{ type: "text/html", value: mailOptions.html }],
+        }),
+      });
+      if (!response.ok) {
+        const text = await response.text();
+        throw new Error(text || `Status ${response.status}`);
+      }
+      console.log(`✅ Email sent via SendGrid API`);
+      return { messageId: "sendgrid-success" };
+    } catch (apiError) {
+      console.error(`❌ SendGrid API failed:`, apiError.message);
+      throw apiError;
+    }
+  }
+
+  // Fallback to Nodemailer SMTP
   let lastError = null;
 
   for (let attempt = 0; attempt <= maxRetries; attempt++) {
