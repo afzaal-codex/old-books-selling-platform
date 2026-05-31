@@ -181,18 +181,21 @@ const getBooks = async (req, res) => {
       conditions.push({ recommended: true });
     }
     if (offersThisWeek === "true") {
-      conditions.push({ offersThisWeek: true });
+      if (!req.user?.isAdmin) {
+        conditions.push({
+          offersThisWeek: true,
+          $or: [
+            { offersThisWeekExpiry: { $exists: false } },
+            { offersThisWeekExpiry: null },
+            { offersThisWeekExpiry: { $gt: new Date() } }
+          ]
+        });
+      } else {
+        conditions.push({ offersThisWeek: true });
+      }
     }
     if (highDiscount === "true") {
-      conditions.push({
-        discountedPrice: { $gt: 0 },
-        $expr: {
-          $gte: [
-            { $divide: [{ $subtract: ["$originalPrice", "$discountedPrice"] }, "$originalPrice"] },
-            0.15,
-          ],
-        },
-      });
+      conditions.push({ highDiscount: true });
     }
 
     // Promo filter
@@ -529,13 +532,7 @@ const getBestSellerBooks = async (req, res) => {
 const getHighDiscountBooks = async (req, res) => {
   try {
     const filter = {
-      discountedPrice: { $gt: 0 },
-      $expr: {
-        $gte: [
-          { $divide: [{ $subtract: ["$originalPrice", "$discountedPrice"] }, "$originalPrice"] },
-          0.15,
-        ],
-      },
+      highDiscount: true
     };
     if (!req.user?.isAdmin) {
       const inactiveCats = await Category.find({ isActive: false }).select("_id");

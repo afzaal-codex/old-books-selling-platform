@@ -264,7 +264,11 @@ export default function OffersThisWeek({ offers }) {
     author: b.author?.name || "Unknown Author",
     price: `Rs. ${b.discountedPrice > 0 ? b.discountedPrice : b.originalPrice}`,
     oldPrice: `Rs. ${b.originalPrice}`,
-    endsAt: b.discountExpiresAt ? new Date(b.discountExpiresAt).getTime() : Date.now() + 2 * 24 * 3600 * 1000,
+    endsAt: b.offersThisWeekExpiry
+      ? new Date(b.offersThisWeekExpiry).getTime()
+      : b.discountExpiresAt
+      ? new Date(b.discountExpiresAt).getTime()
+      : Date.now() + 2 * 24 * 3600 * 1000,
     coverUrl: b.images?.[0] || "https://placehold.co/400x600?text=Book",
     rawBook: b
   })) : OFFERS;

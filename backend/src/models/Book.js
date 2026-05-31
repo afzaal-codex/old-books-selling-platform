@@ -189,6 +189,15 @@ const bookSchema = new mongoose.Schema(
       default: false,
     },
 
+    offersThisWeekExpiry: {
+      type: Date,
+    },
+
+    highDiscount: {
+      type: Boolean,
+      default: false,
+    },
+
     /* =========================
        RATINGS
     ========================= */

@@ -320,7 +320,24 @@ const AuthorDetails = () => {
       try {
         setLoading(true);
         const authsRes = await axiosInstance.get("/authors");
-        const matchedAuth = authsRes.data.find((a) => a.slug === slug);
+        let matchedAuth = null;
+        if (authsRes.data && Array.isArray(authsRes.data)) {
+          matchedAuth = authsRes.data.find(
+            (a) =>
+              a.slug?.toLowerCase() === slug?.toLowerCase() ||
+              a._id === slug
+          );
+        }
+
+        // Fallback: If not found by slug matching, and slug is an ObjectId, fetch directly
+        if (!matchedAuth && slug && slug.match(/^[0-9a-fA-F]{24}$/)) {
+          try {
+            const singleAuthRes = await axiosInstance.get(`/authors/${slug}`);
+            matchedAuth = singleAuthRes.data;
+          } catch (e) {
+            console.error("Failed to fetch author by ID directly", e);
+          }
+        }
 
         if (matchedAuth) {
           setAuthor(matchedAuth);

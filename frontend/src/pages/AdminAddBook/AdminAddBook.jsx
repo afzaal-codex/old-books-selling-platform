@@ -58,6 +58,8 @@ const AdminAddBook = () => {
       trending: false,
       newRelease: false,
       offersThisWeek: false,
+      offersThisWeekExpiry: "",
+      highDiscount: false,
       discountExpiresAt: "",
 
       bindingType: "Paperback",
@@ -422,6 +424,23 @@ const AdminAddBook = () => {
             />
           </div>
 
+          {/* OFFERS THIS WEEK EXPIRES AT */}
+
+          <div className="flex flex-col gap-1.5">
+            <span className="text-[10px] text-gray-400 font-bold uppercase pl-2">Offers This Week Expires At</span>
+            <input
+              type="datetime-local"
+              name="offersThisWeekExpiry"
+              value={
+                formData.offersThisWeekExpiry
+              }
+              onChange={
+                handleChange
+              }
+              className="rounded-2xl border border-gray-200 px-5 py-4 outline-none text-sm text-gray-600 focus:border-[#c8860a]"
+            />
+          </div>
+
           {/* BINDING TYPE */}
           <select
             name="bindingType"
@@ -578,6 +597,21 @@ const AdminAddBook = () => {
               className="h-4 w-4"
             />
             Offer This Week
+          </label>
+
+          <label className="flex items-center gap-3 cursor-pointer text-gray-700 font-medium">
+            <input
+              type="checkbox"
+              name="highDiscount"
+              checked={
+                formData.highDiscount
+              }
+              onChange={
+                handleChange
+              }
+              className="h-4 w-4"
+            />
+            High Discount
           </label>
         </div>
 
