@@ -21,9 +21,10 @@ export const toggleBlockUser = createAsyncThunk("auth/toggleBlockUser", async ({
   }
 });
 
-const token = localStorage.getItem("token") || null;
+const tokenVal = localStorage.getItem("token");
+const token = (tokenVal && tokenVal !== "null" && tokenVal !== "undefined") ? tokenVal : null;
 const userStr = localStorage.getItem("user");
-const user = userStr ? JSON.parse(userStr) : null;
+const user = (userStr && userStr !== "null" && userStr !== "undefined") ? JSON.parse(userStr) : null;
 const isAdmin = localStorage.getItem("isAdmin") === "true";
 
 const initialState = {

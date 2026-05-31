@@ -15,7 +15,14 @@ const sendAdminOtp = async (req, res) => {
     return res.status(400).json({ success: false, message: "Invalid OTP purpose" });
   }
 
-  const email = getAdminEmail(req);
+  let email = getAdminEmail(req);
+  if (purpose === "cms-update" && req.body.targetEmail) {
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(req.body.targetEmail)) {
+      return res.status(400).json({ success: false, message: "Invalid email format" });
+    }
+    email = req.body.targetEmail.toLowerCase().trim();
+  }
   const otp = createSixDigits();
   const matchNumber = createMatchNumber();
 
@@ -191,17 +198,18 @@ const changeAdminEmail = async (req, res) => {
     return res.status(400).json({ success: false, message: "Emails do not match" });
   }
 
-  const email = getAdminEmail(req);
+  const targetEmail = newEmail.toLowerCase().trim();
   try {
-    await verifyAdminOtp({ email, purpose: "cms-update", otp });
+    await verifyAdminOtp({ email: targetEmail, purpose: "cms-update", otp });
   } catch (error) {
     return res.status(401).json({ success: false, message: error.message });
   }
 
-  const admin = await User.findOne({ email });
+  const currentEmail = getAdminEmail(req);
+  const admin = await User.findOne({ email: currentEmail });
   if (!admin) return res.status(404).json({ success: false, message: "Admin user not found" });
 
-  admin.email = newEmail.toLowerCase().trim();
+  admin.email = targetEmail;
   await admin.save();
 
   // Sync email change to .env

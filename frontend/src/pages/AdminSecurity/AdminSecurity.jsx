@@ -35,10 +35,22 @@ const AdminSecurity = () => {
   };
 
   const requestEmailOtp = async () => {
+    if (!emailForm.newEmail || !emailForm.confirmEmail) {
+      toast.error("Please fill in New Email and Confirm Email first");
+      return;
+    }
+    if (emailForm.newEmail.toLowerCase().trim() !== emailForm.confirmEmail.toLowerCase().trim()) {
+      toast.error("New Email and Confirm Email do not match");
+      return;
+    }
     try {
-      const response = await axiosInstance.post("/cms/request-otp", { purpose: "cms-update" });
+      const targetEmail = emailForm.newEmail.toLowerCase().trim();
+      const response = await axiosInstance.post("/cms/request-otp", {
+        purpose: "cms-update",
+        targetEmail
+      });
       setEmailForm((prev) => ({ ...prev, matchNumber: response.data.matchNumber || "" }));
-      toast.success("OTP request sent to admin email");
+      toast.success(`OTP request sent to ${targetEmail}`);
     } catch (error) {
       toast.error(error.response?.data?.message || "Failed to send OTP");
     }

@@ -8,6 +8,7 @@ import {
 
 import {
   protect,
+  optionalProtect,
 } from "../middleware/authMiddleware.js";
 
 import { adminProtect } from "../middleware/adminMiddleware.js";
@@ -16,7 +17,7 @@ const router = express.Router();
 
 router.post(
   "/",
-  protect,
+  optionalProtect,
   createPayment
 );
 
