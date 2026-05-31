@@ -453,6 +453,9 @@ const Home = () => {
           <OfferThisWeek offers={offersThisWeek} />
         )}
 
+        {/* 4.5. CONNECT SECTION */}
+        <ConnectForm />
+
         {/* 5. FEATURED BOOKS SECTION */}
         {settings?.homepageSections?.featuredBooks !== false && featuredBooks.length > 0 && (
           <section className="hs-section">
@@ -607,8 +610,7 @@ const Home = () => {
           </section>
         )}
 
-        {/* 10. CONNECT SECTION */}
-        <ConnectForm />
+
 
       </div>
 

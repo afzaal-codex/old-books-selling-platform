@@ -1,9 +1,269 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import axiosInstance from "../../utils/axiosInstance";
-import { Package, Calendar, MapPin, CheckCircle, Clock, Truck, ShieldAlert, ArrowLeft, CreditCard, DollarSign } from "lucide-react";
-import toast from "react-hot-toast";
+import { Package, Calendar, MapPin, ShieldAlert, ShoppingBag, ArrowLeft } from "lucide-react";
 
+/* ─── Design tokens ───────────────────────────────────────────────────────── */
+const T = {
+  bg:         "#0a0a0b",
+  card:       "#111114",
+  hover:      "#16161a",
+  border:     "#222228",
+  gold:       "#c8860a",
+  text:       "#f0ede8",
+  muted:      "#6b6870",
+  dim:        "#44424a",
+  success:    "#10b981",
+  danger:     "#ef4444",
+  dangerBg:   "#1a0808",
+  dangerBdr:  "#3d1010",
+  successBg:  "#071a12",
+  successBdr: "#0d3d26",
+};
+
+const s = {
+  label: {
+    fontFamily: "system-ui, sans-serif",
+    fontSize: 9,
+    fontWeight: 700,
+    letterSpacing: "0.12em",
+    textTransform: "uppercase",
+    color: T.muted,
+  },
+  card: {
+    background: T.card,
+    border: `1px solid ${T.border}`,
+    borderRadius: 0,
+    fontFamily: "system-ui, sans-serif",
+    transition: "all 0.18s ease",
+  },
+};
+
+/* ─── Status Badge ───────────────────────────────────────────────────────── */
+const StatusBadge = ({ status }) => {
+  let bg, bdr, color;
+  if (status === "Cancelled")      { bg = T.dangerBg;  bdr = T.dangerBdr;  color = T.danger; }
+  else if (status === "Delivered") { bg = T.successBg; bdr = T.successBdr; color = T.success; }
+  else                             { bg = "#0e0e11";   bdr = T.border;     color = T.muted; }
+  return (
+    <span style={{
+      background: bg, border: `1px solid ${bdr}`, color,
+      fontSize: 9, fontWeight: 700, letterSpacing: "0.12em",
+      textTransform: "uppercase", padding: "4px 10px",
+      borderRadius: 0, fontFamily: "system-ui, sans-serif",
+      whiteSpace: "nowrap",
+    }}>
+      {status}
+    </span>
+  );
+};
+
+/* ─── Timeline ───────────────────────────────────────────────────────────── */
+const stages = [
+  { label: "Payment",          step: 1 },
+  { label: "Approved",         step: 2 },
+  { label: "Processing",       step: 3 },
+  { label: "Shipped",          step: 4 },
+  { label: "Out for Delivery", step: 5 },
+  { label: "Delivered",        step: 6 },
+];
+
+const getTimelineProgress = (status) => {
+  switch (status) {
+    case "Pending Payment Verification": return 1;
+    case "Payment Verified": case "Approved": return 2;
+    case "Processing": case "Ready to Ship": return 3;
+    case "Shipped": case "In Transit": return 4;
+    case "Out for Delivery": return 5;
+    case "Delivered": return 6;
+    default: return -1;
+  }
+};
+
+const DOT   = 24;
+const TOTAL = stages.length;
+const SEGS  = TOTAL - 1;
+
+const OrderTimeline = ({ progress }) => {
+  const completedSegs = Math.max(0, Math.min(progress - 1, SEGS));
+  const goldPct = (completedSegs / SEGS) * 100;
+
+  return (
+    <div>
+      <p style={{ ...s.label, marginBottom: 16 }}>Order Progress</p>
+
+      {/* Desktop horizontal */}
+      <div className="tl-desktop" style={{ position: "relative", display: "flex", alignItems: "flex-start" }}>
+        <div style={{
+          position: "absolute", top: `${DOT / 2}px`,
+          left: `${(1 / (TOTAL * 2)) * 100}%`,
+          width: `${((TOTAL - 1) / TOTAL) * 100}%`,
+          height: 1, background: T.border,
+          transform: "translateY(-50%)", zIndex: 0,
+        }} />
+        <div style={{
+          position: "absolute", top: `${DOT / 2}px`,
+          left: `${(1 / (TOTAL * 2)) * 100}%`,
+          width: `${((TOTAL - 1) / TOTAL) * goldPct}%`,
+          height: 1, background: T.gold,
+          transform: "translateY(-50%)", zIndex: 1,
+          transition: "width 0.5s ease",
+        }} />
+        {stages.map((stage) => {
+          const done    = progress >= stage.step;
+          const current = progress === stage.step;
+          return (
+            <div key={stage.step} style={{ flex: 1, zIndex: 2, display: "flex", flexDirection: "column", alignItems: "center", gap: 10 }}>
+              <div style={{
+                width: DOT, height: DOT,
+                background: done ? T.gold : T.card,
+                border: `1px solid ${done ? T.gold : T.border}`,
+                borderRadius: 0,
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontSize: 9, fontWeight: 800,
+                color: done ? "#000" : T.dim,
+                fontFamily: "system-ui, sans-serif",
+                transition: "all 0.18s ease",
+                transform: current ? "scale(1.18)" : "scale(1)",
+                boxShadow: current ? `0 0 0 3px ${T.gold}28` : "none",
+                flexShrink: 0,
+              }}>
+                {done ? "✓" : stage.step}
+              </div>
+              <span style={{ ...s.label, fontSize: 8, color: done ? T.text : T.dim, textAlign: "center", letterSpacing: "0.10em" }}>
+                {stage.label}
+              </span>
+            </div>
+          );
+        })}
+      </div>
+
+      {/* Mobile dots only */}
+      <div className="tl-mobile" style={{ display: "none" }}>
+        <div style={{ display: "flex", flexWrap: "wrap", gap: 8, alignItems: "flex-start" }}>
+          {stages.map((stage) => {
+            const done    = progress >= stage.step;
+            const current = progress === stage.step;
+            return (
+              <div key={stage.step} style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 5, flex: "1 0 calc(33% - 8px)" }}>
+                <div style={{
+                  width: 22, height: 22,
+                  background: done ? T.gold : T.card,
+                  border: `1px solid ${done ? T.gold : T.border}`,
+                  borderRadius: 0,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontSize: 8, fontWeight: 800,
+                  color: done ? "#000" : T.dim,
+                  fontFamily: "system-ui, sans-serif",
+                  transform: current ? "scale(1.15)" : "scale(1)",
+                  boxShadow: current ? `0 0 0 3px ${T.gold}28` : "none",
+                  transition: "all 0.18s ease",
+                }}>
+                  {done ? "✓" : stage.step}
+                </div>
+                <span style={{ ...s.label, fontSize: 7, color: done ? T.text : T.dim, textAlign: "center" }}>
+                  {stage.label}
+                </span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
+      <style>{`
+        @media (max-width: 600px) {
+          .tl-desktop { display: none !important; }
+          .tl-mobile  { display: block !important; }
+        }
+      `}</style>
+    </div>
+  );
+};
+
+/* ─── Activity Log ───────────────────────────────────────────────────────── */
+const ActivityLog = ({ timeline }) => (
+  <div style={{ borderTop: `1px solid ${T.border}`, paddingTop: 20, marginTop: 4 }}>
+    <p style={{ ...s.label, marginBottom: 16 }}>Activity History</p>
+    <div style={{ position: "relative", paddingLeft: 20 }}>
+      <div style={{ position: "absolute", left: 4, top: 6, bottom: 6, width: 1, background: T.border }} />
+      <div style={{ display: "flex", flexDirection: "column", gap: 16 }}>
+        {timeline.map((item, idx) => (
+          <div key={idx} style={{ position: "relative" }}>
+            <div style={{
+              position: "absolute", left: -20, top: 3,
+              width: 9, height: 9,
+              background: T.gold, border: `1px solid ${T.bg}`,
+              borderRadius: 0,
+            }} />
+            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", flexWrap: "wrap", gap: 4, marginBottom: 2 }}>
+              <span style={{ fontFamily: "system-ui, sans-serif", fontSize: 11, fontWeight: 700, color: T.text, letterSpacing: "-0.01em" }}>
+                {item.status}
+              </span>
+              <span style={{ ...s.label, fontSize: 9, letterSpacing: "0.08em" }}>
+                {new Date(item.actionDate).toLocaleString()}
+              </span>
+            </div>
+            {item.notes && (
+              <p style={{ fontFamily: "system-ui, sans-serif", fontSize: 10, color: T.muted, fontStyle: "italic", lineHeight: 1.5, marginBottom: 2 }}>
+                {item.notes}
+              </p>
+            )}
+            <span style={{ ...s.label, fontSize: 8, color: T.dim }}>
+              Logged by: {item.actionBy || "System"}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
+  </div>
+);
+
+/* ─── Delivery Details Block ─────────────────────────────────────────────── */
+const DeliveryDetails = ({ addr }) => {
+  const Pill = ({ label, value }) => (
+    <span style={{
+      display: "inline-flex",
+      alignItems: "baseline",
+      gap: 4,
+      fontFamily: "system-ui, sans-serif",
+      fontSize: 10,
+      lineHeight: 1.6,
+      whiteSpace: "normal",
+      wordBreak: "break-all",
+    }}>
+      <span style={{ ...s.label, fontSize: 8, color: T.dim, flexShrink: 0 }}>{label}:</span>
+      <span style={{ color: T.text, fontWeight: 600 }}>{value}</span>
+    </span>
+  );
+
+  return (
+    <div
+      className="px-[2px] md:px-[14px]"
+      style={{
+        background: "#0d0d10",
+        border: `1px solid ${T.border}`,
+        paddingTop: 10,
+        paddingBottom: 10,
+      }}
+    >
+      <p style={{ ...s.label, marginBottom: 8, display: "flex", alignItems: "center", gap: 6 }}>
+        <MapPin size={11} color={T.gold} strokeWidth={2} style={{ flexShrink: 0 }} />
+        Delivery Details
+      </p>
+
+      <div style={{ display: "flex", flexWrap: "wrap", gap: "4px 16px" }}>
+        <Pill label="Name"    value={addr.fullName} />
+        <Pill label="Address" value={`${addr.address}, ${addr.city}`} />
+        <Pill label="Phone"   value={addr.phone} />
+        {addr.email && (
+          <Pill label="Email" value={addr.email} />
+        )}
+      </div>
+    </div>
+  );
+};
+
+/* ─── Main GuestTracking Component ───────────────────────────────────────── */
 const GuestTracking = () => {
   const { orderId } = useParams();
   const navigate = useNavigate();
@@ -32,44 +292,13 @@ const GuestTracking = () => {
     }
   }, [orderId]);
 
-  // Timeline progress values
-  const getTimelineProgress = (status) => {
-    switch (status) {
-      case "Pending Payment Verification":
-        return 1;
-      case "Payment Verified":
-      case "Approved":
-        return 2;
-      case "Processing":
-      case "Ready to Ship":
-        return 3;
-      case "Shipped":
-      case "In Transit":
-        return 4;
-      case "Out for Delivery":
-        return 5;
-      case "Delivered":
-        return 6;
-      default:
-        return -1;
-    }
-  };
-
-  const stages = [
-    { label: "Payment Verification", step: 1 },
-    { label: "Approved", step: 2 },
-    { label: "Processing", step: 3 },
-    { label: "Shipped", step: 4 },
-    { label: "Out for Delivery", step: 5 },
-    { label: "Delivered", step: 6 },
-  ];
-
   if (loading) {
     return (
-      <div className="flex h-screen items-center justify-center bg-[var(--color-bg)] text-white">
-        <div className="flex flex-col items-center gap-3">
-          <div className="h-10 w-10 animate-spin rounded-full border-4 border-[var(--color-primary)] border-t-transparent"></div>
-          <p className="text-sm text-gray-400">Loading Order Tracking Details...</p>
+      <div style={{ display: "flex", alignItems: "center", justifyContext: "center", height: "100vh", background: T.bg }} className="flex justify-center items-center">
+        <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: 12 }}>
+          <div style={{ width: 28, height: 28, border: `1px solid ${T.border}`, borderTop: `1px solid ${T.gold}`, borderRadius: "50%", animation: "spin 0.7s linear infinite" }} />
+          <p style={{ fontFamily: "system-ui, sans-serif", fontSize: 13, color: T.muted }}>Loading Order Tracking Details...</p>
+          <style>{`@keyframes spin { to { transform: rotate(360deg); } }`}</style>
         </div>
       </div>
     );
@@ -77,17 +306,33 @@ const GuestTracking = () => {
 
   if (error || !order) {
     return (
-      <div className="flex flex-col items-center justify-center min-h-[60vh] bg-[var(--color-bg)] text-white p-6 space-y-6">
-        <ShieldAlert size={64} className="text-red-500" />
-        <div className="text-center space-y-2 max-w-md">
-          <h2 className="text-2xl font-bold text-red-500">Order Tracking Error</h2>
-          <p className="text-sm text-gray-400">{error || "Order not found or invalid URL."}</p>
+      <div style={{ display: "flex", flexDirection: "column", alignItems: "center", justifyContent: "center", minHeight: "60vh", background: T.bg, padding: 24, gap: 24 }}>
+        <ShieldAlert size={48} color={T.danger} strokeWidth={1.5} />
+        <div style={{ textAlign: "center", display: "flex", flexDirection: "column", gap: 8 }}>
+          <h2 style={{ fontFamily: "system-ui, sans-serif", fontSize: 20, fontWeight: 800, color: T.danger }}>Order Tracking Error</h2>
+          <p style={{ fontFamily: "system-ui, sans-serif", fontSize: 13, color: T.muted }}>{error || "Order not found or invalid URL."}</p>
         </div>
         <button
           onClick={() => navigate("/")}
-          className="flex items-center gap-2 px-6 py-3 bg-[var(--color-primary)] text-black font-bold rounded-none hover:opacity-90 transition cursor-pointer"
+          style={{
+            fontFamily: "system-ui, sans-serif",
+            fontSize: 10, fontWeight: 800,
+            textTransform: "uppercase", letterSpacing: "0.08em",
+            padding: "12px 24px",
+            background: T.gold,
+            color: "#000",
+            border: "none",
+            borderRadius: 0,
+            cursor: "pointer",
+            display: "flex",
+            alignItems: "center",
+            gap: 8,
+            transition: "opacity 0.18s ease",
+          }}
+          onMouseEnter={(e) => e.target.style.opacity = 0.85}
+          onMouseLeave={(e) => e.target.style.opacity = 1}
         >
-          <ArrowLeft size={16} /> Return to Storefront
+          <ArrowLeft size={12} strokeWidth={2.5} /> Return to Storefront
         </button>
       </div>
     );
@@ -96,188 +341,197 @@ const GuestTracking = () => {
   const progress = getTimelineProgress(order.orderStatus);
 
   return (
-    <div className="max-w-4xl mx-auto space-y-8 bg-[var(--color-bg)] text-white py-8 px-4">
-      {/* Header */}
-      <div className="flex items-center gap-3">
-        <button
-          onClick={() => navigate("/")}
-          className="p-2 bg-neutral-900 border border-[var(--color-border)] rounded-none cursor-pointer hover:border-gray-500 transition"
-        >
-          <ArrowLeft size={16} />
-        </button>
-        <div>
-          <h1 className="text-3xl font-extrabold text-[var(--color-primary)]">Order Tracking</h1>
-          <p className="text-xs text-gray-450 mt-1">Real-time status tracking for order #{order.orderNumber}</p>
+    <div style={{ background: T.bg, minHeight: "100%", padding: "24px 0 48px", fontFamily: "system-ui, sans-serif" }} className="px-4">
+      <div style={{ maxWidth: "800px", margin: "0 auto", display: "flex", flexDirection: "column", gap: 28 }}>
+        {/* Page Header */}
+        <div style={{ paddingBottom: 28, borderBottom: `1px solid ${T.border}`, display: "flex", flexDirection: "column", gap: 12 }}>
+          <div style={{ display: "flex", alignItems: "center", gap: 7, fontSize: 11, fontWeight: 600, letterSpacing: "0.12em", textTransform: "uppercase", color: T.gold }}>
+            <button
+              onClick={() => navigate("/")}
+              style={{
+                background: "transparent",
+                border: "none",
+                cursor: "pointer",
+                display: "flex",
+                alignItems: "center",
+                gap: 6,
+                color: T.gold,
+                fontFamily: "system-ui, sans-serif",
+                fontSize: 10,
+                fontWeight: 800,
+                letterSpacing: "0.12em",
+                textTransform: "uppercase",
+                padding: 0,
+              }}
+            >
+              <ArrowLeft size={11} strokeWidth={2.5} />
+              Back to Store
+            </button>
+          </div>
+          <div>
+            <h1 style={{ fontFamily: "system-ui, sans-serif", fontSize: "clamp(24px, 4vw, 34px)", fontWeight: 800, color: T.text, lineHeight: 1.15, margin: "0 0 6px", letterSpacing: "-0.01em" }}>
+              Order Tracking
+            </h1>
+            <p style={{ fontFamily: "system-ui, sans-serif", fontSize: 13, color: T.muted, margin: 0 }}>
+              Real-time status tracking for order #{order.orderNumber}
+            </p>
+          </div>
         </div>
-      </div>
 
-      <div className="grid gap-8 md:grid-cols-3">
-        {/* Main Details */}
-        <div className="md:col-span-2 space-y-6">
-          <div className="bg-[var(--color-card-bg)] border border-[var(--color-border)] rounded-none py-6 px-[2px] md:px-6 space-y-6 shadow-md">
-            {/* Status Header */}
-            <div className="flex justify-between items-center border-b border-neutral-900 pb-4">
-              <div>
-                <span className="text-[10px] text-gray-500 uppercase tracking-widest block">Reference ID</span>
-                <span className="text-xs font-mono text-gray-300">{order._id}</span>
+        {/* Order Details Card */}
+        <div style={{ ...s.card, overflow: "hidden" }}>
+          {/* Card Header Row */}
+          <div
+            className="px-[2px] md:px-6"
+            style={{
+              width: "100%",
+              background: T.hover,
+              borderBottom: `1px solid ${T.border}`,
+              paddingTop: 16,
+              paddingBottom: 16,
+              display: "flex",
+              flexWrap: "wrap",
+              justifyContent: "space-between",
+              alignItems: "center",
+              gap: 12,
+            }}
+          >
+            {/* Left Meta */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 4, textAlign: "left" }}>
+              {order.orderNumber && (
+                <span style={{
+                  fontFamily: "system-ui, sans-serif",
+                  fontSize: 11, fontWeight: 800,
+                  textTransform: "uppercase", letterSpacing: "0.07em",
+                  color: T.muted,
+                }}>
+                  Order&nbsp;<span style={{ color: T.gold }}>{order.orderNumber}</span>
+                </span>
+              )}
+              <span style={{ ...s.label, fontSize: 8, color: T.dim }}>
+                ID: {order._id}
+              </span>
+              <div style={{ display: "flex", alignItems: "center", gap: 6, fontFamily: "system-ui, sans-serif", fontSize: 10, color: T.muted }}>
+                <Calendar size={11} color={T.gold} strokeWidth={2} />
+                {new Date(order.createdAt).toLocaleDateString()}
               </div>
-              <span className={`px-4 py-1.5 rounded-full text-xs font-bold ${
-                order.orderStatus === "Cancelled"
-                  ? "bg-red-950/40 border border-red-800 text-red-400"
-                  : order.orderStatus === "Delivered"
-                  ? "bg-emerald-950/40 border border-emerald-800 text-emerald-400"
-                  : "bg-neutral-850 border border-neutral-700 text-gray-300"
-              }`}>
-                {order.orderStatus}
+            </div>
+
+            {/* Right Status / Price */}
+            <div style={{ display: "flex", alignItems: "center", gap: 12, flexWrap: "wrap" }}>
+              <StatusBadge status={order.orderStatus} />
+              <span style={{ fontFamily: "system-ui, sans-serif", fontSize: 15, fontWeight: 800, color: T.gold, letterSpacing: "-0.01em" }}>
+                Rs.&nbsp;{order.totalPrice}
               </span>
             </div>
+          </div>
 
-            {/* Items */}
-            <div className="space-y-4">
-              <h3 className="font-bold text-sm text-[var(--color-primary)] uppercase tracking-wider">Ordered Items</h3>
-              <div className="space-y-3">
+          {/* Card Body */}
+          <div style={{ padding: "20px 24px", display: "flex", flexDirection: "column", gap: 20 }}>
+            {/* Ordered Items */}
+            <div>
+              <p style={{ ...s.label, marginBottom: 12 }}>Ordered Items</p>
+              <div style={{ display: "flex", flexDirection: "column", gap: 0 }}>
                 {order.orderItems.map((item, idx) => (
-                  <div key={idx} className="flex justify-between items-center text-sm">
-                    <div className="flex items-center gap-3">
+                  <div key={idx} style={{
+                    display: "flex", justifyContent: "space-between", alignItems: "center",
+                    padding: "10px 0",
+                    borderBottom: idx < order.orderItems.length - 1 ? `1px solid ${T.border}` : "none",
+                  }}>
+                    <div style={{ display: "flex", alignItems: "center", gap: 10 }}>
                       {item.image && (
-                        <img src={item.image} alt={item.title} className="h-12 w-8 object-cover rounded-md" />
+                        <img src={item.image} alt={item.title} style={{ width: 28, height: 40, objectFit: "cover", border: `1px solid ${T.border}`, borderRadius: 0, flexShrink: 0 }} />
                       )}
-                      <div>
-                        <p className="font-medium text-gray-200">{item.title}</p>
-                        <p className="text-[10px] text-gray-400">Qty: {item.quantity} | Rs. {item.price} each</p>
+                      <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+                        <span style={{ fontFamily: "system-ui, sans-serif", fontSize: 12, fontWeight: 600, color: T.text }}>
+                          {item.title}
+                        </span>
+                        <span style={{ ...s.label, fontSize: 8, color: T.dim }}>Qty: {item.quantity}</span>
                       </div>
                     </div>
-                    <span className="font-semibold text-gray-300">Rs. {item.price * item.quantity}</span>
+                    <span style={{ fontFamily: "system-ui, sans-serif", fontSize: 11, fontWeight: 700, color: T.text }}>
+                      Rs.&nbsp;{item.price * item.quantity}
+                    </span>
                   </div>
                 ))}
               </div>
             </div>
 
-            {/* Shipping Info */}
-            <div className="pt-4 border-t border-neutral-900 space-y-3">
-              <h3 className="font-bold text-sm text-[var(--color-primary)] uppercase tracking-wider flex items-center gap-2"><MapPin size={16} /> Delivery Details</h3>
-              <div className="flex items-start gap-3 bg-neutral-900/40 border border-neutral-900 rounded-none py-4 px-[2px] md:px-4 text-xs text-gray-300">
-                <div className="space-y-1">
-                  <p><strong>Name:</strong> {order.shippingAddress.fullName}</p>
-                  <p><strong>Phone:</strong> {order.shippingAddress.phone}</p>
-                  <p className="break-all"><strong>Email:</strong> {order.shippingAddress.email}</p>
-                  <p><strong>Address:</strong> {order.shippingAddress.address}, {order.shippingAddress.city}</p>
+            {/* Payment & Invoice Breakdown */}
+            <div style={{ display: "flex", flexDirection: "column", gap: 12, background: "#0d0d10", border: `1px solid ${T.border}`, padding: "16px 20px" }}>
+              <p style={{ ...s.label, marginBottom: 4 }}>Payment & Cost Summary</p>
+              <div style={{ display: "grid", gap: "16px 24px", gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))" }}>
+                {/* Payment info */}
+                <div style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 11, color: T.muted }}>
+                  <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <span>Payment Method:</span>
+                    <strong style={{ color: T.text }}>{order.paymentMethod}</strong>
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <span>Payment Status:</span>
+                    <strong style={{ color: order.paymentStatus === "Paid" ? T.success : T.gold }}>{order.paymentStatus}</strong>
+                  </div>
+                  {order.transactionId && (
+                    <div style={{ display: "flex", justifyContent: "space-between" }}>
+                      <span>Transaction ID:</span>
+                      <strong style={{ color: T.text, fontFamily: "monospace" }}>{order.transactionId}</strong>
+                    </div>
+                  )}
+                </div>
+                {/* Cost breakdown */}
+                <div style={{ display: "flex", flexDirection: "column", gap: 6, fontSize: 11, color: T.muted }} className="pricing-border-left">
+                  <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <span>Subtotal:</span>
+                    <span style={{ color: T.text }}>Rs. {order.subtotal}</span>
+                  </div>
+                  <div style={{ display: "flex", justifyContent: "space-between" }}>
+                    <span>Delivery Charges:</span>
+                    <span style={{ color: T.text }}>Rs. {order.deliveryCharges}</span>
+                  </div>
+                  {order.couponDiscount > 0 && (
+                    <div style={{ display: "flex", justifyContent: "space-between", color: T.success }}>
+                      <span>Discount:</span>
+                      <span>- Rs. {order.couponDiscount}</span>
+                    </div>
+                  )}
+                  <div style={{ display: "flex", justifyContent: "space-between", fontSize: 13, fontWeight: 800, color: T.text, borderTop: `1px solid ${T.border}`, paddingTop: 6, marginTop: 4 }}>
+                    <span>Total Paid:</span>
+                    <span style={{ color: T.gold }}>Rs. {order.totalPrice}</span>
+                  </div>
                 </div>
               </div>
             </div>
 
-            {/* Visual Timeline */}
-            {progress !== -1 ? (
-              <div className="pt-4 border-t border-neutral-900 space-y-4">
-                <h3 className="font-bold text-sm text-[var(--color-primary)] uppercase tracking-wider">Order Progress</h3>
-                <div className="relative flex flex-col md:flex-row justify-between items-center gap-4 text-[10px] text-gray-400 pt-2">
-                  <div className="absolute top-1/2 left-0 h-0.5 w-full bg-neutral-850 -translate-y-1/2 hidden md:block z-0"></div>
-                  <div
-                    className="absolute top-1/2 left-0 h-0.5 bg-[var(--color-primary)] -translate-y-1/2 hidden md:block z-0 transition-all duration-500"
-                    style={{ width: `${((progress - 1) / 5) * 100}%` }}
-                  ></div>
+            {/* Delivery address */}
+            <DeliveryDetails addr={order.shippingAddress} />
 
-                  {stages.map((stage) => {
-                    const isDone = progress >= stage.step;
-                    const isCurrent = progress === stage.step;
-                    return (
-                      <div key={stage.step} className="flex md:flex-col items-center gap-2 md:gap-1.5 z-10 w-full md:w-auto">
-                        <div className={`h-6 w-6 rounded-full flex items-center justify-center border font-bold text-[10px] transition duration-300 ${
-                          isDone
-                            ? "bg-[var(--color-primary)] border-[var(--color-primary)] text-black"
-                            : "bg-neutral-900 border-neutral-700 text-gray-500"
-                        } ${isCurrent ? "ring-4 ring-[var(--color-primary)]/20 scale-110" : ""}`}>
-                          {isDone ? "✓" : stage.step}
-                        </div>
-                        <span className={`font-semibold text-center ${isDone ? "text-gray-250" : "text-gray-600"}`}>
-                          {stage.label}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
+            {/* Timeline or cancelled */}
+            {progress !== -1 ? (
+              <OrderTimeline progress={progress} />
             ) : (
-              <div className="flex items-center gap-2 bg-red-950/20 border border-red-900/40 rounded-none py-4 px-[2px] md:px-4 text-xs text-red-400 font-semibold border-t border-neutral-900">
-                <ShieldAlert size={16} />
-                <span>This order has been cancelled or has entered a special state. Please contact customer support for further information.</span>
+              <div style={{ display: "flex", alignItems: "center", gap: 8, background: T.dangerBg, border: `1px solid ${T.dangerBdr}`, padding: "10px 14px" }}>
+                <ShieldAlert size={13} color={T.danger} strokeWidth={2} style={{ flexShrink: 0 }} />
+                <span style={{ fontFamily: "system-ui, sans-serif", fontSize: 10, fontWeight: 700, color: T.danger, letterSpacing: "0.04em" }}>
+                  This order has been cancelled — items returned to inventory stock.
+                </span>
               </div>
             )}
-          </div>
-        </div>
 
-        {/* Sidebar Info */}
-        <div className="space-y-6">
-          {/* Payment Card */}
-          <div className="bg-[var(--color-card-bg)] border border-[var(--color-border)] rounded-none py-6 px-[2px] md:px-6 space-y-4 shadow-md text-xs text-gray-300">
-            <h3 className="font-bold text-sm text-[var(--color-primary)] uppercase tracking-wider flex items-center gap-2">
-              <CreditCard size={16} /> Payment Summary
-            </h3>
-            <div className="space-y-2 pt-2">
-              <div className="flex justify-between">
-                <span>Payment Method:</span>
-                <span className="font-bold text-white">{order.paymentMethod}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Payment Status:</span>
-                <span className={`font-semibold ${
-                  order.paymentStatus === "Paid" ? "text-emerald-400" : "text-yellow-500"
-                }`}>{order.paymentStatus}</span>
-              </div>
-              {order.transactionId && (
-                <div className="flex justify-between">
-                  <span>Transaction ID:</span>
-                  <span className="font-mono text-white tracking-wider">{order.transactionId}</span>
-                </div>
-              )}
-            </div>
-
-            <div className="border-t border-neutral-900 pt-3 space-y-2 text-gray-400">
-              <div className="flex justify-between">
-                <span>Subtotal:</span>
-                <span>Rs. {order.subtotal}</span>
-              </div>
-              <div className="flex justify-between">
-                <span>Delivery:</span>
-                <span>Rs. {order.deliveryCharges}</span>
-              </div>
-              {order.couponDiscount > 0 && (
-                <div className="flex justify-between text-emerald-400 font-semibold">
-                  <span>Discount:</span>
-                  <span>- Rs. {order.couponDiscount}</span>
-                </div>
-              )}
-              <div className="flex justify-between text-sm font-extrabold text-white border-t border-neutral-900 pt-2">
-                <span>Grand Total:</span>
-                <span className="text-[var(--color-primary)]">Rs. {order.totalPrice}</span>
-              </div>
-            </div>
-          </div>
-
-          {/* Detailed Activity Logs */}
-          <div className="bg-[var(--color-card-bg)] border border-[var(--color-border)] rounded-none py-6 px-[2px] md:px-6 space-y-4 shadow-md text-xs">
-            <h3 className="font-bold text-sm text-[var(--color-primary)] uppercase tracking-wider flex items-center gap-2">
-              <Clock size={16} /> Status History
-            </h3>
-            {order.timeline && order.timeline.length > 0 ? (
-              <div className="relative pl-5 space-y-4 before:absolute before:left-1.5 before:top-2 before:bottom-2 before:w-0.5 before:bg-neutral-850 pt-2">
-                {order.timeline.map((item, idx) => (
-                  <div key={idx} className="relative space-y-1">
-                    <span className="absolute -left-[19px] top-1 h-2 w-2 rounded-full bg-[var(--color-primary)]"></span>
-                    <div className="flex flex-col text-gray-300 font-semibold">
-                      <span>{item.status}</span>
-                      <span className="text-[9px] text-gray-500 font-normal">{new Date(item.actionDate).toLocaleString()}</span>
-                    </div>
-                    {item.notes && <p className="text-gray-400 italic text-[11px] leading-tight">{item.notes}</p>}
-                  </div>
-                ))}
-              </div>
-            ) : (
-              <p className="text-gray-500 pt-2 text-center italic">No tracking updates logged yet.</p>
+            {/* Activity logs */}
+            {order.timeline && order.timeline.length > 0 && (
+              <ActivityLog timeline={order.timeline} />
             )}
           </div>
         </div>
       </div>
+      <style>{`
+        @media (min-width: 600px) {
+          .pricing-border-left {
+            border-left: 1px solid ${T.border};
+            padding-left: 24px;
+          }
+        }
+      `}</style>
     </div>
   );
 };
