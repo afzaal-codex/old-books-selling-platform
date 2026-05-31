@@ -72,3 +72,5 @@ app.listen(PORT, () => {
     `Server running on port ${PORT}`
   );
 });
+
+// Server startup script
