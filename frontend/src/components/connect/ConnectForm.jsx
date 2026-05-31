@@ -121,8 +121,9 @@ const ConnectForm = () => {
         }
 
         .cf-img-wrap {
-          position: absolute;
-          inset: 0;
+          position: relative;
+          width: 62%;
+          height: 88%;
           overflow: hidden;
         }
 
@@ -246,14 +247,13 @@ const ConnectForm = () => {
         @media (min-width: 640px) {
           .cf-left {
             display: flex;
-            flex: 0 0 260px;
-          }
-
-          .cf-img-wrap {
-            width: 100%;
+            flex: 1;
+            align-items: flex-end;
+            justify-content: center;
           }
 
           .cf-right {
+            flex: 1;
             padding: 44px 52px 44px 40px;
           }
         }
