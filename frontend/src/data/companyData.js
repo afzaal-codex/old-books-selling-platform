@@ -12,7 +12,7 @@ const companyData = {
     "Online Old Book Store",
 
   email:
-    "support@bookworld.site",
+    "hello@bookworld.site",
 
   phone:
     "+92 300 0000000",

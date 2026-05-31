@@ -1,4 +1,5 @@
 import companyData from "../../data/companyData";
+import { Link } from "react-router-dom";
 
 const FooterBottom = () => {
   return (
@@ -61,12 +62,12 @@ const FooterBottom = () => {
         </p>
 
         <div className="footer-bottom-links">
-          <button className="footer-bottom-link-item">
+          <Link to="/faq" className="footer-bottom-link-item" style={{ textDecoration: "none" }}>
             Privacy Policy
-          </button>
-          <button className="footer-bottom-link-item">
+          </Link>
+          <Link to="/faq" className="footer-bottom-link-item" style={{ textDecoration: "none" }}>
             Terms &amp; Conditions
-          </button>
+          </Link>
         </div>
       </div>
     </div>

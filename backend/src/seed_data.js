@@ -815,7 +815,7 @@ async function seed() {
     const bookIds = insertedBooks.slice(0, 5).map((b) => b._id);
     
     await Settings.create({
-      supportEmail: "support@bookworld.site",
+      supportEmail: "hello@bookworld.site",
       supportPhone: "+92 300 1234567",
       socialLinks: {
         facebook: "https://facebook.com/bookworld",

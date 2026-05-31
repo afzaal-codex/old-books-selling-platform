@@ -24,17 +24,35 @@ const FooterContact = () => {
         color: "#8b8b92"
       }}>
         <p style={{ margin: 0 }}>
-          {settings?.supportEmail || "support@bookworld.site"}
+          <a
+            href={`mailto:${settings?.supportEmail || "hello@bookworld.site"}`}
+            className="footer-contact-link"
+            style={{ color: "#8b8b92", textDecoration: "none", transition: "color 0.18s ease" }}
+          >
+            {settings?.supportEmail || "hello@bookworld.site"}
+          </a>
         </p>
 
         <p style={{ margin: 0 }}>
-          {settings?.supportPhone || "+92 300 0000000"}
+          <a
+            href={`tel:${settings?.supportPhone || "+92 300 0000000"}`}
+            className="footer-contact-link"
+            style={{ color: "#8b8b92", textDecoration: "none", transition: "color 0.18s ease" }}
+          >
+            {settings?.supportPhone || "+92 300 0000000"}
+          </a>
         </p>
 
         <p style={{ margin: 0, color: "#6b6870" }}>
           Customer Support Available 24/7
         </p>
       </div>
+
+      <style>{`
+        .footer-contact-link:hover {
+          color: #ffffff !important;
+        }
+      `}</style>
     </div>
   );
 };
