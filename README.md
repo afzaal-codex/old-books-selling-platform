@@ -88,11 +88,11 @@ To prevent customers from viewing or ordering items in temporarily unavailable g
    ```env
    PORT=5000
    NODE_ENV=development
-   MONGO_URI=mongodb://127.0.0.1:27017/oldbooksstore
+   MONGO_URI=mongodb://127.0.0.1:27017/
    JWT_SECRET=your_jwt_secret_key
-   ADMIN_EMAIL=ibneadam4542@gmail.com
-   ADMIN_PASSWORD=Afzaal15
-   ADMIN_NAME="Muhammad Afzaal"
+   ADMIN_EMAIL=xyz@gmail.com
+   ADMIN_PASSWORD=password
+   ADMIN_NAME="xyz"
    CLOUDINARY_CLOUD_NAME=your_cloudinary_cloud_name
    CLOUDINARY_API_KEY=your_cloudinary_api_key
    CLOUDINARY_API_SECRET=your_cloudinary_api_secret
