@@ -39,20 +39,12 @@ export const protect = async (req, res, next) => {
     // =========================================
 
     if (decoded.isAdmin) {
-
-      req.user = {
-        _id: "admin-id",
-
-        isAdmin: true,
-
-        name:
-          (process.env.ADMIN_NAME || "").trim(),
-
-        email:
-          (process.env.ADMIN_EMAIL || "").trim(),
-      };
-
-      return next();
+      const adminUser = await User.findById(decoded.id).select("-password");
+      if (adminUser) {
+        req.user = adminUser;
+        req.user.isAdmin = true;
+        return next();
+      }
     }
 
     // =========================================
@@ -167,13 +159,12 @@ export const optionalProtect = async (req, res, next) => {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
     if (decoded.isAdmin) {
-      req.user = {
-        _id: "admin-id",
-        isAdmin: true,
-        name: (process.env.ADMIN_NAME || "").trim(),
-        email: (process.env.ADMIN_EMAIL || "").trim(),
-      };
-      return next();
+      const adminUser = await User.findById(decoded.id).select("-password");
+      if (adminUser) {
+        req.user = adminUser;
+        req.user.isAdmin = true;
+        return next();
+      }
     }
 
     const user = await User.findById(decoded.id).select("-password");

@@ -251,9 +251,7 @@ user.isInactive = false;
 await user.save();
 
     // ADMIN CHECK
-    const isAdmin =
-      user.email.trim().toLowerCase() ===
-      (process.env.ADMIN_EMAIL || "").trim().toLowerCase();
+    const isAdmin = user.isAdmin === true;
 
     if (isAdmin) {
       if (!otp) {
@@ -583,9 +581,7 @@ export const verifySignupOTP = async (
     });
 
     // ADMIN CHECK
-    const isAdmin =
-      user.email ===
-      process.env.ADMIN_EMAIL;
+    const isAdmin = user.isAdmin === true;
 
     // TOKEN
     const token = generateToken(
@@ -706,9 +702,7 @@ user.isInactive = false;
 
 await user.save();
     // ADMIN CHECK
-    const isAdmin =
-      user.email ===
-      process.env.ADMIN_EMAIL;
+    const isAdmin = user.isAdmin === true;
 
     // JWT TOKEN
     const jwtToken =
