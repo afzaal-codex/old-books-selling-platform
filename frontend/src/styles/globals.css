@@ -2,13 +2,13 @@
 @import "./variables.css";
 @import "./animations.css";
 
-/* Global Placeholder Golden Style */
+/* Global Placeholder Style */
 ::placeholder {
-  color: #c8860a !important;
+  color: var(--color-primary) !important;
   opacity: 0.75 !important;
 }
 input::placeholder, textarea::placeholder, select::placeholder {
-  color: #c8860a !important;
+  color: var(--color-primary) !important;
   opacity: 0.75 !important;
 }
 
@@ -457,8 +457,10 @@ img, picture, video, canvas, svg {
 }
 
 .admin-layout input::placeholder,
-.admin-layout textarea::placeholder {
-  color: #DCDCDC !important;
+.admin-layout textarea::placeholder,
+.admin-layout select::placeholder {
+  color: #000000 !important;
+  opacity: 1 !important;
 }
 
 /* Standardized Button System */
