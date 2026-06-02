@@ -249,12 +249,21 @@ const BookCard = ({ book, noBorder }) => {
                   e.preventDefault(); e.stopPropagation();
                   setThumbStartIndex((prev) => Math.max(0, prev - 1));
                 }}
-                className={`absolute left-1 top-1/2 -translate-y-1/2 z-20 bg-black/75 hover:bg-black text-white rounded-full p-0.5 transition ${
-                  thumbStartIndex === 0 ? "opacity-30 cursor-not-allowed" : "opacity-100 cursor-pointer"
+                className={`absolute left-0.5 top-1/2 -translate-y-1/2 z-20 transition ${
+                  thumbStartIndex === 0 ? "opacity-25 cursor-not-allowed" : "opacity-100 cursor-pointer hover:scale-110"
                 }`}
-                style={{ border: "none", display: "flex", alignItems: "center", justifyContent: "center" }}
+                style={{
+                  background: "none",
+                  border: "none",
+                  outline: "none",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#c8860a",
+                  padding: 0,
+                }}
               >
-                <ChevronLeft size={10} />
+                <ChevronLeft size={18} strokeWidth={3} />
               </button>
               <button
                 type="button"
@@ -263,12 +272,21 @@ const BookCard = ({ book, noBorder }) => {
                   e.preventDefault(); e.stopPropagation();
                   setThumbStartIndex((prev) => Math.min(book.images.length - 4, prev + 1));
                 }}
-                className={`absolute right-1 top-1/2 -translate-y-1/2 z-20 bg-black/75 hover:bg-black text-white rounded-full p-0.5 transition ${
-                  thumbStartIndex >= book.images.length - 4 ? "opacity-30 cursor-not-allowed" : "opacity-100 cursor-pointer"
+                className={`absolute right-0.5 top-1/2 -translate-y-1/2 z-20 transition ${
+                  thumbStartIndex >= book.images.length - 4 ? "opacity-25 cursor-not-allowed" : "opacity-100 cursor-pointer hover:scale-110"
                 }`}
-                style={{ border: "none", display: "flex", alignItems: "center", justifyContent: "center" }}
+                style={{
+                  background: "none",
+                  border: "none",
+                  outline: "none",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  color: "#c8860a",
+                  padding: 0,
+                }}
               >
-                <ChevronRight size={10} />
+                <ChevronRight size={18} strokeWidth={3} />
               </button>
             </>
           )}
@@ -288,8 +306,7 @@ const BookCard = ({ book, noBorder }) => {
                   }`}
                   style={{
                     width: "calc(25% - 3px)",
-                    aspectRatio: "2 / 3",
-                    height: "40px",
+                    aspectRatio: "1 / 1",
                   }}
                 >
                   <img
