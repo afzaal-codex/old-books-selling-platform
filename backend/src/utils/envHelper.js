@@ -1,5 +1,9 @@
 import fs from "fs";
 import path from "path";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 /**
  * Updates a specific key in the .env file with a new value.
@@ -8,7 +12,7 @@ import path from "path";
  */
 export const updateEnvValue = (key, value) => {
   try {
-    const envPath = path.resolve(process.cwd(), ".env");
+    const envPath = path.resolve(__dirname, "../../.env");
     if (!fs.existsSync(envPath)) {
       console.warn(`.env file not found at ${envPath}`);
       return false;
