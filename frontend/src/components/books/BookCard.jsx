@@ -1,7 +1,7 @@
 import { Heart, ShoppingCart, Share2, ChevronLeft, ChevronRight } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import toast from "react-hot-toast";
 import { addToCart } from "../../store/slices/cartSlice";
 import { toggleWishlistItem, fetchWishlist } from "../../store/slices/wishlistSlice";
@@ -11,6 +11,15 @@ const BookCard = ({ book, noBorder }) => {
   const navigate = useNavigate();
   const [activeImgIdx, setActiveImgIdx] = useState(0);
   const [thumbStartIndex, setThumbStartIndex] = useState(0);
+  const [maxThumbs, setMaxThumbs] = useState(window.innerWidth < 768 ? 5 : 6);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setMaxThumbs(window.innerWidth < 768 ? 5 : 6);
+    };
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
 
   const { isAuthenticated } = useSelector((state) => state.auth);
   const { wishlist } = useSelector((state) => state.wishlist);
@@ -202,8 +211,8 @@ const BookCard = ({ book, noBorder }) => {
 
       {/* ── THUMBNAIL CAROUSEL ── */}
       {book.images && book.images.length > 0 && (
-        <div className="relative mx-auto select-none w-[50%]" style={{ marginTop: "4px", marginBottom: "4px" }}>
-          {book.images.length > 4 && (
+        <div className="relative mx-auto select-none w-[75%] md:w-[60%]" style={{ marginTop: "4px", marginBottom: "4px" }}>
+          {book.images.length > maxThumbs && (
             <>
               <button
                 type="button"
@@ -212,7 +221,7 @@ const BookCard = ({ book, noBorder }) => {
                   e.preventDefault(); e.stopPropagation();
                   setThumbStartIndex((prev) => Math.max(0, prev - 1));
                 }}
-                className={`absolute -left-6 top-1/2 -translate-y-1/2 z-20 transition ${
+                className={`absolute -left-5 md:-left-6 top-1/2 -translate-y-1/2 z-20 transition ${
                   thumbStartIndex === 0 ? "opacity-25 cursor-not-allowed" : "opacity-100 cursor-pointer hover:scale-110"
                 }`}
                 style={{
@@ -230,13 +239,13 @@ const BookCard = ({ book, noBorder }) => {
               </button>
               <button
                 type="button"
-                disabled={thumbStartIndex >= book.images.length - 4}
+                disabled={thumbStartIndex >= book.images.length - maxThumbs}
                 onClick={(e) => {
                   e.preventDefault(); e.stopPropagation();
-                  setThumbStartIndex((prev) => Math.min(book.images.length - 4, prev + 1));
+                  setThumbStartIndex((prev) => Math.min(book.images.length - maxThumbs, prev + 1));
                 }}
-                className={`absolute -right-6 top-1/2 -translate-y-1/2 z-20 transition ${
-                  thumbStartIndex >= book.images.length - 4 ? "opacity-25 cursor-not-allowed" : "opacity-100 cursor-pointer hover:scale-110"
+                className={`absolute -right-5 md:-right-6 top-1/2 -translate-y-1/2 z-20 transition ${
+                  thumbStartIndex >= book.images.length - maxThumbs ? "opacity-25 cursor-not-allowed" : "opacity-100 cursor-pointer hover:scale-110"
                 }`}
                 style={{
                   background: "none",
@@ -254,7 +263,7 @@ const BookCard = ({ book, noBorder }) => {
             </>
           )}
           <div className="flex gap-1 overflow-hidden w-full" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
-            {book.images.slice(thumbStartIndex, thumbStartIndex + 4).map((img, idx) => {
+            {book.images.slice(thumbStartIndex, thumbStartIndex + maxThumbs).map((img, idx) => {
               const actualIdx = thumbStartIndex + idx;
               const isActive = actualIdx === activeImgIdx;
               return (
@@ -268,7 +277,7 @@ const BookCard = ({ book, noBorder }) => {
                     isActive ? "border-[#c8860a]" : "border-transparent hover:border-neutral-700"
                   }`}
                   style={{
-                    width: "calc(25% - 3px)",
+                    width: `calc(${100 / maxThumbs}% - 3px)`,
                     aspectRatio: "1 / 1",
                   }}
                 >
