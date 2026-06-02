@@ -220,13 +220,35 @@ const changeAdminEmail = async (req, res) => {
   const admin = await User.findOne({ email });
   if (!admin) return res.status(404).json({ success: false, message: "Admin user not found" });
 
-  admin.email = newEmail.toLowerCase().trim();
+  const targetEmail = newEmail.toLowerCase().trim();
+  const existingUser = await User.findOne({ email: targetEmail });
+  if (existingUser && existingUser._id.toString() !== admin._id.toString()) {
+    return res.status(400).json({ success: false, message: "Email is already registered by another user" });
+  }
+
+  admin.email = targetEmail;
   await admin.save();
 
   // Sync email change to .env
-  updateEnvValue("ADMIN_EMAIL", newEmail.toLowerCase().trim());
+  updateEnvValue("ADMIN_EMAIL", targetEmail);
 
-  res.json({ success: true, message: "Admin email changed successfully" });
+  // Send confirmation email to the new email address
+  await sendBrandedEmail({
+    to: targetEmail,
+    subject: "BookWorld Administrative Status Confirmation",
+    bodyHtml: `
+      <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 25px; border: 1px solid #c8860a; border-radius: 12px; background-color: #0c0c0e; color: #fff;">
+        <h2 style="color: #c8860a; text-align: center; margin-bottom: 20px;">BookWorld Administrative Status</h2>
+        <p style="font-size: 14px; line-height: 1.6; color: #ccc;">Hello,</p>
+        <p style="font-size: 14px; line-height: 1.6; color: #ccc;">This is to confirm that your email address has been configured as the primary administrator email for BookWorld.</p>
+        <p style="font-size: 16px; line-height: 1.6; color: #c8860a; font-weight: bold; text-align: center; margin: 20px 0;">Now you are the admin.</p>
+        <p style="font-size: 14px; line-height: 1.6; color: #ccc;">From now on, you must log in to the admin panel using this email address: <strong>${targetEmail}</strong>.</p>
+        <p style="font-size: 12px; color: #666; text-align: center; margin-top: 20px;">If you did not request this change, please contact database security immediately.</p>
+      </div>
+    `
+  });
+
+  res.json({ success: true, message: "Admin email changed successfully. Please log in again using your new email." });
 };
 
 const updateAdminProfile = async (req, res) => {
