@@ -253,7 +253,7 @@ const BookCard = ({ book, noBorder }) => {
               </button>
             </>
           )}
-          <div className="flex gap-1 justify-center items-center overflow-hidden w-full">
+          <div className="flex gap-1 overflow-hidden w-full" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
             {book.images.slice(thumbStartIndex, thumbStartIndex + 4).map((img, idx) => {
               const actualIdx = thumbStartIndex + idx;
               const isActive = actualIdx === activeImgIdx;
