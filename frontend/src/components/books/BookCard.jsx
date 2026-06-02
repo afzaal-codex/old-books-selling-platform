@@ -10,6 +10,7 @@ const BookCard = ({ book, noBorder }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [activeImgIdx, setActiveImgIdx] = useState(0);
+  const [thumbStartIndex, setThumbStartIndex] = useState(0);
 
   const { isAuthenticated } = useSelector((state) => state.auth);
   const { wishlist } = useSelector((state) => state.wishlist);
@@ -235,6 +236,73 @@ const BookCard = ({ book, noBorder }) => {
           )}
         </Link>
       </div>
+
+      {/* ── THUMBNAIL CAROUSEL ── */}
+      {book.images && book.images.length > 0 && (
+        <div className="relative px-6 select-none" style={{ marginTop: "4px", marginBottom: "4px" }}>
+          {book.images.length > 4 && (
+            <>
+              <button
+                type="button"
+                disabled={thumbStartIndex === 0}
+                onClick={(e) => {
+                  e.preventDefault(); e.stopPropagation();
+                  setThumbStartIndex((prev) => Math.max(0, prev - 1));
+                }}
+                className={`absolute left-1 top-1/2 -translate-y-1/2 z-20 bg-black/75 hover:bg-black text-white rounded-full p-0.5 transition ${
+                  thumbStartIndex === 0 ? "opacity-30 cursor-not-allowed" : "opacity-100 cursor-pointer"
+                }`}
+                style={{ border: "none", display: "flex", alignItems: "center", justifyContent: "center" }}
+              >
+                <ChevronLeft size={10} />
+              </button>
+              <button
+                type="button"
+                disabled={thumbStartIndex >= book.images.length - 4}
+                onClick={(e) => {
+                  e.preventDefault(); e.stopPropagation();
+                  setThumbStartIndex((prev) => Math.min(book.images.length - 4, prev + 1));
+                }}
+                className={`absolute right-1 top-1/2 -translate-y-1/2 z-20 bg-black/75 hover:bg-black text-white rounded-full p-0.5 transition ${
+                  thumbStartIndex >= book.images.length - 4 ? "opacity-30 cursor-not-allowed" : "opacity-100 cursor-pointer"
+                }`}
+                style={{ border: "none", display: "flex", alignItems: "center", justifyContent: "center" }}
+              >
+                <ChevronRight size={10} />
+              </button>
+            </>
+          )}
+          <div className="flex gap-1 justify-center items-center overflow-hidden w-full">
+            {book.images.slice(thumbStartIndex, thumbStartIndex + 4).map((img, idx) => {
+              const actualIdx = thumbStartIndex + idx;
+              const isActive = actualIdx === activeImgIdx;
+              return (
+                <div
+                  key={actualIdx}
+                  onClick={(e) => {
+                    e.preventDefault(); e.stopPropagation();
+                    setActiveImgIdx(actualIdx);
+                  }}
+                  className={`cursor-pointer transition-all duration-200 border-2 overflow-hidden rounded ${
+                    isActive ? "border-[#c8860a]" : "border-transparent hover:border-neutral-700"
+                  }`}
+                  style={{
+                    width: "calc(25% - 3px)",
+                    aspectRatio: "2 / 3",
+                    height: "40px",
+                  }}
+                >
+                  <img
+                    src={img}
+                    alt={`thumb-${actualIdx}`}
+                    className="w-full h-full object-cover"
+                  />
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
 
       {/* ── CONTENT ── */}
       <div className="flex flex-col flex-1" style={{ padding: "0 8px 0 8px" }}>

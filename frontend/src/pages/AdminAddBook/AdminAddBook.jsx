@@ -150,15 +150,16 @@ const AdminAddBook = () => {
   const handleImages =
     (e) => {
       const selectedFiles = Array.from(e.target.files);
-      if (selectedFiles.length > 10) {
-        toast.error("You can upload a maximum of 10 images!");
-        e.target.value = null;
-        setImages([]);
-        setCoverIndex(0);
-        return;
-      }
-      setImages(selectedFiles);
+      setImages((prev) => {
+        const combined = [...prev, ...selectedFiles];
+        if (combined.length > 10) {
+          toast.error("You can upload a maximum of 10 images!");
+          return prev;
+        }
+        return combined;
+      });
       setCoverIndex(0);
+      e.target.value = null;
     };
 
   /* SUBMIT */
@@ -553,6 +554,21 @@ const AdminAddBook = () => {
                     className={`relative w-24 h-36 cursor-pointer border-2 transition-all overflow-hidden rounded-lg group ${isCover ? "border-[#c8860a] ring-2 ring-[#c8860a]/20" : "border-gray-200 hover:border-gray-400"}`}
                   >
                     <img src={url} alt={`preview-${idx}`} className="w-full h-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        setImages((prev) => prev.filter((_, i) => i !== idx));
+                        if (coverIndex === idx) {
+                          setCoverIndex(0);
+                        } else if (coverIndex > idx) {
+                          setCoverIndex(coverIndex - 1);
+                        }
+                      }}
+                      className="absolute right-1 top-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 leading-none text-[8px] font-black z-25"
+                    >
+                      ✕
+                    </button>
                     {isCover ? (
                       <span className="absolute bottom-0 left-0 right-0 bg-[#c8860a] text-black text-[9px] font-black text-center py-1">
                         COVER IMAGE
