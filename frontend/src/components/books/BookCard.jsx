@@ -180,43 +180,6 @@ const BookCard = ({ book, noBorder }) => {
                   borderRadius: "4px",
                 }}
               />
-              {book.images.length > 1 && (
-                <>
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.preventDefault(); e.stopPropagation();
-                      setActiveImgIdx((prev) => (prev === 0 ? book.images.length - 1 : prev - 1));
-                    }}
-                    className="absolute left-1 top-1/2 -translate-y-1/2 z-30 bg-black/60 hover:bg-black/90 text-white rounded-full p-1 border border-neutral-800 transition opacity-0 group-hover:opacity-100"
-                    style={{ cursor: "pointer", border: "none", display: "flex", alignItems: "center", justifyContent: "center" }}
-                  >
-                    <ChevronLeft size={12} />
-                  </button>
-                  <button
-                    type="button"
-                    onClick={(e) => {
-                      e.preventDefault(); e.stopPropagation();
-                      setActiveImgIdx((prev) => (prev === book.images.length - 1 ? 0 : prev + 1));
-                    }}
-                    className="absolute right-1 top-1/2 -translate-y-1/2 z-30 bg-black/60 hover:bg-black/90 text-white rounded-full p-1 border border-neutral-800 transition opacity-0 group-hover:opacity-100"
-                    style={{ cursor: "pointer", border: "none", display: "flex", alignItems: "center", justifyContent: "center" }}
-                  >
-                    <ChevronRight size={12} />
-                  </button>
-                  {/* Indicator dots */}
-                  <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 flex gap-1 z-30 bg-black/45 px-1.5 py-0.5 rounded-full">
-                    {book.images.slice(0, 10).map((_, idx) => (
-                      <span
-                        key={idx}
-                        className={`w-1 h-1 rounded-full transition-all ${
-                          idx === activeImgIdx ? "bg-[var(--color-primary)] scale-125" : "bg-neutral-500"
-                        }`}
-                      />
-                    ))}
-                  </div>
-                </>
-              )}
             </div>
           ) : (
             <div
@@ -239,7 +202,7 @@ const BookCard = ({ book, noBorder }) => {
 
       {/* ── THUMBNAIL CAROUSEL ── */}
       {book.images && book.images.length > 0 && (
-        <div className="relative px-6 select-none" style={{ marginTop: "4px", marginBottom: "4px" }}>
+        <div className="relative mx-auto select-none w-[50%]" style={{ marginTop: "4px", marginBottom: "4px" }}>
           {book.images.length > 4 && (
             <>
               <button
@@ -249,7 +212,7 @@ const BookCard = ({ book, noBorder }) => {
                   e.preventDefault(); e.stopPropagation();
                   setThumbStartIndex((prev) => Math.max(0, prev - 1));
                 }}
-                className={`absolute left-0.5 top-1/2 -translate-y-1/2 z-20 transition ${
+                className={`absolute -left-6 top-1/2 -translate-y-1/2 z-20 transition ${
                   thumbStartIndex === 0 ? "opacity-25 cursor-not-allowed" : "opacity-100 cursor-pointer hover:scale-110"
                 }`}
                 style={{
@@ -272,7 +235,7 @@ const BookCard = ({ book, noBorder }) => {
                   e.preventDefault(); e.stopPropagation();
                   setThumbStartIndex((prev) => Math.min(book.images.length - 4, prev + 1));
                 }}
-                className={`absolute right-0.5 top-1/2 -translate-y-1/2 z-20 transition ${
+                className={`absolute -right-6 top-1/2 -translate-y-1/2 z-20 transition ${
                   thumbStartIndex >= book.images.length - 4 ? "opacity-25 cursor-not-allowed" : "opacity-100 cursor-pointer hover:scale-110"
                 }`}
                 style={{
