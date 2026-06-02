@@ -56,8 +56,8 @@ const BookCard = ({ book, noBorder }) => {
     <div
       className="group flex flex-col overflow-visible transition-all duration-300 hover:translate-y-[-4px]"
       style={{
-        background: "var(--color-card-bg)",
-        border: "none",
+        background: "#0d0d0d",
+        border: noBorder ? "none" : "1px solid #9ca3af",
         borderRadius: "6px",
        
         transform: "perspective(800px) rotateX(1deg)",

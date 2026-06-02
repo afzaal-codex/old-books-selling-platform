@@ -30,14 +30,14 @@ const HOME_STYLES = `
     font-family: 'Outfit', system-ui, sans-serif;
     font-size: clamp(22px, 3vw, 28px);
     font-weight: 800;
-    color: var(--color-text);
+    color: #ffffff;
     letter-spacing: -0.02em;
     line-height: 1.15;
     margin: 0;
   }
   .hs-head__sub {
     font-size: 13px;
-    color: var(--color-text-muted);
+    color: #DCDCDC;
     margin: 0;
     font-family: system-ui, sans-serif;
   }
@@ -51,9 +51,9 @@ const HOME_STYLES = `
     font-weight: 700;
     letter-spacing: .10em;
     text-transform: uppercase;
-    color: var(--color-primary);
+    color: #c8860a;
     text-decoration: none;
-    border: 1px solid rgba(37, 99, 235, 0.2);
+    border: 1px solid rgba(200,134,10,0.2);
     padding: 8px 16px;
     border-radius: 8px;
     transition: all 0.25s ease;
@@ -61,8 +61,8 @@ const HOME_STYLES = `
     flex-shrink: 0;
   }
   .hs-view-all:hover {
-    background: rgba(37, 99, 235, 0.08);
-    border-color: var(--color-primary);
+    background: rgba(200,134,10,0.08);
+    border-color: #c8860a;
     transform: translateY(-1px);
   }
 
@@ -117,54 +117,54 @@ const HOME_STYLES = `
     justify-content: center;
     text-decoration: none;
     padding: 24px 16px;
-    background: var(--color-card-bg);
-    border: 1px solid var(--color-border);
+    background: #111115;
+    border: 1px solid #222228;
     border-radius: 16px;
     transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
     gap: 12px;
   }
   .hs-cat-item:hover {
-    background: rgba(37, 99, 235, 0.04);
-    border-color: var(--color-primary);
+    background: rgba(200,134,10,0.04);
+    border-color: #c8860a;
     transform: translateY(-2px);
-    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.3);
   }
 
   .hs-cat-item__img {
     width: 60px; height: 60px;
     object-fit: cover;
-    border: 2px solid var(--color-border);
+    border: 2px solid #222228;
     border-radius: 50%;
     display: block;
     transition: all 0.25s ease;
   }
   .hs-cat-item:hover .hs-cat-item__img {
-    border-color: var(--color-primary);
+    border-color: #c8860a;
     transform: scale(1.05);
   }
 
   .hs-cat-item__icon {
     width: 60px; height: 60px;
     display: flex; align-items: center; justify-content: center;
-    color: var(--color-primary); background: var(--color-bg);
-    border: 2px solid var(--color-border);
+    color: #c8860a; background: #16161c;
+    border: 2px solid #222228;
     border-radius: 50%;
     transition: all 0.25s ease;
   }
   .hs-cat-item:hover .hs-cat-item__icon {
-    border-color: var(--color-primary);
+    border-color: #c8860a;
     color: #ffffff;
-    background: var(--color-primary);
+    background: #c8860a;
   }
 
   .hs-cat-item__name {
     font-family: 'Outfit', system-ui, sans-serif;
     font-size: 13.5px; font-weight: 600;
-    color: var(--color-text); text-align: center;
+    color: #f0ede8; text-align: center;
     line-height: 1.3; margin: 0;
     transition: color 0.15s;
   }
-  .hs-cat-item:hover .hs-cat-item__name { color: var(--color-primary); }
+  .hs-cat-item:hover .hs-cat-item__name { color: #c8860a; }
 
   /* ── Authors grid — 6 per row desktop, always image-top/text-bottom ── */
   .hs-authors-grid {
@@ -188,11 +188,11 @@ const HOME_STYLES = `
     border: none;
     width: 100%;
     height: auto;
-    box-shadow: 0 12px 32px rgba(0,0,0,0.1);
+    box-shadow: 0 12px 32px rgba(0,0,0,0.55);
     transition: box-shadow 0.3s ease;
   }
   .hs-author-item:hover {
-    box-shadow: 0 16px 44px rgba(37, 99, 235, 0.18);
+    box-shadow: 0 16px 44px rgba(200,134,10,0.18);
   }
 
   .hs-author-item__img-wrap {
@@ -210,7 +210,7 @@ const HOME_STYLES = `
     justify-content: flex-start;
     align-items: center;
     text-align: center;
-    background: var(--color-card-bg);
+    background: #0d0d10;
     box-sizing: border-box;
     flex-shrink: 0;
   }
@@ -218,7 +218,7 @@ const HOME_STYLES = `
   .hs-author-item__bio {
     font-size: 10px;
     line-height: 1.5;
-    color: var(--color-text-muted);
+    color: #DCDCDC;
     margin-top: 6px;
     overflow: hidden;
     display: -webkit-box;
@@ -236,20 +236,20 @@ const HOME_STYLES = `
   .hs-author-item__fallback {
     width: 100%; height: 100%;
     display: flex; align-items: center; justify-content: center;
-    background: var(--color-sidebar-bg);
+    background: #16161c;
   }
   .hs-author-item__initial {
     font-size: 28px;
-    font-weight: 800; color: var(--color-primary);
+    font-weight: 800; color: #c8860a;
   }
   .hs-author-item__name {
     font-family: 'Outfit', system-ui, sans-serif;
     font-size: 13.5px; font-weight: 600;
-    color: var(--color-text); text-align: center;
+    color: #f0ede8; text-align: center;
     line-height: 1.3; margin: 0;
     transition: color 0.15s;
   }
-  .hs-author-item:hover .hs-author-item__name { color: var(--color-primary); }
+  .hs-author-item:hover .hs-author-item__name { color: #c8860a; }
 
   /* Mobile: 3 per row, 2 rows visible (6 cards) then View More */
   @media (max-width: 479px) {
@@ -427,7 +427,7 @@ const Home = () => {
   const metaKeywords = cmsSeo.keywords || "old books, used books, bookstore, novel, cheap books, second hand books Pakistan";
 
   return (
-    <div style={{ background: "var(--color-bg, #ffffff)", color: "var(--color-text, #000000)", paddingBottom: 64 }}>
+    <div style={{ background: "var(--color-bg, #0a0a0b)", color: "#f0ede8", paddingBottom: 64 }}>
       <Helmet>
         <title>{metaTitle}</title>
         <meta name="description" content={metaDesc} />
