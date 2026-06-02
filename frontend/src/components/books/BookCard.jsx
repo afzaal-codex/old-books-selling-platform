@@ -234,48 +234,46 @@ const BookCard = ({ book, noBorder }) => {
       {book.images && book.images.length > 0 && (
         <div
           className="relative select-none"
-          style={{ marginTop: "4px", marginBottom: "4px", paddingLeft: "20px", paddingRight: "20px" }}
+          style={{ marginTop: "4px", marginBottom: "4px", paddingLeft: "22px", paddingRight: "22px" }}
         >
-          {/* LEFT ARROW — always rendered, faded when disabled */}
+          {/* LEFT ARROW — always present, fades out at start */}
           <button
             type="button"
-            disabled={!canGoPrev}
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); moveThumbnails(-1); }}
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (canGoPrev) moveThumbnails(-1); }}
             style={{
               position: "absolute", left: 0, top: "50%", transform: "translateY(-50%)",
               zIndex: 30, color: "#c8860a", background: "none", border: "none",
-              padding: 0, outline: "none", lineHeight: 0,
-              opacity: canGoPrev ? 1 : 0.2,
-              cursor: canGoPrev ? "pointer" : "not-allowed",
-              transition: "opacity 0.2s, transform 0.2s",
+              padding: "4px", outline: "none", lineHeight: 0,
+              opacity: canGoPrev ? 1 : 0.15,
+              cursor: canGoPrev ? "pointer" : "default",
+              transition: "opacity 0.2s",
+              touchAction: "manipulation",
+              WebkitTapHighlightColor: "transparent",
             }}
-            onMouseEnter={e => { if (canGoPrev) e.currentTarget.style.transform = "translateY(-50%) scale(1.2)"; }}
-            onMouseLeave={e => { e.currentTarget.style.transform = "translateY(-50%) scale(1)"; }}
           >
-            <ChevronLeft size={14} strokeWidth={3} />
+            <ChevronLeft size={16} strokeWidth={3} />
           </button>
 
-          {/* RIGHT ARROW — always rendered, faded when disabled */}
+          {/* RIGHT ARROW — always present, fades out at end */}
           <button
             type="button"
-            disabled={!canGoNext}
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); moveThumbnails(1); }}
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (canGoNext) moveThumbnails(1); }}
             style={{
               position: "absolute", right: 0, top: "50%", transform: "translateY(-50%)",
               zIndex: 30, color: "#c8860a", background: "none", border: "none",
-              padding: 0, outline: "none", lineHeight: 0,
-              opacity: canGoNext ? 1 : 0.2,
-              cursor: canGoNext ? "pointer" : "not-allowed",
-              transition: "opacity 0.2s, transform 0.2s",
+              padding: "4px", outline: "none", lineHeight: 0,
+              opacity: canGoNext ? 1 : 0.15,
+              cursor: canGoNext ? "pointer" : "default",
+              transition: "opacity 0.2s",
+              touchAction: "manipulation",
+              WebkitTapHighlightColor: "transparent",
             }}
-            onMouseEnter={e => { if (canGoNext) e.currentTarget.style.transform = "translateY(-50%) scale(1.2)"; }}
-            onMouseLeave={e => { e.currentTarget.style.transform = "translateY(-50%) scale(1)"; }}
           >
-            <ChevronRight size={14} strokeWidth={3} />
+            <ChevronRight size={16} strokeWidth={3} />
           </button>
 
-          {/* THUMBNAILS */}
-          <div style={{ display: "flex", gap: "3px", overflow: "hidden" }}>
+          {/* THUMBNAILS — show maxThumbs at a time */}
+          <div style={{ display: "flex", gap: "3px", overflow: "hidden", width: "100%" }}>
             {book.images.slice(thumbStartIndex, thumbStartIndex + maxThumbs).map((img, idx) => {
               const actualIdx = thumbStartIndex + idx;
               const isActive = actualIdx === activeImgIdx;
@@ -284,15 +282,16 @@ const BookCard = ({ book, noBorder }) => {
                   key={actualIdx}
                   onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveImgIdx(actualIdx); }}
                   style={{
-                    width: `calc(${100 / maxThumbs}% - 3px)`,
+                    flex: `0 0 calc(${100 / maxThumbs}% - 3px)`,
                     aspectRatio: "1 / 1",
-                    flexShrink: 0,
                     cursor: "pointer",
                     borderRadius: "3px",
                     overflow: "hidden",
                     border: isActive ? "2px solid #c8860a" : "2px solid transparent",
                     transition: "border-color 0.2s",
                     boxSizing: "border-box",
+                    touchAction: "manipulation",
+                    WebkitTapHighlightColor: "transparent",
                   }}
                 >
                   <img src={img} alt={`thumb-${actualIdx}`} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
