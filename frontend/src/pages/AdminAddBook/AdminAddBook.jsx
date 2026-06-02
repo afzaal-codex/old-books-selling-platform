@@ -71,6 +71,12 @@ const AdminAddBook = () => {
       isbn: "",
 
       publicationYear: "",
+
+      manageStock: true,
+      antique: false,
+      signed: false,
+      signedBy: "",
+      vintage: false,
     });
 
   /* FETCH */
@@ -141,12 +147,13 @@ const AdminAddBook = () => {
 
   const handleImages =
     (e) => {
-
-      setImages(
-        Array.from(
-          e.target.files
-        )
-      );
+      const files = Array.from(e.target.files);
+      if (files.length > 10) {
+        toast.error("You can only upload up to 10 images");
+        setImages(files.slice(0, 10));
+      } else {
+        setImages(files);
+      }
     };
 
   /* SUBMIT */
@@ -372,19 +379,28 @@ const AdminAddBook = () => {
           />
 
           {/* STOCK */}
+          {formData.manageStock && (
+            <input
+              type="number"
+              name="stock"
+              placeholder="Stock"
+              value={formData.stock}
+              onChange={handleChange}
+              className="rounded-2xl border border-gray-200 px-5 py-4 outline-none"
+            />
+          )}
 
-          <input
-            type="number"
-            name="stock"
-            placeholder="Stock"
-            value={
-              formData.stock
-            }
-            onChange={
-              handleChange
-            }
-            className="rounded-2xl border border-gray-200 px-5 py-4 outline-none"
-          />
+          {/* SIGNED BY */}
+          {formData.signed && (
+            <input
+              type="text"
+              name="signedBy"
+              placeholder="Signed By"
+              value={formData.signedBy}
+              onChange={handleChange}
+              className="rounded-2xl border border-gray-200 px-5 py-4 outline-none"
+            />
+          )}
 
           {/* CONDITION */}
 
@@ -524,6 +540,50 @@ const AdminAddBook = () => {
         {/* CHECKBOXES */}
 
         <div className="flex flex-wrap gap-8">
+          <label className="flex items-center gap-3 cursor-pointer text-gray-700 font-medium">
+            <input
+              type="checkbox"
+              name="manageStock"
+              checked={formData.manageStock}
+              onChange={handleChange}
+              className="h-4 w-4"
+            />
+            Manage Stock
+          </label>
+
+          <label className="flex items-center gap-3 cursor-pointer text-gray-700 font-medium">
+            <input
+              type="checkbox"
+              name="antique"
+              checked={formData.antique}
+              onChange={handleChange}
+              className="h-4 w-4"
+            />
+            Antique Book
+          </label>
+
+          <label className="flex items-center gap-3 cursor-pointer text-gray-700 font-medium">
+            <input
+              type="checkbox"
+              name="signed"
+              checked={formData.signed}
+              onChange={handleChange}
+              className="h-4 w-4"
+            />
+            Signed Book
+          </label>
+
+          <label className="flex items-center gap-3 cursor-pointer text-gray-700 font-medium">
+            <input
+              type="checkbox"
+              name="vintage"
+              checked={formData.vintage}
+              onChange={handleChange}
+              className="h-4 w-4"
+            />
+            Vintage Finds
+          </label>
+
           <label className="flex items-center gap-3 cursor-pointer text-gray-700 font-medium">
             <input
               type="checkbox"

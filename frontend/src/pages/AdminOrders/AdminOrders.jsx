@@ -239,12 +239,12 @@ const AdminOrders = () => {
     y += 7;
 
     doc.setFillColor(17, 17, 20);
-    doc.rect(135, y - 4, 60, 8, "F");
+    doc.rect(125, y - 4, 75, 8, "F");
     doc.setFont("helvetica", "bold");
     doc.setTextColor(212, 175, 55);
     const totalLabel = (order.paymentMethod === "COD" || order.paymentStatus !== "Paid") ? "Total Payable Amount:" : "Total Paid Amount:";
-    doc.text(totalLabel, 138, y + 1);
-    doc.text(`Rs. ${order.totalPrice?.toLocaleString()}`, 173, y + 1);
+    doc.text(totalLabel, 128, y + 1);
+    doc.text(`Rs. ${order.totalPrice?.toLocaleString()}`, 175, y + 1);
 
     y += 25;
     doc.setFontSize(9);

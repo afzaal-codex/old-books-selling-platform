@@ -320,6 +320,48 @@ const BookDetailsCard = ({
           )}
 
 
+          {/* Special Edition Badges */}
+          {(book.signed || book.antique || book.vintage) && (
+            <div className="flex flex-wrap gap-1.5" style={{ marginTop: "2px" }}>
+              {book.signed && (
+                <span
+                  style={{
+                    fontSize: "8px", fontWeight: 700, color: "#fff",
+                    background: "rgba(200,134,10,0.18)", padding: "3px 8px",
+                    border: "1px solid #c8860a", borderRadius: 0,
+                    letterSpacing: "0.07em", textTransform: "uppercase",
+                  }}
+                >
+                  ✍ Signed{book.signedBy ? ` by ${book.signedBy}` : ""}
+                </span>
+              )}
+              {book.antique && (
+                <span
+                  style={{
+                    fontSize: "8px", fontWeight: 700, color: "#d4a96a",
+                    background: "rgba(120,80,20,0.18)", padding: "3px 8px",
+                    border: "1px solid #7c5a2a", borderRadius: 0,
+                    letterSpacing: "0.07em", textTransform: "uppercase",
+                  }}
+                >
+                  🏺 Antique
+                </span>
+              )}
+              {book.vintage && (
+                <span
+                  style={{
+                    fontSize: "8px", fontWeight: 700, color: "#a8c8a0",
+                    background: "rgba(60,100,60,0.18)", padding: "3px 8px",
+                    border: "1px solid #3c6048", borderRadius: 0,
+                    letterSpacing: "0.07em", textTransform: "uppercase",
+                  }}
+                >
+                  📖 Vintage
+                </span>
+              )}
+            </div>
+          )}
+
           <div className="flex flex-col gap-2">
             {/* Specifications */}
             <div style={{ background: "#000", padding: "8px 10px" }}>

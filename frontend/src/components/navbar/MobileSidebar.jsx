@@ -271,6 +271,15 @@ const MobileSidebar = ({ isOpen, setIsOpen }) => {
               >
 
                 <button
+                  onClick={() => go("/books")}
+                  className="w-full text-left font-bold text-gray-300 hover:text-white transition-colors cursor-pointer"
+                  style={{ ...rowPad, fontSize: rowFs }}
+                >
+                  All Books
+                </button>
+                <Divider />
+
+                <button
                   onClick={() => go("/books?featured=true")}
                   className="w-full text-left font-bold text-gray-300 hover:text-white transition-colors cursor-pointer"
                   style={{ ...rowPad, fontSize: rowFs }}

@@ -160,19 +160,36 @@ const BookCard = ({ book, noBorder }) => {
           }}
         >
           {book.images?.[0] ? (
-            <img
-              src={book.images[0]}
-              alt={book.title}
-              className="transition duration-500 group-hover:scale-105"
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                objectPosition: "center",
-                display: "block",
-                borderRadius: "4px",
-              }}
-            />
+            <div className="relative w-full h-full">
+              <img
+                src={book.images[0]}
+                alt={book.title}
+                className={`transition duration-500 group-hover:scale-105 ${book.images.length > 1 ? 'group-hover:opacity-0' : ''}`}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                  objectFit: "cover",
+                  objectPosition: "center",
+                  display: "block",
+                  borderRadius: "4px",
+                }}
+              />
+              {book.images.length > 1 && (
+                <img
+                  src={book.images[1]}
+                  alt={`${book.title} alternate view`}
+                  className="absolute inset-0 transition duration-500 opacity-0 group-hover:opacity-100 group-hover:scale-105"
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover",
+                    objectPosition: "center",
+                    display: "block",
+                    borderRadius: "4px",
+                  }}
+                />
+              )}
+            </div>
           ) : (
             <div
               style={{

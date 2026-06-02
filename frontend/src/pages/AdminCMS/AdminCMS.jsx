@@ -89,6 +89,14 @@ const AdminCMS = () => {
   const [newReleasesSec, setNewReleasesSec] = useState(true);
   const [bestSellerSec, setBestSellerSec] = useState(true);
   const [highDiscountSec, setHighDiscountSec] = useState(true);
+  const [antiqueBooksSec, setAntiqueBooksSec] = useState(true);
+  const [signedBooksSec, setSignedBooksSec] = useState(true);
+  const [vintageFindsSec, setVintageFindsSec] = useState(true);
+
+  // Secondary Nav visibility states
+  const [secNavFeatured, setSecNavFeatured] = useState(true);
+  const [secNavBestSeller, setSecNavBestSeller] = useState(true);
+  const [secNavHighDiscount, setSecNavHighDiscount] = useState(true);
 
   // Discount strip states
   const [stripText, setStripText] = useState("");
@@ -181,6 +189,14 @@ const AdminCMS = () => {
       setNewReleasesSec(hp.newReleases !== false);
       setBestSellerSec(hp.bestSeller !== false);
       setHighDiscountSec(hp.highDiscount !== false);
+      setAntiqueBooksSec(hp.antiqueBooks !== false);
+      setSignedBooksSec(hp.signedBooks !== false);
+      setVintageFindsSec(hp.vintageFinds !== false);
+
+      const sn = settings.secondaryNav || {};
+      setSecNavFeatured(sn.featuredBooks !== false);
+      setSecNavBestSeller(sn.bestSeller !== false);
+      setSecNavHighDiscount(sn.highDiscount !== false);
 
       const ds = settings.discountStrip || {};
       setStripText(ds.text || "");
@@ -273,6 +289,14 @@ const AdminCMS = () => {
         newReleases: newReleasesSec,
         bestSeller: bestSellerSec,
         highDiscount: highDiscountSec,
+        antiqueBooks: antiqueBooksSec,
+        signedBooks: signedBooksSec,
+        vintageFinds: vintageFindsSec,
+      },
+      secondaryNav: {
+        featuredBooks: secNavFeatured,
+        bestSeller: secNavBestSeller,
+        highDiscount: secNavHighDiscount,
       },
       discountStrip: {
         text: stripText,
@@ -739,14 +763,39 @@ const AdminCMS = () => {
                 { id: "featuredBooks", label: "Featured Books Section", val: featuredBooksSec, setVal: setFeaturedBooksSec },
                 { id: "trendingAuthors", label: "Trending Authors Section", val: trendingAuthorsSec, setVal: setTrendingAuthorsSec },
                 { id: "trendingCategories", label: "Trending Categories Section", val: trendingCategoriesSec, setVal: setTrendingCategoriesSec },
-                { id: "newReleases", label: "New Releases Section", val: newReleasesSec, setVal: setNewReleasesSec },
+                { id: "newReleases", label: "New Treasures Section", val: newReleasesSec, setVal: setNewReleasesSec },
                 { id: "bestSeller", label: "Best Sellers Section", val: bestSellerSec, setVal: setBestSellerSec },
                 { id: "highDiscount", label: "High Discounts Section", val: highDiscountSec, setVal: setHighDiscountSec },
+                { id: "antiqueBooks", label: "Antique Books Section", val: antiqueBooksSec, setVal: setAntiqueBooksSec },
+                { id: "signedBooks", label: "Signed Books Section", val: signedBooksSec, setVal: setSignedBooksSec },
+                { id: "vintageFinds", label: "Vintage Finds Section", val: vintageFindsSec, setVal: setVintageFindsSec },
               ].map((section) => (
                 <div key={section.id} className="flex items-center justify-between p-4 bg-neutral-950/40 border border-neutral-900 rounded-2xl">
                   <div className="space-y-0.5">
                     <span className="font-semibold block text-gray-250">{section.label}</span>
                     <span className="text-[10px] text-gray-500">Toggle display on home storefront</span>
+                  </div>
+                  <input
+                    type="checkbox"
+                    checked={section.val}
+                    onChange={(e) => section.setVal(e.target.checked)}
+                    className="w-5 h-5 rounded border-neutral-700 bg-neutral-900 text-[var(--color-primary)] focus:ring-[var(--color-primary)] cursor-pointer"
+                  />
+                </div>
+              ))}
+            </div>
+
+            <h3 className="font-bold text-lg text-white border-b border-neutral-900 pb-3 mt-8">Secondary Navigation Visibility</h3>
+            <div className="grid gap-6 md:grid-cols-2 text-sm mt-6">
+              {[
+                { id: "secNavFeatured", label: "Featured Books", val: secNavFeatured, setVal: setSecNavFeatured },
+                { id: "secNavBestSeller", label: "Best Sellers", val: secNavBestSeller, setVal: setSecNavBestSeller },
+                { id: "secNavHighDiscount", label: "High Discounts", val: secNavHighDiscount, setVal: setSecNavHighDiscount },
+              ].map((section) => (
+                <div key={section.id} className="flex items-center justify-between p-4 bg-neutral-950/40 border border-neutral-900 rounded-2xl">
+                  <div className="space-y-0.5">
+                    <span className="font-semibold block text-gray-250">{section.label}</span>
+                    <span className="text-[10px] text-gray-500">Toggle display on secondary navbar</span>
                   </div>
                   <input
                     type="checkbox"

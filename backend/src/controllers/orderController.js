@@ -5,7 +5,7 @@ import User from "../models/User.js";
 import sendEmail from "../services/mailService.js";
 import { getBrandedEmailTemplate } from "../utils/emailTemplate.js";
 import Settings from "../models/Settings.js";
-
+import Payment from "../models/Payment.js";
 
 const createOrder = async (req, res) => {
   try {
@@ -295,11 +295,43 @@ const updateOrderStatus = async (req, res) => {
     if (orderStatus && orderStatus !== order.orderStatus) {
       timelineNotes.push(`Status changed from ${order.orderStatus} to ${orderStatus}`);
       order.orderStatus = orderStatus;
+
+      if (orderStatus === "Delivered" && order.paymentMethod === "COD" && order.paymentStatus !== "Paid") {
+        order.paymentStatus = "Paid";
+        timelineNotes.push(`Payment status auto-updated to Paid for COD Delivery`);
+        const payment = await Payment.findOne({ order: order._id });
+        if (payment) {
+          payment.verificationStatus = "Approved";
+          await payment.save();
+        } else {
+          await Payment.create({
+            order: order._id,
+            transactionId: `COD-${order.orderNumber}`,
+            paymentMethod: "COD",
+            verificationStatus: "Approved"
+          });
+        }
+      }
     }
 
     if (paymentStatus && paymentStatus !== order.paymentStatus) {
       timelineNotes.push(`Payment status changed from ${order.paymentStatus} to ${paymentStatus}`);
       order.paymentStatus = paymentStatus;
+
+      const payment = await Payment.findOne({ order: order._id });
+      if (payment) {
+        if (paymentStatus === "Paid") payment.verificationStatus = "Approved";
+        else if (paymentStatus === "Failed") payment.verificationStatus = "Rejected";
+        else if (paymentStatus === "Pending") payment.verificationStatus = "Pending";
+        await payment.save();
+      } else if (paymentStatus === "Paid") {
+        await Payment.create({
+          order: order._id,
+          transactionId: order.transactionId || `AUTO-${order.orderNumber}`,
+          paymentMethod: order.paymentMethod,
+          verificationStatus: "Approved"
+        });
+      }
     }
 
     if (assignedEmployee !== undefined && assignedEmployee !== String(order.assignedEmployee || "")) {

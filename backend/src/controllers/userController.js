@@ -7,9 +7,12 @@ import Category from "../models/Category.js";
 import { sendBrandedEmail } from "../services/mailService.js";
 
 const getUsers = async (req, res) => {
-  const users = await User.find().select("-password");
-
-  res.json(users);
+  try {
+    const users = await User.find().select("-password");
+    res.json(users);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
+  }
 };
 
 const getSingleUser = async (req, res) => {

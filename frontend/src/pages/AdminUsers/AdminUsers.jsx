@@ -34,7 +34,7 @@ const AdminUsers = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedCategory, setSelectedCategory] = useState("");
   const [selectedAuthor, setSelectedAuthor] = useState("");
-  const [spendLimit, setSpendLimit] = useState(3000);
+  const [spendLimit, setSpendLimit] = useState("");
   const [inactivityFilter, setInactivityFilter] = useState("all"); // 'all', 'inactive', 'active'
   const [orderStageFilter, setOrderStageFilter] = useState("all"); // 'all', or specific stage
 
@@ -419,7 +419,7 @@ const AdminUsers = () => {
               setSearchTerm("");
               setSelectedCategory("");
               setSelectedAuthor("");
-              setSpendLimit(3000);
+              setSpendLimit("");
               setInactivityFilter("all");
               setOrderStageFilter("all");
               toast.success("CRM filters successfully cleared!");

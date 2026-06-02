@@ -324,6 +324,9 @@ const Home = () => {
   const [featuredBooks, setFeaturedBooks] = useState([]);
   const [bestSellers, setBestSellers] = useState([]);
   const [highDiscounts, setHighDiscounts] = useState([]);
+  const [antiqueBooks, setAntiqueBooks] = useState([]);
+  const [signedBooks, setSignedBooks] = useState([]);
+  const [vintageFinds, setVintageFinds] = useState([]);
   const [showPromo, setShowPromo] = useState(false);
   const [loadingSections, setLoadingSections] = useState(true);
 
@@ -373,19 +376,28 @@ const Home = () => {
           offersThisWeekRes,
           featuredRes,
           bestsellersRes,
-          highDiscountsRes
+          highDiscountsRes,
+          antiqueRes,
+          signedRes,
+          vintageRes
         ] = await Promise.all([
           axiosInstance.get("/books?newRelease=true&sort=latest"),
           axiosInstance.get("/books?offersThisWeek=true"),
           axiosInstance.get("/books/featured"),
           axiosInstance.get("/books/bestsellers"),
           axiosInstance.get("/books?trending=true"),
+          axiosInstance.get("/books?antique=true"),
+          axiosInstance.get("/books?signed=true"),
+          axiosInstance.get("/books?vintage=true"),
         ]);
         setNewReleases((newReleasesRes.data || []).slice(0, 10));
         setOffersThisWeek((offersThisWeekRes.data.books || offersThisWeekRes.data || []).slice(0, 10));
         setFeaturedBooks((featuredRes.data.books || featuredRes.data || []).slice(0, 4));
         setBestSellers((bestsellersRes.data.books || bestsellersRes.data || []).slice(0, 4));
         setHighDiscounts((highDiscountsRes.data.books || highDiscountsRes.data || []).slice(0, 4));
+        setAntiqueBooks((antiqueRes.data.books || antiqueRes.data || []).slice(0, 4));
+        setSignedBooks((signedRes.data.books || signedRes.data || []).slice(0, 4));
+        setVintageFinds((vintageRes.data.books || vintageRes.data || []).slice(0, 4));
       } catch (err) {
         console.error("Failed to load homepage sections:", err);
       } finally {
@@ -438,9 +450,9 @@ const Home = () => {
 
       <div className="container-custom">
 
-        {/* 3. NEW RELEASE BOOKS SECTION */}
+        {/* 3. NEW TREASURES SECTION (Formerly New Releases) */}
         {settings?.homepageSections?.newReleases !== false && newReleases.length > 0 && (
-          <NewRelease books={newReleases} />
+          <NewRelease books={newReleases} title="New Treasures" />
         )}
 
         {/* 3.5 PROMO BANNER SECTION */}
@@ -510,6 +522,66 @@ const Home = () => {
             </div>
             <div className="hs-books-grid">
               {highDiscounts.map((book) => (
+                <BookCard key={book._id} book={book} />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* 7.1 ANTIQUE BOOKS SECTION */}
+        {settings?.homepageSections?.antiqueBooks !== false && antiqueBooks.length > 0 && (
+          <section className="hs-section">
+            <div className="hs-head">
+              <div className="hs-head__left">
+                <h2 className="hs-head__title">Antique Books</h2>
+                <p className="hs-head__sub">Timeless pieces of history</p>
+              </div>
+              <Link to="/books?antique=true" className="hs-view-all">
+                See More <ArrowRight size={12} />
+              </Link>
+            </div>
+            <div className="hs-books-grid">
+              {antiqueBooks.map((book) => (
+                <BookCard key={book._id} book={book} />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* 7.2 SIGNED BOOKS SECTION */}
+        {settings?.homepageSections?.signedBooks !== false && signedBooks.length > 0 && (
+          <section className="hs-section">
+            <div className="hs-head">
+              <div className="hs-head__left">
+                <h2 className="hs-head__title">Signed Books</h2>
+                <p className="hs-head__sub">Exclusive autographed editions</p>
+              </div>
+              <Link to="/books?signed=true" className="hs-view-all">
+                See More <ArrowRight size={12} />
+              </Link>
+            </div>
+            <div className="hs-books-grid">
+              {signedBooks.map((book) => (
+                <BookCard key={book._id} book={book} />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* 7.3 VINTAGE FINDS SECTION */}
+        {settings?.homepageSections?.vintageFinds !== false && vintageFinds.length > 0 && (
+          <section className="hs-section">
+            <div className="hs-head">
+              <div className="hs-head__left">
+                <h2 className="hs-head__title">Vintage Finds</h2>
+                <p className="hs-head__sub">Rare and nostalgic editions</p>
+              </div>
+              <Link to="/books?vintage=true" className="hs-view-all">
+                See More <ArrowRight size={12} />
+              </Link>
+            </div>
+            <div className="hs-books-grid">
+              {vintageFinds.map((book) => (
                 <BookCard key={book._id} book={book} />
               ))}
             </div>

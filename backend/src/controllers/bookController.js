@@ -73,6 +73,9 @@ const getBooks = async (req, res) => {
       highDiscount,
       promo,
       offersThisWeek,
+      antique,
+      signed,
+      vintage,
     } = req.query;
 
     const query = {};
@@ -196,6 +199,15 @@ const getBooks = async (req, res) => {
     }
     if (highDiscount === "true") {
       conditions.push({ highDiscount: true });
+    }
+    if (antique === "true") {
+      conditions.push({ antique: true });
+    }
+    if (signed === "true") {
+      conditions.push({ signed: true });
+    }
+    if (vintage === "true") {
+      conditions.push({ vintage: true });
     }
 
     // Promo filter
