@@ -14,7 +14,8 @@ const BookCard = ({ book, noBorder }) => {
   const { isAuthenticated } = useSelector((state) => state.auth);
   const { wishlist } = useSelector((state) => state.wishlist);
   const { settings } = useSelector((state) => state.cms);
-  const showStockSetting = settings?.showStock !== false;
+  const showStockSetting = (settings?.showStock !== false) && (book.showStock !== false);
+  const showDiscountSetting = book.showDiscount !== false;
   const isWishlisted = wishlist?.books?.some((b) => b && (b._id || b) === book._id) || false;
 
   const hasDiscount = book.discountedPrice > 0 && book.discountedPrice < book.originalPrice;
@@ -126,7 +127,7 @@ const BookCard = ({ book, noBorder }) => {
         }}
       >
         {/* Circular discount badge — anchored to top-left of the padded image area */}
-        {hasDiscount && (
+        {hasDiscount && showDiscountSetting && (
           <div
             className="absolute z-20 flex flex-col items-center justify-center"
             style={{
@@ -293,7 +294,7 @@ const BookCard = ({ book, noBorder }) => {
 
         {/* PRICING */}
         <div className="flex flex-col" style={{ gap: "1px" }}>
-          {hasDiscount ? (
+          {hasDiscount && showDiscountSetting ? (
             <>
               <div className="flex items-baseline gap-1 flex-wrap">
                 <span style={{ fontSize: "clamp(11px, 2vw, 13px)", fontWeight: 900, color: "#ffffff" }}>
@@ -309,7 +310,7 @@ const BookCard = ({ book, noBorder }) => {
             </>
           ) : (
             <span style={{ fontSize: "clamp(11px, 2vw, 13px)", fontWeight: 900, color: "#ffffff" }}>
-              Rs. {book.originalPrice}
+              Rs. {hasDiscount ? book.discountedPrice : book.originalPrice}
             </span>
           )}
         </div>

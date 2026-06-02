@@ -198,6 +198,12 @@ const AdminEditBook = () => {
             vintage:
               book.vintage || false,
 
+            showStock:
+              book.showStock !== false,
+
+            showDiscount:
+              book.showDiscount !== false,
+
             bindingType:
               book.bindingType || "Paperback",
 
@@ -850,6 +856,28 @@ const AdminEditBook = () => {
               className="h-4 w-4"
             />
             Signed Book
+          </label>
+
+          <label className="flex items-center gap-3 cursor-pointer text-gray-700 font-medium">
+            <input
+              type="checkbox"
+              name="showStock"
+              checked={formData.showStock}
+              onChange={handleChange}
+              className="h-4 w-4"
+            />
+            Show Stock Status
+          </label>
+
+          <label className="flex items-center gap-3 cursor-pointer text-gray-700 font-medium">
+            <input
+              type="checkbox"
+              name="showDiscount"
+              checked={formData.showDiscount}
+              onChange={handleChange}
+              className="h-4 w-4"
+            />
+            Show Discount Percentage
           </label>
 
           {formData.signed && (

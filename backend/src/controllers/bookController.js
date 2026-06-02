@@ -371,15 +371,28 @@ const updateBook = async (req, res) => {
       return res.status(404).json({ success: false, message: "Book not found" });
     }
 
-    if (req.files) {
-      if (req.files.images && req.files.images.length > 0) {
-        const uploaded = await uploadMultipleImages(req.files.images);
-        req.body.images = uploaded.map(img => img.url);
+    let existing = [];
+    if (req.body.existingImages) {
+      try {
+        existing = JSON.parse(req.body.existingImages);
+      } catch (err) {
+        existing = Array.isArray(req.body.existingImages)
+          ? req.body.existingImages
+          : [req.body.existingImages];
       }
-      if (req.files.newReleaseBgImage && req.files.newReleaseBgImage.length > 0) {
-        const uploaded = await uploadSingleImage(req.files.newReleaseBgImage[0]);
-        req.body.newReleaseBgImage = uploaded.url;
-      }
+    }
+
+    let newImages = [];
+    if (req.files && req.files.images && req.files.images.length > 0) {
+      const uploaded = await uploadMultipleImages(req.files.images);
+      newImages = uploaded.map(img => img.url);
+    }
+
+    req.body.images = [...existing, ...newImages];
+
+    if (req.files && req.files.newReleaseBgImage && req.files.newReleaseBgImage.length > 0) {
+      const uploaded = await uploadSingleImage(req.files.newReleaseBgImage[0]);
+      req.body.newReleaseBgImage = uploaded.url;
     }
 
     Object.assign(book, req.body);

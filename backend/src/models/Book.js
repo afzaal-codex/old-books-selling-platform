@@ -218,6 +218,16 @@ const bookSchema = new mongoose.Schema(
       default: false,
     },
 
+    showStock: {
+      type: Boolean,
+      default: true,
+    },
+
+    showDiscount: {
+      type: Boolean,
+      default: true,
+    },
+
     /* =========================
        RATINGS
     ========================= */

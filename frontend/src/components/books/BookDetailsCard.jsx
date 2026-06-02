@@ -19,7 +19,8 @@ const BookDetailsCard = ({
   reviewsLength,
 }) => {
   const { settings } = useSelector((state) => state.cms);
-  const showStockSetting = settings?.showStock !== false;
+  const showStockSetting = (settings?.showStock !== false) && (book.showStock !== false);
+  const showDiscountSetting = book.showDiscount !== false;
   return (
     <div
       className="w-full text-white"
@@ -62,7 +63,7 @@ const BookDetailsCard = ({
 
             {/* TAGS ON THE LEFT */}
             <div className="absolute top-0 left-0 flex flex-col items-start gap-1 z-10">
-              {hasDiscount && (
+              {hasDiscount && showDiscountSetting && (
                 <div
                   className="text-white font-black"
                   style={{
@@ -231,7 +232,7 @@ const BookDetailsCard = ({
               <span className="font-bold" style={{ fontSize: "20px", color: "#c8860a" }}>
                 Rs. {hasDiscount ? book.discountedPrice : book.originalPrice}
               </span>
-              {hasDiscount && (
+              {hasDiscount && showDiscountSetting && (
                 <span
                   className="line-through"
                   style={{ fontSize: "11px", color: "#6b7280" }}
@@ -240,7 +241,7 @@ const BookDetailsCard = ({
                 </span>
               )}
             </div>
-            {hasDiscount && (
+            {hasDiscount && showDiscountSetting && (
               <span
                 className="font-semibold"
                 style={{ fontSize: "10px", color: "#22c55e" }}
