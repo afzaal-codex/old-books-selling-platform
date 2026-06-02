@@ -270,12 +270,15 @@ const AdminEditBook = () => {
 
   const handleImages =
     (e) => {
-
-      setImages(
-        Array.from(
-          e.target.files
-        )
-      );
+      const selectedFiles = Array.from(e.target.files);
+      const totalCount = selectedFiles.length + existingImages.length;
+      if (totalCount > 10) {
+        toast.error(`You can have a maximum of 10 images! You already have ${existingImages.length} stored.`);
+        e.target.value = null;
+        setImages([]);
+        return;
+      }
+      setImages(selectedFiles);
     };
 
   /* REMOVE IMAGE */

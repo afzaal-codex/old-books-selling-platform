@@ -145,12 +145,14 @@ const AdminAddBook = () => {
 
   const handleImages =
     (e) => {
-
-      setImages(
-        Array.from(
-          e.target.files
-        )
-      );
+      const selectedFiles = Array.from(e.target.files);
+      if (selectedFiles.length > 10) {
+        toast.error("You can upload a maximum of 10 images!");
+        e.target.value = null;
+        setImages([]);
+        return;
+      }
+      setImages(selectedFiles);
     };
 
   /* SUBMIT */
