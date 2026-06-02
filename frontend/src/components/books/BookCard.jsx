@@ -139,7 +139,7 @@ const BookCard = ({ book, noBorder }) => {
       );
     }
 
-    // Desktop: single row, all images (max 10)
+    // Desktop: single row, fixed size same as 10-image layout, center aligned
     return (
       <div style={{ marginTop: "4px", marginBottom: "4px", paddingLeft: "8px", paddingRight: "8px" }}>
         <div style={{ display: "flex", gap: "2px", justifyContent: "center" }}>
@@ -150,7 +150,7 @@ const BookCard = ({ book, noBorder }) => {
                 key={idx}
                 onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveImgIdx(idx); }}
                 style={{
-                  flex: `0 0 calc(${100 / totalImages}% - 2px)`,
+                  flex: "0 0 calc(10% - 2px)",
                   aspectRatio: "1 / 1",
                   cursor: "pointer",
                   borderRadius: "3px",
