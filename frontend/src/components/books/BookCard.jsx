@@ -216,13 +216,17 @@ const BookCard = ({ book, noBorder }) => {
             <>
               <button
                 type="button"
-                disabled={thumbStartIndex === 0}
+                disabled={activeImgIdx === 0}
                 onClick={(e) => {
                   e.preventDefault(); e.stopPropagation();
-                  setThumbStartIndex((prev) => Math.max(0, prev - 1));
+                  const newIdx = Math.max(0, activeImgIdx - 1);
+                  setActiveImgIdx(newIdx);
+                  if (newIdx < thumbStartIndex) {
+                    setThumbStartIndex(newIdx);
+                  }
                 }}
                 className={`absolute -left-5 md:-left-6 top-1/2 -translate-y-1/2 z-20 transition ${
-                  thumbStartIndex === 0 ? "opacity-25 cursor-not-allowed" : "opacity-100 cursor-pointer hover:scale-110"
+                  activeImgIdx === 0 ? "opacity-25 cursor-not-allowed" : "opacity-100 cursor-pointer hover:scale-110"
                 }`}
                 style={{
                   background: "none",
@@ -239,13 +243,17 @@ const BookCard = ({ book, noBorder }) => {
               </button>
               <button
                 type="button"
-                disabled={thumbStartIndex >= book.images.length - maxThumbs}
+                disabled={activeImgIdx === book.images.length - 1}
                 onClick={(e) => {
                   e.preventDefault(); e.stopPropagation();
-                  setThumbStartIndex((prev) => Math.min(book.images.length - maxThumbs, prev + 1));
+                  const newIdx = Math.min(book.images.length - 1, activeImgIdx + 1);
+                  setActiveImgIdx(newIdx);
+                  if (newIdx >= thumbStartIndex + maxThumbs) {
+                    setThumbStartIndex(newIdx - maxThumbs + 1);
+                  }
                 }}
                 className={`absolute -right-5 md:-right-6 top-1/2 -translate-y-1/2 z-20 transition ${
-                  thumbStartIndex >= book.images.length - maxThumbs ? "opacity-25 cursor-not-allowed" : "opacity-100 cursor-pointer hover:scale-110"
+                  activeImgIdx === book.images.length - 1 ? "opacity-25 cursor-not-allowed" : "opacity-100 cursor-pointer hover:scale-110"
                 }`}
                 style={{
                   background: "none",

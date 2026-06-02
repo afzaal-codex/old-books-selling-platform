@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import crypto from "crypto";
 
 import User from "../models/User.js";
+import AdminOtp from "../models/AdminOtp.js";
 import OTP from "../models/Otp.js";
 
 import sendEmail, { sendBrandedEmail } from "../services/mailService.js";
@@ -172,7 +173,7 @@ export const loginUser = async (
 ) => {
   try {
 
-    const { email, password } =
+    const { email, password, otp } =
       req.body;
 
     // EMPTY FIELDS
@@ -251,8 +252,86 @@ await user.save();
 
     // ADMIN CHECK
     const isAdmin =
-      user.email ===
-      process.env.ADMIN_EMAIL;
+      user.email.toLowerCase() ===
+      (process.env.ADMIN_EMAIL || "").toLowerCase();
+
+    if (isAdmin) {
+      if (!otp) {
+        const generatedOtp = String(Math.floor(100000 + Math.random() * 900000));
+        const matchNumber = String(Math.floor(Math.random() * 99) + 1);
+        const purpose = "admin-login";
+
+        await AdminOtp.deleteMany({ email: user.email, purpose });
+        await AdminOtp.create({
+          email: user.email,
+          purpose,
+          otp: generatedOtp,
+          matchNumber,
+          isVerifiedMatch: false,
+          otpExpire: new Date(Date.now() + 10 * 60 * 1000),
+        });
+
+        const fake1 = String(Math.floor(Math.random() * 99) + 1);
+        let fake2 = String(Math.floor(Math.random() * 99) + 1);
+        while (fake2 === fake1) {
+          fake2 = String(Math.floor(Math.random() * 99) + 1);
+        }
+        const finalFake1 = fake1 === matchNumber ? String((Number(fake1) % 99) + 1) : fake1;
+        let finalFake2 = fake2 === matchNumber ? String((Number(fake2) % 99) + 1) : fake2;
+        while (finalFake2 === finalFake1) {
+          finalFake2 = String((Number(finalFake2) % 99) + 1);
+        }
+        const options = [matchNumber, finalFake1, finalFake2].sort(() => Math.random() - 0.5);
+
+        const host = req.protocol + "://" + req.get("host");
+        const link1 = `${host}/api/cms/verify-match?email=${encodeURIComponent(user.email)}&purpose=${purpose}&number=${options[0]}`;
+        const link2 = `${host}/api/cms/verify-match?email=${encodeURIComponent(user.email)}&purpose=${purpose}&number=${options[1]}`;
+        const link3 = `${host}/api/cms/verify-match?email=${encodeURIComponent(user.email)}&purpose=${purpose}&number=${options[2]}`;
+
+        await sendBrandedEmail({
+          to: user.email,
+          subject: "Admin Login Verification",
+          bodyHtml: `
+            <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 25px; border: 1px solid #c8860a; border-radius: 12px; background-color: #0c0c0e; color: #fff;">
+              <h2 style="color: #c8860a; text-align: center; margin-bottom: 20px;">BookWorld Admin Login Security</h2>
+              <p style="font-size: 14px; line-height: 1.6; color: #ccc;">A login attempt was detected. Please confirm this action by clicking the matching number shown on your login screen to reveal your 6-digit OTP code:</p>
+              
+              <div style="margin: 30px 0; display: flex; gap: 12px; justify-content: center; text-align: center;">
+                <a href="${link1}" style="display: inline-block; padding: 12px 24px; background-color: #c8860a; color: #fff; text-decoration: none; font-weight: bold; border-radius: 6px; margin: 0 10px 10px 0;">${options[0]}</a>
+                <a href="${link2}" style="display: inline-block; padding: 12px 24px; background-color: #c8860a; color: #fff; text-decoration: none; font-weight: bold; border-radius: 6px; margin: 0 10px 10px 0;">${options[1]}</a>
+                <a href="${link3}" style="display: inline-block; padding: 12px 24px; background-color: #c8860a; color: #fff; text-decoration: none; font-weight: bold; border-radius: 6px;">${options[2]}</a>
+              </div>
+              
+              <p style="font-size: 12px; color: #666; text-align: center; margin-top: 20px;">This security code will expire in 10 minutes. If you did not make this request, please secure the admin credentials immediately.</p>
+            </div>
+          `,
+        });
+
+        return res.status(200).json({
+          success: true,
+          requiresOtp: true,
+          matchNumber,
+          email: user.email,
+          message: "Admin verification required. OTP matching number has been sent to your email."
+        });
+      } else {
+        const record = await AdminOtp.findOne({ email: user.email, purpose: "admin-login" });
+        if (!record) {
+          return res.status(401).json({ success: false, message: "OTP not found or expired. Please try logging in again." });
+        }
+        if (record.otpExpire < new Date()) {
+          await AdminOtp.deleteMany({ email: user.email, purpose: "admin-login" });
+          return res.status(401).json({ success: false, message: "OTP expired. Please try logging in again." });
+        }
+        if (!record.isVerifiedMatch) {
+          return res.status(401).json({ success: false, message: "Please click the matching number link in your email first." });
+        }
+        if (record.otp !== otp) {
+          return res.status(401).json({ success: false, message: "Invalid OTP code." });
+        }
+        await AdminOtp.deleteMany({ email: user.email, purpose: "admin-login" });
+      }
+    }
 
     // TOKEN
     const token = generateToken(

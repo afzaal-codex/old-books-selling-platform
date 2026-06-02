@@ -117,6 +117,25 @@ const verifyMatchClick = async (req, res) => {
     record.isVerifiedMatch = true;
     await record.save();
 
+    if (purpose === "admin-login") {
+      await sendBrandedEmail({
+        to: email,
+        subject: "Your Admin Login OTP Code",
+        bodyHtml: `
+          <div style="font-family: Arial, sans-serif; max-width: 600px; margin: auto; padding: 25px; border: 1px solid #c8860a; border-radius: 12px; background-color: #0c0c0e; color: #fff;">
+            <h2 style="color: #c8860a; text-align: center; margin-bottom: 20px;">BookWorld Admin Security OTP</h2>
+            <p style="font-size: 14px; line-height: 1.6; color: #ccc;">Your matching number has been verified successfully. Here is your 6-digit OTP code to complete your login:</p>
+            <div style="text-align: center; margin: 30px 0;">
+              <span style="font-size: 32px; font-weight: 950; color: #fff; letter-spacing: 5px; padding: 15px 30px; background: #0c0c0e; border: 2px dashed #c8860a; border-radius: 10px; display: inline-block;">
+                ${record.otp}
+              </span>
+            </div>
+            <p style="font-size: 12px; color: #666; text-align: center; margin-top: 20px;">This OTP will expire in 10 minutes. If you did not initiate this login, please change your password immediately.</p>
+          </div>
+        `
+      });
+    }
+
     return res.send(`
       <div style="font-family: Arial, sans-serif; text-align: center; background-color: #0c0c0e; color: #fff; padding: 50px; min-height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center; box-sizing: border-box;">
         <div style="border: 1px solid #c8860a; border-radius: 16px; padding: 40px; background-color: #141416; max-width: 500px; box-shadow: 0 8px 30px rgba(0,0,0,0.5);">

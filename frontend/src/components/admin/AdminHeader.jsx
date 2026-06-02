@@ -35,7 +35,7 @@ const AdminHeader = () => {
           <div className="flex items-center gap-3 rounded-xl border border-[var(--color-border)] px-3 py-1.5 bg-black/20">
             <div className="hidden md:block text-left">
               <h3 className="text-xs font-bold text-white leading-tight">
-                {import.meta.env.VITE_ADMIN_NAME || "Muhammad Afzal"}
+                {user?.name || import.meta.env.VITE_ADMIN_NAME || "Muhammad Afzal"}
               </h3>
               <p className="text-[9px] text-gray-550 font-bold uppercase tracking-widest mt-0.5">
                 Super Admin

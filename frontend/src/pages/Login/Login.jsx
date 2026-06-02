@@ -80,6 +80,9 @@ const Login = () => {
   const [formData,     setFormData]     = useState({
     email: "", password: "", rememberMe: false,
   });
+  const [requiresOtp,  setRequiresOtp]  = useState(false);
+  const [otp,          setOtp]          = useState("");
+  const [matchNumber,  setMatchNumber]  = useState("");
 
   const handleChange = (e) => {
     const { name, value, checked, type } = e.target;
@@ -91,9 +94,14 @@ const Login = () => {
     const newErrors = {};
     if (!formData.email.trim()) newErrors.email    = "Email is required";
     if (!formData.password)     newErrors.password = "Password is required";
+    if (requiresOtp && !otp.trim()) newErrors.otp   = "OTP is required";
     setErrors(newErrors);
     if (Object.keys(newErrors).length > 0) {
-      toast.error("Email and password are required");
+      if (requiresOtp && newErrors.otp) {
+        toast.error("OTP is required");
+      } else {
+        toast.error("Email and password are required");
+      }
       return false;
     }
     return true;
@@ -107,8 +115,15 @@ const Login = () => {
       const response = await axiosInstance.post("/auth/login", {
         email:    formData.email.trim().toLowerCase(),
         password: formData.password,
+        otp:      requiresOtp ? otp : undefined,
       });
       const data = response.data;
+      if (data.requiresOtp) {
+        setRequiresOtp(true);
+        setMatchNumber(data.matchNumber);
+        toast.success("Security verification required. Click the matching number in your email.");
+        return;
+      }
       dispatch(setAuth({ token: data.token, user: data.user, isAdmin: data.isAdmin }));
       toast.success(data.message);
       const redirectPath = location.state?.from?.pathname || "/";
@@ -119,6 +134,7 @@ const Login = () => {
       if (message === "User not found")                  setErrors({ email: message });
       if (message === "Invalid email or password")       setErrors({ password: message });
       if (message === "Your account has been blocked")   setErrors({ email: message });
+      if (message.includes("OTP"))                       setErrors({ otp: message });
     } finally {
       setLoading(false);
     }
@@ -206,85 +222,143 @@ const Login = () => {
 
         {/* ── Form ── */}
         <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+          {requiresOtp ? (
+            <>
+              <div style={{ textAlign: "center", margin: "10px 0" }}>
+                <span style={{ fontSize: 13, color: T.muted }}>
+                  Click the matching number in your email to receive your OTP.
+                </span>
+                <div style={{
+                  marginTop: 12,
+                  padding: "12px",
+                  background: T.input,
+                  border: `1px solid ${T.border}`,
+                  textAlign: "center",
+                }}>
+                  Match Number: <strong style={{ color: T.gold, fontSize: 20 }}>{matchNumber}</strong>
+                </div>
+              </div>
 
-          {/* Email */}
-          <Field label="Email Address" error={errors.email}>
-            <input
-              className="login-input"
-              type="email" name="email"
-              value={formData.email}
-              onChange={handleChange}
-              placeholder="Enter your email"
-              style={inputStyle(errors.email)}
-            />
-          </Field>
+              <Field label="Enter 6-Digit OTP" error={errors.otp}>
+                <input
+                  className="login-input"
+                  type="text"
+                  name="otp"
+                  maxLength={6}
+                  value={otp}
+                  onChange={(e) => {
+                    setOtp(e.target.value);
+                    setErrors((prev) => ({ ...prev, otp: "" }));
+                  }}
+                  placeholder="Enter OTP code"
+                  style={inputStyle(errors.otp)}
+                />
+              </Field>
 
-          {/* Password */}
-          <Field label="Password" error={errors.password}>
-            <div style={{ position: "relative" }}>
-              <input
-                className="login-input"
-                type={showPassword ? "text" : "password"}
-                name="password"
-                value={formData.password}
-                onChange={handleChange}
-                placeholder="Enter your password"
-                style={inputStyle(errors.password, { paddingRight: 48 })}
-              />
+              <LoginBtn loading={loading} />
+
               <button
                 type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                style={{
-                  position:  "absolute", right: 12, top: "50%",
-                  transform: "translateY(-50%)",
-                  background: "none", border: "none",
-                  cursor: "pointer", padding: 2,
-                  color: T.dim, transition: "color 0.18s ease",
-                  display: "flex", alignItems: "center",
+                onClick={() => {
+                  setRequiresOtp(false);
+                  setOtp("");
+                  setMatchNumber("");
                 }}
-                onMouseEnter={e => e.currentTarget.style.color = T.gold}
-                onMouseLeave={e => e.currentTarget.style.color = T.dim}
+                style={{
+                  background: "none",
+                  border: "none",
+                  color: T.muted,
+                  cursor: "pointer",
+                  fontSize: 12,
+                  marginTop: 8,
+                  textDecoration: "underline",
+                }}
               >
-                {showPassword
-                  ? <EyeOff size={14} strokeWidth={2} />
-                  : <Eye    size={14} strokeWidth={2} />}
+                Back to Login
               </button>
-            </div>
-          </Field>
+            </>
+          ) : (
+            <>
+              {/* Email */}
+              <Field label="Email Address" error={errors.email}>
+                <input
+                  className="login-input"
+                  type="email" name="email"
+                  value={formData.email}
+                  onChange={handleChange}
+                  placeholder="Enter your email"
+                  style={inputStyle(errors.email)}
+                />
+              </Field>
 
-          {/* Remember Me + Forgot Password */}
-          <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-            <label style={{
-              display:    "flex",
-              alignItems: "center",
-              gap:        6,
-              fontSize:   11,
-              color:      T.muted,
-              cursor:     "pointer",
-              userSelect: "none",
-            }}>
-              <input
-                type="checkbox"
-                name="rememberMe"
-                checked={formData.rememberMe}
-                onChange={handleChange}
-                style={{ accentColor: T.gold, cursor: "pointer" }}
-              />
-              Remember Me
-            </label>
+              {/* Password */}
+              <Field label="Password" error={errors.password}>
+                <div style={{ position: "relative" }}>
+                  <input
+                    className="login-input"
+                    type={showPassword ? "text" : "password"}
+                    name="password"
+                    value={formData.password}
+                    onChange={handleChange}
+                    placeholder="Enter your password"
+                    style={inputStyle(errors.password, { paddingRight: 48 })}
+                  />
+                  <button
+                    type="button"
+                    onClick={() => setShowPassword(!showPassword)}
+                    style={{
+                      position:  "absolute", right: 12, top: "50%",
+                      transform: "translateY(-50%)",
+                      background: "none", border: "none",
+                      cursor: "pointer", padding: 2,
+                      color: T.dim, transition: "color 0.18s ease",
+                      display: "flex", alignItems: "center",
+                    }}
+                    onMouseEnter={e => e.currentTarget.style.color = T.gold}
+                    onMouseLeave={e => e.currentTarget.style.color = T.dim}
+                  >
+                    {showPassword
+                      ? <EyeOff size={14} strokeWidth={2} />
+                      : <Eye    size={14} strokeWidth={2} />}
+                  </button>
+                </div>
+              </Field>
 
-            <Link
-              to="/forgot-password"
-              style={{ fontSize: 11, fontWeight: 600, color: T.gold, textDecoration: "none" }}
-              onMouseEnter={e => e.currentTarget.style.textDecoration = "underline"}
-              onMouseLeave={e => e.currentTarget.style.textDecoration = "none"}
-            >
-              Forgot Password?
-            </Link>
-          </div>
+              {/* Remember Me + Forgot Password */}
+              <div style={{ display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+                <label style={{
+                  display:    "flex",
+                  alignItems: "center",
+                  gap:        6,
+                  fontSize:   11,
+                  color:      T.muted,
+                  cursor:     "pointer",
+                  userSelect: "none",
+                }}>
+                  <input
+                    type="checkbox"
+                    name="rememberMe"
+                    checked={formData.rememberMe}
+                    onChange={handleChange}
+                    style={{ accentColor: T.gold, cursor: "pointer" }}
+                  />
+                  Remember Me
+                </label>
 
-          {/* Login Button */}
-          <LoginBtn loading={loading} />
+                <Link
+                  to="/forgot-password"
+                  style={{ fontSize: 11, fontWeight: 600, color: T.gold, textDecoration: "none" }}
+                  onMouseEnter={e => e.currentTarget.style.textDecoration = "underline"}
+                  onMouseLeave={e => e.currentTarget.style.textDecoration = "none"}
+                >
+                  Forgot Password?
+                </Link>
+              </div>
+
+              {/* Login Button */}
+              <LoginBtn loading={loading} />
+            </>
+          )}
         </form>
 
         {/* ── Divider ── */}
