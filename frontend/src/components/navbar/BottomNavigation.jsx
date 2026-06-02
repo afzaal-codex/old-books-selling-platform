@@ -13,23 +13,30 @@ const BottomNavigation = ({ isOpen, setIsOpen }) => {
   return (
     <div className="fixed bottom-0 left-0 right-0 z-50 md:hidden bg-neutral-950/95 border-t border-white/10 backdrop-blur-md py-1.5 shadow-[0_-4px_20px_rgba(0,0,0,0.5)]">
       <div className="grid grid-cols-3 items-center w-full max-w-lg mx-auto h-12">
+
         {/* Left: Home */}
         <div className="flex justify-center w-full">
           <Link
             to="/"
+            onClick={() => setIsOpen(false)}
             className={`flex flex-col items-center justify-center transition-all duration-150 w-full ${
               isHome ? "text-[var(--color-primary)]" : "text-gray-400 hover:text-[var(--color-primary)]"
             }`}
           >
             <Home size={18} className={isHome ? "scale-105" : ""} />
-            <span className={`text-[8px] font-bold mt-0.5 uppercase tracking-wider ${isHome ? "text-[var(--color-primary)]" : ""}`}>Home</span>
+            <span className={`text-[8px] font-bold mt-0.5 uppercase tracking-wider ${isHome ? "text-[var(--color-primary)]" : ""}`}>
+              Home
+            </span>
           </Link>
         </div>
 
         {/* Center: Cart */}
         <div className="flex justify-center w-full">
           <button
-            onClick={() => navigate("/cart")}
+            onClick={() => {
+              setIsOpen(false);
+              navigate("/cart");
+            }}
             className="
               relative flex items-center justify-center
               w-10 h-10 rounded-full
@@ -66,9 +73,12 @@ const BottomNavigation = ({ isOpen, setIsOpen }) => {
             }`}
           >
             <Menu size={18} className={isOpen ? "scale-105 rotate-90" : ""} />
-            <span className={`text-[8px] font-bold mt-0.5 uppercase tracking-wider ${isOpen ? "text-[var(--color-primary)]" : ""}`}>Menu</span>
+            <span className={`text-[8px] font-bold mt-0.5 uppercase tracking-wider ${isOpen ? "text-[var(--color-primary)]" : ""}`}>
+              Menu
+            </span>
           </button>
         </div>
+
       </div>
     </div>
   );
