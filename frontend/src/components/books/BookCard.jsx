@@ -29,10 +29,17 @@ const BookCard = ({ book, noBorder }) => {
   }, [book._id]);
 
   const moveThumbnails = (direction) => {
-    const lastStartIndex = Math.max((book.images?.length || 0) - maxThumbs, 0);
-    const newStartIndex = Math.min(Math.max(thumbStartIndex + direction, 0), lastStartIndex);
+    const totalImages = book.images?.length || 0;
+    const lastStartIndex = Math.max(totalImages - maxThumbs, 0);
+    const newStartIndex = Math.min(Math.max(thumbStartIndex + direction * maxThumbs, 0), lastStartIndex);
     setThumbStartIndex(newStartIndex);
-    setActiveImgIdx(direction > 0 ? Math.min(newStartIndex + maxThumbs - 1, (book.images?.length || 1) - 1) : newStartIndex);
+    setActiveImgIdx((prev) => {
+      const isVisible = prev >= newStartIndex && prev < newStartIndex + maxThumbs;
+      if (isVisible) return prev;
+      return direction > 0
+        ? newStartIndex
+        : Math.min(newStartIndex + maxThumbs - 1, totalImages - 1);
+    });
   };
 
   const { isAuthenticated } = useSelector((state) => state.auth);
