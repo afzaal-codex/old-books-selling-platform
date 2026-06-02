@@ -31,14 +31,14 @@ const BookCard = ({ book, noBorder }) => {
   const moveThumbnails = (direction) => {
     const totalImages = book.images?.length || 0;
     const lastStartIndex = Math.max(totalImages - maxThumbs, 0);
+    // Jump a full page per click
     const newStartIndex = Math.min(Math.max(thumbStartIndex + direction * maxThumbs, 0), lastStartIndex);
     setThumbStartIndex(newStartIndex);
+    // If active thumb is no longer in the new window, snap it into view
     setActiveImgIdx((prev) => {
-      const isVisible = prev >= newStartIndex && prev < newStartIndex + maxThumbs;
-      if (isVisible) return prev;
-      return direction > 0
-        ? newStartIndex
-        : Math.min(newStartIndex + maxThumbs - 1, totalImages - 1);
+      const stillVisible = prev >= newStartIndex && prev < newStartIndex + maxThumbs;
+      if (stillVisible) return prev;
+      return direction > 0 ? newStartIndex : Math.min(newStartIndex + maxThumbs - 1, totalImages - 1);
     });
   };
 
