@@ -1,4 +1,4 @@
-import { Heart, ShoppingCart, Share2, ChevronLeft, ChevronRight } from "lucide-react";
+import { Heart, ShoppingCart, Share2 } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { useState, useEffect } from "react";
@@ -10,8 +10,7 @@ const BookCard = ({ book, noBorder }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const [activeImgIdx, setActiveImgIdx] = useState(0);
-  const [thumbStartIndex, setThumbStartIndex] = useState(0);
-  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
+  const [windowWidth, setWindowWidth] = useState(typeof window !== "undefined" ? window.innerWidth : 1024);
 
   useEffect(() => {
     const handleResize = () => setWindowWidth(window.innerWidth);
@@ -21,26 +20,10 @@ const BookCard = ({ book, noBorder }) => {
 
   useEffect(() => {
     setActiveImgIdx(0);
-    setThumbStartIndex(0);
   }, [book._id]);
 
-  // Derived — never stale
-  const maxThumbs = windowWidth < 768 ? 5 : 6;
-  const totalImages = book.images?.length || 0;
-  const canGoPrev = thumbStartIndex > 0;
-  const canGoNext = thumbStartIndex + maxThumbs < totalImages;
-
-  const moveThumbnails = (direction) => {
-    const lastStartIndex = Math.max(totalImages - maxThumbs, 0);
-    const newStartIndex = Math.min(Math.max(thumbStartIndex + direction, 0), lastStartIndex);
-    setThumbStartIndex(newStartIndex);
-    // Keep active thumb visible — snap to edge of new window if needed
-    setActiveImgIdx((prev) => {
-      const stillVisible = prev >= newStartIndex && prev < newStartIndex + maxThumbs;
-      if (stillVisible) return prev;
-      return direction > 0 ? newStartIndex : Math.min(newStartIndex + maxThumbs - 1, totalImages - 1);
-    });
-  };
+  const isMobile = windowWidth < 768;
+  const totalImages = Math.min(book.images?.length || 0, 10);
 
   const { isAuthenticated } = useSelector((state) => state.auth);
   const { wishlist } = useSelector((state) => state.wishlist);
@@ -84,6 +67,108 @@ const BookCard = ({ book, noBorder }) => {
     }
   };
 
+  // Split images into rows for mobile (5 + 5), or single row for desktop (all 10)
+  const renderThumbnails = () => {
+    if (totalImages === 0) return null;
+
+    if (isMobile) {
+      // Mobile: up to 2 rows of 5
+      const row1 = Array.from({ length: Math.min(5, totalImages) }, (_, i) => i);
+      const row2 = totalImages > 5
+        ? Array.from({ length: Math.min(5, totalImages - 5) }, (_, i) => i + 5)
+        : [];
+
+      return (
+        <div style={{ display: "flex", flexDirection: "column", gap: "2px", marginTop: "4px", marginBottom: "4px", paddingLeft: "8px", paddingRight: "8px" }}>
+          {/* Row 1 */}
+          <div style={{ display: "flex", gap: "2px", justifyContent: "center" }}>
+            {row1.map((idx) => {
+              const isActive = idx === activeImgIdx;
+              return (
+                <div
+                  key={idx}
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveImgIdx(idx); }}
+                  style={{
+                    flex: "0 0 calc(20% - 2px)",
+                    aspectRatio: "1 / 1",
+                    cursor: "pointer",
+                    borderRadius: "3px",
+                    overflow: "hidden",
+                    border: isActive ? "2px solid #c8860a" : "2px solid transparent",
+                    transition: "border-color 0.2s",
+                    boxSizing: "border-box",
+                    touchAction: "manipulation",
+                    WebkitTapHighlightColor: "transparent",
+                  }}
+                >
+                  <img src={book.images[idx]} alt={`thumb-${idx}`} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                </div>
+              );
+            })}
+          </div>
+
+          {/* Row 2 — only if more than 5 images */}
+          {row2.length > 0 && (
+            <div style={{ display: "flex", gap: "2px", justifyContent: "center" }}>
+              {row2.map((idx) => {
+                const isActive = idx === activeImgIdx;
+                return (
+                  <div
+                    key={idx}
+                    onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveImgIdx(idx); }}
+                    style={{
+                      flex: "0 0 calc(20% - 2px)",
+                      aspectRatio: "1 / 1",
+                      cursor: "pointer",
+                      borderRadius: "3px",
+                      overflow: "hidden",
+                      border: isActive ? "2px solid #c8860a" : "2px solid transparent",
+                      transition: "border-color 0.2s",
+                      boxSizing: "border-box",
+                      touchAction: "manipulation",
+                      WebkitTapHighlightColor: "transparent",
+                    }}
+                  >
+                    <img src={book.images[idx]} alt={`thumb-${idx}`} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      );
+    }
+
+    // Desktop: single row, all images (max 10)
+    return (
+      <div style={{ marginTop: "4px", marginBottom: "4px", paddingLeft: "8px", paddingRight: "8px" }}>
+        <div style={{ display: "flex", gap: "2px", justifyContent: "center" }}>
+          {Array.from({ length: totalImages }, (_, idx) => {
+            const isActive = idx === activeImgIdx;
+            return (
+              <div
+                key={idx}
+                onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveImgIdx(idx); }}
+                style={{
+                  flex: `0 0 calc(${100 / totalImages}% - 2px)`,
+                  aspectRatio: "1 / 1",
+                  cursor: "pointer",
+                  borderRadius: "3px",
+                  overflow: "hidden",
+                  border: isActive ? "2px solid #c8860a" : "2px solid transparent",
+                  transition: "border-color 0.2s",
+                  boxSizing: "border-box",
+                }}
+              >
+                <img src={book.images[idx]} alt={`thumb-${idx}`} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
+              </div>
+            );
+          })}
+        </div>
+      </div>
+    );
+  };
+
   return (
     <div
       className="group flex flex-col overflow-visible transition-all duration-300 hover:translate-y-[-4px]"
@@ -91,13 +176,12 @@ const BookCard = ({ book, noBorder }) => {
         background: "#0d0d0d",
         border: "none",
         borderRadius: "6px",
-       
         transform: "perspective(800px) rotateX(1deg)",
         transformStyle: "preserve-3d",
       }}
     >
 
-      {/* ── TOP TAGS ROW — only Bestseller & Featured ── */}
+      {/* ── TOP TAGS ROW ── */}
       <div
         className="flex flex-row items-center gap-1"
         style={{ padding: "6px 8px 4px 8px", minHeight: "24px" }}
@@ -132,22 +216,7 @@ const BookCard = ({ book, noBorder }) => {
         )}
       </div>
 
-      {/*
-        ── IMAGE TAPE ──
-        Margins (% of card width via padding on parent):
-          top    = 8%  of card  → paddingTop on wrapper
-          bottom = 3%  of card  → paddingBottom on wrapper
-          left   = 5%  of card  → paddingLeft (book leans left)
-          right  = 10% of card  → paddingRight (sinks right)
-
-        Image is scaled down 20% from current size.
-        Current: fills 100% of (card - 4px*2 margins).
-        New:     fills 80% of that area → achieved by adding more
-                 horizontal room (left 5% + right 10% = 15% total h-padding,
-                 was 4px+4px ≈ ~4% total).
-        The asymmetric left/right padding creates the "leaning left, sinking right" feel.
-      *)
-      */}
+      {/* ── IMAGE ── */}
       <div
         className="relative"
         style={{
@@ -157,7 +226,7 @@ const BookCard = ({ book, noBorder }) => {
           paddingRight:  "13%",
         }}
       >
-        {/* Circular discount badge — anchored to top-left of the padded image area */}
+        {/* Discount badge */}
         {hasDiscount && showDiscountSetting && (
           <div
             className="absolute z-20 flex flex-col items-center justify-center"
@@ -168,7 +237,6 @@ const BookCard = ({ book, noBorder }) => {
               background: "linear-gradient(135deg, #cc2200, #ff4422)",
               border: "2px solid #0d0d0d",
               boxShadow: "0 2px 8px rgba(204,34,0,0.6)",
-              /* sit at top-left corner of the padded image box */
               top: "calc(8% - 17px)",
               left: "calc(13% - 17px)",
               lineHeight: 1,
@@ -181,7 +249,6 @@ const BookCard = ({ book, noBorder }) => {
           </div>
         )}
 
-        {/* Image tape: fills the padded area with strict 2:3 ratio */}
         <Link
           to={`/book/${book._id}`}
           className="block overflow-hidden"
@@ -230,77 +297,8 @@ const BookCard = ({ book, noBorder }) => {
         </Link>
       </div>
 
-      {/* ── THUMBNAIL CAROUSEL ── */}
-      {book.images && book.images.length > 0 && (
-        <div
-          className="relative select-none"
-          style={{ marginTop: "4px", marginBottom: "4px", paddingLeft: "22px", paddingRight: "22px" }}
-        >
-          {/* LEFT ARROW — always present, fades out at start */}
-          <button
-            type="button"
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (canGoPrev) moveThumbnails(-1); }}
-            style={{
-              position: "absolute", left: 0, top: "50%", transform: "translateY(-50%)",
-              zIndex: 30, color: "#c8860a", background: "none", border: "none",
-              padding: "4px", outline: "none", lineHeight: 0,
-              opacity: canGoPrev ? 1 : 0.15,
-              cursor: canGoPrev ? "pointer" : "default",
-              transition: "opacity 0.2s",
-              touchAction: "manipulation",
-              WebkitTapHighlightColor: "transparent",
-            }}
-          >
-            <ChevronLeft size={16} strokeWidth={3} />
-          </button>
-
-          {/* RIGHT ARROW — always present, fades out at end */}
-          <button
-            type="button"
-            onClick={(e) => { e.preventDefault(); e.stopPropagation(); if (canGoNext) moveThumbnails(1); }}
-            style={{
-              position: "absolute", right: 0, top: "50%", transform: "translateY(-50%)",
-              zIndex: 30, color: "#c8860a", background: "none", border: "none",
-              padding: "4px", outline: "none", lineHeight: 0,
-              opacity: canGoNext ? 1 : 0.15,
-              cursor: canGoNext ? "pointer" : "default",
-              transition: "opacity 0.2s",
-              touchAction: "manipulation",
-              WebkitTapHighlightColor: "transparent",
-            }}
-          >
-            <ChevronRight size={16} strokeWidth={3} />
-          </button>
-
-          {/* THUMBNAILS — show maxThumbs at a time */}
-          <div style={{ display: "flex", gap: "3px", overflow: "hidden", width: "100%" }}>
-            {book.images.slice(thumbStartIndex, thumbStartIndex + maxThumbs).map((img, idx) => {
-              const actualIdx = thumbStartIndex + idx;
-              const isActive = actualIdx === activeImgIdx;
-              return (
-                <div
-                  key={actualIdx}
-                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveImgIdx(actualIdx); }}
-                  style={{
-                    flex: `0 0 calc(${100 / maxThumbs}% - 3px)`,
-                    aspectRatio: "1 / 1",
-                    cursor: "pointer",
-                    borderRadius: "3px",
-                    overflow: "hidden",
-                    border: isActive ? "2px solid #c8860a" : "2px solid transparent",
-                    transition: "border-color 0.2s",
-                    boxSizing: "border-box",
-                    touchAction: "manipulation",
-                    WebkitTapHighlightColor: "transparent",
-                  }}
-                >
-                  <img src={img} alt={`thumb-${actualIdx}`} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
-                </div>
-              );
-            })}
-          </div>
-        </div>
-      )}
+      {/* ── THUMBNAILS ── */}
+      {book.images && book.images.length > 0 && renderThumbnails()}
 
       {/* ── CONTENT ── */}
       <div className="flex flex-col flex-1" style={{ padding: "0 8px 0 8px" }}>
