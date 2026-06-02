@@ -388,7 +388,12 @@ const updateBook = async (req, res) => {
       newImages = uploaded.map(img => img.url);
     }
 
-    req.body.images = [...existing, ...newImages];
+    const isNewCover = req.body.isNewCover === "true";
+    if (isNewCover) {
+      req.body.images = [...newImages, ...existing];
+    } else {
+      req.body.images = [...existing, ...newImages];
+    }
 
     if (req.files && req.files.newReleaseBgImage && req.files.newReleaseBgImage.length > 0) {
       const uploaded = await uploadSingleImage(req.files.newReleaseBgImage[0]);

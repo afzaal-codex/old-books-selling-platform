@@ -46,6 +46,10 @@ const AdminEditBook = () => {
     setExistingImages] =
     useState([]);
 
+  const [coverSelection,
+    setCoverSelection] =
+    useState({ type: "existing", index: 0 });
+
   const [formData,
     setFormData] =
     useState({
@@ -282,16 +286,17 @@ const AdminEditBook = () => {
         toast.error(`You can have a maximum of 10 images! You already have ${existingImages.length} stored.`);
         e.target.value = null;
         setImages([]);
+        setCoverSelection({ type: "existing", index: 0 });
         return;
       }
       setImages(selectedFiles);
+      setCoverSelection({ type: "existing", index: 0 });
     };
 
   /* REMOVE IMAGE */
 
   const removeExistingImage =
     (image) => {
-
       setExistingImages(
         (prev) =>
           prev.filter(
@@ -299,6 +304,7 @@ const AdminEditBook = () => {
               img !== image
           )
       );
+      setCoverSelection({ type: "existing", index: 0 });
     };
 
   /* UPDATE */
@@ -326,17 +332,27 @@ const AdminEditBook = () => {
         });
 
         /* EXISTING */
+        const orderedExisting = [...existingImages];
+        if (coverSelection.type === "existing" && coverSelection.index < orderedExisting.length) {
+          const [coverImg] = orderedExisting.splice(coverSelection.index, 1);
+          orderedExisting.unshift(coverImg);
+        }
 
         submitData.append(
           "existingImages",
-          JSON.stringify(
-            existingImages
-          )
+          JSON.stringify(orderedExisting)
         );
 
         /* NEW */
+        const orderedNew = [...images];
+        if (coverSelection.type === "new" && coverSelection.index < orderedNew.length) {
+          const [coverFile] = orderedNew.splice(coverSelection.index, 1);
+          orderedNew.unshift(coverFile);
+        }
 
-        images.forEach(
+        submitData.append("isNewCover", coverSelection.type === "new" ? "true" : "false");
+
+        orderedNew.forEach(
           (image) => {
 
             submitData.append(
@@ -681,56 +697,94 @@ const AdminEditBook = () => {
           className="w-full rounded-2xl border border-gray-200 px-5 py-4 outline-none"
         />
 
-        {/* EXISTING IMAGES */}
+        {/* IMAGES & COVER MANAGER */}
 
-        <div>
-          <h3 className="mb-4 text-xl font-semibold">
-            Existing Images
-          </h3>
+        <div className="space-y-4">
+          <h3 className="text-xl font-semibold">Image Manager & Cover Selection</h3>
+          <p className="text-xs text-gray-500">Click on any image thumbnail to set it as the book's primary cover image.</p>
+          
+          {/* Existing Images Gallery */}
+          {existingImages.length > 0 && (
+            <div className="space-y-2">
+              <span className="text-xs font-bold text-gray-400 uppercase">Existing Images</span>
+              <div className="flex flex-wrap gap-4 bg-gray-50 p-4 border border-gray-200 rounded-2xl">
+                {existingImages.map((image, index) => {
+                  const isCover = coverSelection.type === "existing" && coverSelection.index === index;
+                  return (
+                    <div
+                      key={`exist-${index}`}
+                      onClick={() => setCoverSelection({ type: "existing", index })}
+                      className={`relative w-24 h-36 cursor-pointer border-2 transition-all overflow-hidden rounded-lg group ${isCover ? "border-[#c8860a] ring-2 ring-[#c8860a]/20" : "border-gray-200 hover:border-gray-400"}`}
+                    >
+                      <img src={image} alt={`existing-${index}`} className="w-full h-full object-cover" />
+                      <button
+                        type="button"
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          removeExistingImage(image);
+                        }}
+                        className="absolute right-1 top-1 bg-red-500 hover:bg-red-600 text-white rounded-full p-1 leading-none text-[8px] font-black z-25"
+                      >
+                        ✕
+                      </button>
+                      {isCover ? (
+                        <span className="absolute bottom-0 left-0 right-0 bg-[#c8860a] text-black text-[9px] font-black text-center py-1">
+                          COVER IMAGE
+                        </span>
+                      ) : (
+                        <span className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-[9px] font-bold text-center py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          SET AS COVER
+                        </span>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
 
-          <div className="grid grid-cols-2 gap-5 md:grid-cols-4">
-            {existingImages.map(
-              (
-                image,
-                index
-              ) => (
-                <div
-                  key={index}
-                  className="relative"
-                >
-                  <img
-                    src={image}
-                    alt="Book"
-                    className="h-48 w-full rounded-2xl object-cover"
-                  />
-
-                  <button
-                    type="button"
-                    onClick={() =>
-                      removeExistingImage(
-                        image
-                      )
-                    }
-                    className="absolute right-3 top-3 rounded-full bg-red-500 px-3 py-1 text-xs text-white"
-                  >
-                    Remove
-                  </button>
-                </div>
-              )
-            )}
+          {/* New Image Upload */}
+          <div className="space-y-2">
+            <span className="text-xs font-bold text-gray-400 uppercase block">Upload New Images</span>
+            <input
+              type="file"
+              multiple
+              onChange={handleImages}
+              className="w-full rounded-2xl border border-gray-200 px-5 py-4"
+            />
           </div>
+
+          {/* New Images Previews */}
+          {images.length > 0 && (
+            <div className="space-y-2">
+              <span className="text-xs font-bold text-gray-400 uppercase">New Upload Previews</span>
+              <div className="flex flex-wrap gap-4 bg-gray-50 p-4 border border-gray-200 rounded-2xl">
+                {images.map((file, index) => {
+                  const url = URL.createObjectURL(file);
+                  const isCover = coverSelection.type === "new" && coverSelection.index === index;
+                  return (
+                    <div
+                      key={`new-${index}`}
+                      onClick={() => setCoverSelection({ type: "new", index })}
+                      className={`relative w-24 h-36 cursor-pointer border-2 transition-all overflow-hidden rounded-lg group ${isCover ? "border-[#c8860a] ring-2 ring-[#c8860a]/20" : "border-gray-200 hover:border-gray-400"}`}
+                    >
+                      <img src={url} alt={`new-${index}`} className="w-full h-full object-cover" />
+                      {isCover ? (
+                        <span className="absolute bottom-0 left-0 right-0 bg-[#c8860a] text-black text-[9px] font-black text-center py-1">
+                          COVER IMAGE
+                        </span>
+                      ) : (
+                        <span className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-[9px] font-bold text-center py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                          SET AS COVER
+                        </span>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+          )}
         </div>
-
-        {/* NEW IMAGES */}
-
-        <input
-          type="file"
-          multiple
-          onChange={
-            handleImages
-          }
-          className="w-full rounded-2xl border border-gray-200 px-5 py-4"
-        />
 
         {/* CHECKBOXES */}
 

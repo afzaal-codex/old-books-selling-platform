@@ -32,6 +32,10 @@ const AdminAddBook = () => {
     setImages] =
     useState([]);
 
+  const [coverIndex,
+    setCoverIndex] =
+    useState(0);
+
   const [formData,
     setFormData] =
     useState({
@@ -143,8 +147,6 @@ const AdminAddBook = () => {
       }));
     };
 
-  /* IMAGE */
-
   const handleImages =
     (e) => {
       const selectedFiles = Array.from(e.target.files);
@@ -152,9 +154,11 @@ const AdminAddBook = () => {
         toast.error("You can upload a maximum of 10 images!");
         e.target.value = null;
         setImages([]);
+        setCoverIndex(0);
         return;
       }
       setImages(selectedFiles);
+      setCoverIndex(0);
     };
 
   /* SUBMIT */
@@ -181,7 +185,13 @@ const AdminAddBook = () => {
           );
         });
 
-        images.forEach(
+        const rearrangedImages = [...images];
+        if (coverIndex > 0 && coverIndex < rearrangedImages.length) {
+          const [coverFile] = rearrangedImages.splice(coverIndex, 1);
+          rearrangedImages.unshift(coverFile);
+        }
+
+        rearrangedImages.forEach(
           (image) => {
 
             submitData.append(
@@ -528,6 +538,36 @@ const AdminAddBook = () => {
           }
           className="w-full rounded-2xl border border-gray-200 px-5 py-4"
         />
+
+        {images.length > 0 && (
+          <div className="w-full mt-2 p-4 bg-gray-50 border border-gray-200 rounded-2xl">
+            <span className="text-xs text-gray-500 font-bold uppercase block mb-3">Review Images & Select Cover Image (Click to choose)</span>
+            <div className="flex flex-wrap gap-4">
+              {images.map((file, idx) => {
+                const url = URL.createObjectURL(file);
+                const isCover = idx === coverIndex;
+                return (
+                  <div
+                    key={idx}
+                    onClick={() => setCoverIndex(idx)}
+                    className={`relative w-24 h-36 cursor-pointer border-2 transition-all overflow-hidden rounded-lg group ${isCover ? "border-[#c8860a] ring-2 ring-[#c8860a]/20" : "border-gray-200 hover:border-gray-400"}`}
+                  >
+                    <img src={url} alt={`preview-${idx}`} className="w-full h-full object-cover" />
+                    {isCover ? (
+                      <span className="absolute bottom-0 left-0 right-0 bg-[#c8860a] text-black text-[9px] font-black text-center py-1">
+                        COVER IMAGE
+                      </span>
+                    ) : (
+                      <span className="absolute bottom-0 left-0 right-0 bg-black/60 text-white text-[9px] font-bold text-center py-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                        SET AS COVER
+                      </span>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        )}
 
         {/* CHECKBOXES */}
 
