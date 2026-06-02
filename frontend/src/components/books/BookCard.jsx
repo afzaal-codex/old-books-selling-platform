@@ -235,13 +235,15 @@ const BookCard = ({ book, noBorder }) => {
                   e.preventDefault(); e.stopPropagation();
                   moveThumbnails(-1);
                 }}
-                className={`absolute -left-4 md:-left-5 top-1/2 -translate-y-1/2 z-30 transition flex items-center justify-center rounded-full bg-neutral-950 border border-neutral-800/80 w-6 h-6 ${
-                  thumbStartIndex === 0 ? "opacity-20 cursor-not-allowed" : "opacity-100 cursor-pointer hover:bg-neutral-900 hover:scale-110"
+                className={`absolute -left-4 md:-left-5 top-1/2 -translate-y-1/2 z-30 transition flex items-center justify-center w-5 h-5 ${
+                  thumbStartIndex === 0 ? "opacity-20 cursor-not-allowed" : "opacity-100 cursor-pointer hover:scale-110"
                 }`}
                 style={{
                   color: "#c8860a",
                   padding: 0,
                   outline: "none",
+                  background: "none",
+                  border: "none",
                 }}
               >
                 <ChevronLeft size={14} strokeWidth={3} />
@@ -253,13 +255,15 @@ const BookCard = ({ book, noBorder }) => {
                   e.preventDefault(); e.stopPropagation();
                   moveThumbnails(1);
                 }}
-                className={`absolute -right-4 md:-right-5 top-1/2 -translate-y-1/2 z-30 transition flex items-center justify-center rounded-full bg-neutral-950 border border-neutral-800/80 w-6 h-6 ${
-                  thumbStartIndex >= book.images.length - maxThumbs ? "opacity-20 cursor-not-allowed" : "opacity-100 cursor-pointer hover:bg-neutral-900 hover:scale-110"
+                className={`absolute -right-4 md:-right-5 top-1/2 -translate-y-1/2 z-30 transition flex items-center justify-center w-5 h-5 ${
+                  thumbStartIndex >= book.images.length - maxThumbs ? "opacity-20 cursor-not-allowed" : "opacity-100 cursor-pointer hover:scale-110"
                 }`}
                 style={{
                   color: "#c8860a",
                   padding: 0,
                   outline: "none",
+                  background: "none",
+                  border: "none",
                 }}
               >
                 <ChevronRight size={14} strokeWidth={3} />
