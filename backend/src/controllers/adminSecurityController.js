@@ -4,7 +4,7 @@ import User from "../models/User.js";
 import { sendBrandedEmail } from "../services/mailService.js";
 import { updateEnvValue } from "../utils/envHelper.js";
 
-const getAdminEmail = (req) => (req.user?.email || process.env.ADMIN_EMAIL || "").toLowerCase();
+const getAdminEmail = (req) => (req.user?.email || process.env.ADMIN_EMAIL || "").trim().toLowerCase();
 
 const createSixDigits = () => String(Math.floor(100000 + Math.random() * 900000));
 const createMatchNumber = () => String(Math.floor(Math.random() * 99) + 1);

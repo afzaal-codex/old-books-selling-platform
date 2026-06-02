@@ -46,10 +46,10 @@ export const protect = async (req, res, next) => {
         isAdmin: true,
 
         name:
-          process.env.ADMIN_NAME,
+          (process.env.ADMIN_NAME || "").trim(),
 
         email:
-          process.env.ADMIN_EMAIL,
+          (process.env.ADMIN_EMAIL || "").trim(),
       };
 
       return next();
@@ -170,8 +170,8 @@ export const optionalProtect = async (req, res, next) => {
       req.user = {
         _id: "admin-id",
         isAdmin: true,
-        name: process.env.ADMIN_NAME,
-        email: process.env.ADMIN_EMAIL,
+        name: (process.env.ADMIN_NAME || "").trim(),
+        email: (process.env.ADMIN_EMAIL || "").trim(),
       };
       return next();
     }

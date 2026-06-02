@@ -252,8 +252,8 @@ await user.save();
 
     // ADMIN CHECK
     const isAdmin =
-      user.email.toLowerCase() ===
-      (process.env.ADMIN_EMAIL || "").toLowerCase();
+      user.email.trim().toLowerCase() ===
+      (process.env.ADMIN_EMAIL || "").trim().toLowerCase();
 
     if (isAdmin) {
       if (!otp) {

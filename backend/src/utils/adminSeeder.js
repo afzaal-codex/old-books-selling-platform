@@ -5,9 +5,9 @@ import User from "../models/User.js";
  */
 export const autoSeedAdmin = async () => {
   try {
-    const adminEmail = process.env.ADMIN_EMAIL;
-    const adminPassword = process.env.ADMIN_PASSWORD;
-    const adminName = process.env.ADMIN_NAME || "Muhammad Afzaal";
+    const adminEmail = (process.env.ADMIN_EMAIL || "").trim();
+    const adminPassword = (process.env.ADMIN_PASSWORD || "").trim();
+    const adminName = (process.env.ADMIN_NAME || "Muhammad Afzaal").trim();
 
     if (!adminEmail || !adminPassword) {
       console.warn("ADMIN_EMAIL or ADMIN_PASSWORD not specified in .env. Skipping admin autoseeding.");
