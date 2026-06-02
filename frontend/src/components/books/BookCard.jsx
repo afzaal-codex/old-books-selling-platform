@@ -11,30 +11,30 @@ const BookCard = ({ book, noBorder }) => {
   const navigate = useNavigate();
   const [activeImgIdx, setActiveImgIdx] = useState(0);
   const [thumbStartIndex, setThumbStartIndex] = useState(0);
-  const [maxThumbs, setMaxThumbs] = useState(window.innerWidth < 768 ? 5 : 6);
+  const [windowWidth, setWindowWidth] = useState(typeof window !== 'undefined' ? window.innerWidth : 1024);
 
   useEffect(() => {
-    const handleResize = () => {
-      const nextMaxThumbs = window.innerWidth < 768 ? 5 : 6;
-      setMaxThumbs(nextMaxThumbs);
-      setThumbStartIndex((prev) => Math.min(prev, Math.max((book.images?.length || 0) - nextMaxThumbs, 0)));
-    };
+    const handleResize = () => setWindowWidth(window.innerWidth);
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, [book.images?.length]);
+  }, []);
 
   useEffect(() => {
     setActiveImgIdx(0);
     setThumbStartIndex(0);
   }, [book._id]);
 
+  // Derived — never stale
+  const maxThumbs = windowWidth < 768 ? 5 : 6;
+  const totalImages = book.images?.length || 0;
+  const canGoPrev = thumbStartIndex > 0;
+  const canGoNext = thumbStartIndex + maxThumbs < totalImages;
+
   const moveThumbnails = (direction) => {
-    const totalImages = book.images?.length || 0;
     const lastStartIndex = Math.max(totalImages - maxThumbs, 0);
-    // Jump a full page per click
-    const newStartIndex = Math.min(Math.max(thumbStartIndex + direction * maxThumbs, 0), lastStartIndex);
+    const newStartIndex = Math.min(Math.max(thumbStartIndex + direction, 0), lastStartIndex);
     setThumbStartIndex(newStartIndex);
-    // If active thumb is no longer in the new window, snap it into view
+    // Keep active thumb visible — snap to edge of new window if needed
     setActiveImgIdx((prev) => {
       const stillVisible = prev >= newStartIndex && prev < newStartIndex + maxThumbs;
       if (stillVisible) return prev;
@@ -232,75 +232,70 @@ const BookCard = ({ book, noBorder }) => {
 
       {/* ── THUMBNAIL CAROUSEL ── */}
       {book.images && book.images.length > 0 && (
-        <div className="relative select-none w-[75%] md:w-[60%]" style={{ marginTop: "4px", marginBottom: "4px", marginLeft: "auto", marginRight: "auto" }}>
-          {book.images.length > maxThumbs && (
-            <>
-              <button
-                type="button"
-                disabled={thumbStartIndex === 0}
-                onClick={(e) => {
-                  e.preventDefault(); e.stopPropagation();
-                  moveThumbnails(-1);
-                }}
-                className={`absolute -left-4 md:-left-5 top-1/2 -translate-y-1/2 z-30 transition flex items-center justify-center w-5 h-5 ${
-                  thumbStartIndex === 0 ? "opacity-20 cursor-not-allowed" : "opacity-100 cursor-pointer hover:scale-110"
-                }`}
-                style={{
-                  color: "#c8860a",
-                  padding: 0,
-                  outline: "none",
-                  background: "none",
-                  border: "none",
-                }}
-              >
-                <ChevronLeft size={14} strokeWidth={3} />
-              </button>
-              <button
-                type="button"
-                disabled={thumbStartIndex >= book.images.length - maxThumbs}
-                onClick={(e) => {
-                  e.preventDefault(); e.stopPropagation();
-                  moveThumbnails(1);
-                }}
-                className={`absolute -right-4 md:-right-5 top-1/2 -translate-y-1/2 z-30 transition flex items-center justify-center w-5 h-5 ${
-                  thumbStartIndex >= book.images.length - maxThumbs ? "opacity-20 cursor-not-allowed" : "opacity-100 cursor-pointer hover:scale-110"
-                }`}
-                style={{
-                  color: "#c8860a",
-                  padding: 0,
-                  outline: "none",
-                  background: "none",
-                  border: "none",
-                }}
-              >
-                <ChevronRight size={14} strokeWidth={3} />
-              </button>
-            </>
-          )}
-          <div className="flex gap-1 overflow-hidden w-full" style={{ display: "flex", justifyContent: "center", alignItems: "center" }}>
+        <div
+          className="relative select-none"
+          style={{ marginTop: "4px", marginBottom: "4px", paddingLeft: "20px", paddingRight: "20px" }}
+        >
+          {/* LEFT ARROW — always rendered, faded when disabled */}
+          <button
+            type="button"
+            disabled={!canGoPrev}
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); moveThumbnails(-1); }}
+            style={{
+              position: "absolute", left: 0, top: "50%", transform: "translateY(-50%)",
+              zIndex: 30, color: "#c8860a", background: "none", border: "none",
+              padding: 0, outline: "none", lineHeight: 0,
+              opacity: canGoPrev ? 1 : 0.2,
+              cursor: canGoPrev ? "pointer" : "not-allowed",
+              transition: "opacity 0.2s, transform 0.2s",
+            }}
+            onMouseEnter={e => { if (canGoPrev) e.currentTarget.style.transform = "translateY(-50%) scale(1.2)"; }}
+            onMouseLeave={e => { e.currentTarget.style.transform = "translateY(-50%) scale(1)"; }}
+          >
+            <ChevronLeft size={14} strokeWidth={3} />
+          </button>
+
+          {/* RIGHT ARROW — always rendered, faded when disabled */}
+          <button
+            type="button"
+            disabled={!canGoNext}
+            onClick={(e) => { e.preventDefault(); e.stopPropagation(); moveThumbnails(1); }}
+            style={{
+              position: "absolute", right: 0, top: "50%", transform: "translateY(-50%)",
+              zIndex: 30, color: "#c8860a", background: "none", border: "none",
+              padding: 0, outline: "none", lineHeight: 0,
+              opacity: canGoNext ? 1 : 0.2,
+              cursor: canGoNext ? "pointer" : "not-allowed",
+              transition: "opacity 0.2s, transform 0.2s",
+            }}
+            onMouseEnter={e => { if (canGoNext) e.currentTarget.style.transform = "translateY(-50%) scale(1.2)"; }}
+            onMouseLeave={e => { e.currentTarget.style.transform = "translateY(-50%) scale(1)"; }}
+          >
+            <ChevronRight size={14} strokeWidth={3} />
+          </button>
+
+          {/* THUMBNAILS */}
+          <div style={{ display: "flex", gap: "3px", overflow: "hidden" }}>
             {book.images.slice(thumbStartIndex, thumbStartIndex + maxThumbs).map((img, idx) => {
               const actualIdx = thumbStartIndex + idx;
               const isActive = actualIdx === activeImgIdx;
               return (
                 <div
                   key={actualIdx}
-                  onClick={(e) => {
-                    e.preventDefault(); e.stopPropagation();
-                    setActiveImgIdx(actualIdx);
-                  }}
-                  className={`cursor-pointer transition-all duration-200 border-2 overflow-hidden rounded ${
-                    isActive ? "border-[#c8860a]" : "border-transparent hover:border-neutral-700"
-                  }`}
+                  onClick={(e) => { e.preventDefault(); e.stopPropagation(); setActiveImgIdx(actualIdx); }}
                   style={{
                     width: `calc(${100 / maxThumbs}% - 3px)`,
                     aspectRatio: "1 / 1",
+                    flexShrink: 0,
+                    cursor: "pointer",
+                    borderRadius: "3px",
+                    overflow: "hidden",
+                    border: isActive ? "2px solid #c8860a" : "2px solid transparent",
+                    transition: "border-color 0.2s",
+                    boxSizing: "border-box",
                   }}
                 >
-                  <img
-                    src={img}
-                    alt={`thumb-${actualIdx}`}
-                    className="w-full h-full object-cover"
-                  />
+                  <img src={img} alt={`thumb-${actualIdx}`} style={{ width: "100%", height: "100%", objectFit: "cover", display: "block" }} />
                 </div>
               );
             })}
