@@ -211,7 +211,7 @@ const BookCard = ({ book, noBorder }) => {
 
       {/* ── THUMBNAIL CAROUSEL ── */}
       {book.images && book.images.length > 0 && (
-        <div className="relative mx-auto select-none w-[75%] md:w-[60%]" style={{ marginTop: "4px", marginBottom: "4px" }}>
+        <div className="relative select-none w-[75%] md:w-[60%]" style={{ marginTop: "4px", marginBottom: "4px", marginLeft: "auto", marginRight: "auto" }}>
           {book.images.length > maxThumbs && (
             <>
               <button
