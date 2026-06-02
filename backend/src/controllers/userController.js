@@ -16,53 +16,61 @@ const getUsers = async (req, res) => {
 };
 
 const getSingleUser = async (req, res) => {
-  const user = await User.findById(req.params.id)
-    .select("-password");
+  try {
+    const user = await User.findById(req.params.id).select("-password");
 
-  if (!user) {
-    res.status(404);
-    throw new Error("User not found");
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    res.json(user);
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
-
-  res.json(user);
 };
 
 const blockUser = async (req, res) => {
-  const user = await User.findById(req.params.id);
+  try {
+    const user = await User.findById(req.params.id);
 
-  if (!user) {
-    res.status(404);
-    throw new Error("User not found");
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    user.isBlocked = true;
+    user.blocked = true;
+
+    await user.save();
+
+    res.json({
+      success: true,
+      message: "User blocked",
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
-
-  user.isBlocked = true;
-  user.blocked = true;
-
-  await user.save();
-
-  res.json({
-    success: true,
-    message: "User blocked",
-  });
 };
 
 const unblockUser = async (req, res) => {
-  const user = await User.findById(req.params.id);
+  try {
+    const user = await User.findById(req.params.id);
 
-  if (!user) {
-    res.status(404);
-    throw new Error("User not found");
+    if (!user) {
+      return res.status(404).json({ success: false, message: "User not found" });
+    }
+
+    user.isBlocked = false;
+    user.blocked = false;
+
+    await user.save();
+
+    res.json({
+      success: true,
+      message: "User unblocked",
+    });
+  } catch (error) {
+    res.status(500).json({ success: false, message: error.message });
   }
-
-  user.isBlocked = false;
-  user.blocked = false;
-
-  await user.save();
-
-  res.json({
-    success: true,
-    message: "User unblocked",
-  });
 };
 
 const getUserInterestsExport = async (req, res) => {

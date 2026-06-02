@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Star, ShoppingCart, Heart, Bell } from "lucide-react";
+import { useSelector } from "react-redux";
 
 const BookDetailsCard = ({
   book,
@@ -17,6 +18,8 @@ const BookDetailsCard = ({
   handleAddToCartClick,
   reviewsLength,
 }) => {
+  const { settings } = useSelector((state) => state.cms);
+  const showStockSetting = settings?.showStock !== false;
   return (
     <div
       className="w-full text-white"
@@ -211,6 +214,12 @@ const BookDetailsCard = ({
                 {book.author?.name || book.author || "Unknown"}
               </span>
             )}
+            {book.signed && (
+              <div style={{ fontSize: "11.5px", color: "#c8860a", fontWeight: 750, marginTop: "4px", display: "flex", alignItems: "center", gap: "4px" }}>
+                <span>✍️ Signed Copy by:</span>
+                <span style={{ color: "#ffffff" }}>{book.signedBy || "Author"}</span>
+              </div>
+            )}
           </div>
 
           {/* Divider */}
@@ -242,58 +251,60 @@ const BookDetailsCard = ({
           </div>
 
           {/* Stock Status */}
-          <div>
-            {book.stock <= 0 ? (
-              <span
-                style={{
-                  fontSize: "8px",
-                  fontWeight: 700,
-                  color: "#ef4444",
-                  background: "rgba(239,68,68,0.08)",
-                  padding: "2px 6px",
-                  border: "1px solid rgba(239,68,68,0.25)",
-                  borderRadius: 0,
-                  letterSpacing: "0.06em",
-                  textTransform: "uppercase",
-                }}
-              >
-                Out of Stock
-              </span>
-            ) : (
-              <div className="flex items-center gap-2 flex-wrap">
+          {showStockSetting && (
+            <div>
+              {book.stock <= 0 ? (
                 <span
                   style={{
                     fontSize: "8px",
                     fontWeight: 700,
-                    color: "#fff",
-                    background: "rgba(34,197,94,0.06)",
+                    color: "#ef4444",
+                    background: "rgba(239,68,68,0.08)",
                     padding: "2px 6px",
-                    border: "1px solid rgba(255,255,255,0.2)",
+                    border: "1px solid rgba(239,68,68,0.25)",
                     borderRadius: 0,
                     letterSpacing: "0.06em",
                     textTransform: "uppercase",
                   }}
                 >
-                  In Stock
+                  Out of Stock
                 </span>
-                {book.stock <= 5 ? (
+              ) : (
+                <div className="flex items-center gap-2 flex-wrap">
                   <span
-                    className="animate-pulse uppercase font-extrabold"
-                    style={{ fontSize: "9px", color: "#ef4444", letterSpacing: "0.04em" }}
+                    style={{
+                      fontSize: "8px",
+                      fontWeight: 700,
+                      color: "#fff",
+                      background: "rgba(34,197,94,0.06)",
+                      padding: "2px 6px",
+                      border: "1px solid rgba(255,255,255,0.2)",
+                      borderRadius: 0,
+                      letterSpacing: "0.06em",
+                      textTransform: "uppercase",
+                    }}
                   >
-                    Only {book.stock} Left
+                    In Stock
                   </span>
-                ) : (
-                  <span
-                    className="font-semibold"
-                    style={{ fontSize: "9px", color: "#6b7280" }}
-                  >
-                    Ready to Ship
-                  </span>
-                )}
-              </div>
-            )}
-          </div>
+                  {book.stock <= 5 ? (
+                    <span
+                      className="animate-pulse uppercase font-extrabold"
+                      style={{ fontSize: "9px", color: "#ef4444", letterSpacing: "0.04em" }}
+                    >
+                      Only {book.stock} Left
+                    </span>
+                  ) : (
+                    <span
+                      className="font-semibold"
+                      style={{ fontSize: "9px", color: "#6b7280" }}
+                    >
+                      Ready to Ship
+                    </span>
+                  )}
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Condition Notes */}
           {book.conditionDetails && book.condition?.toLowerCase() === "old" && (
@@ -319,48 +330,6 @@ const BookDetailsCard = ({
             </div>
           )}
 
-
-          {/* Special Edition Badges */}
-          {(book.signed || book.antique || book.vintage) && (
-            <div className="flex flex-wrap gap-1.5" style={{ marginTop: "2px" }}>
-              {book.signed && (
-                <span
-                  style={{
-                    fontSize: "8px", fontWeight: 700, color: "#fff",
-                    background: "rgba(200,134,10,0.18)", padding: "3px 8px",
-                    border: "1px solid #c8860a", borderRadius: 0,
-                    letterSpacing: "0.07em", textTransform: "uppercase",
-                  }}
-                >
-                  ✍ Signed{book.signedBy ? ` by ${book.signedBy}` : ""}
-                </span>
-              )}
-              {book.antique && (
-                <span
-                  style={{
-                    fontSize: "8px", fontWeight: 700, color: "#d4a96a",
-                    background: "rgba(120,80,20,0.18)", padding: "3px 8px",
-                    border: "1px solid #7c5a2a", borderRadius: 0,
-                    letterSpacing: "0.07em", textTransform: "uppercase",
-                  }}
-                >
-                  🏺 Antique
-                </span>
-              )}
-              {book.vintage && (
-                <span
-                  style={{
-                    fontSize: "8px", fontWeight: 700, color: "#a8c8a0",
-                    background: "rgba(60,100,60,0.18)", padding: "3px 8px",
-                    border: "1px solid #3c6048", borderRadius: 0,
-                    letterSpacing: "0.07em", textTransform: "uppercase",
-                  }}
-                >
-                  📖 Vintage
-                </span>
-              )}
-            </div>
-          )}
 
           <div className="flex flex-col gap-2">
             {/* Specifications */}
@@ -566,28 +535,30 @@ const BookDetailsCard = ({
             </button>
 
             {/* Stock Alert */}
-            <button
-              onClick={handleNotificationClick}
-              className="flex items-center justify-center gap-1.5 font-extrabold uppercase tracking-wider transition-all duration-150 cursor-pointer w-full"
-              style={{
-                fontSize: "10px",
-                padding: "8px 10px",
-                background: notificationEnabled ? "#059669" : "#dc2626",
-                border: notificationEnabled ? "1px solid #10b981" : "1px solid #ef4444",
-                color: "#fff",
-                borderRadius: 0,
-                letterSpacing: "0.07em",
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.background = notificationEnabled ? "#047857" : "#b91c1c";
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.background = notificationEnabled ? "#059669" : "#dc2626";
-              }}
-            >
-              <Bell size={11} />
-              {notificationEnabled ? "Alert On" : "Stock Alert"}
-            </button>
+            {showStockSetting && (
+              <button
+                onClick={handleNotificationClick}
+                className="flex items-center justify-center gap-1.5 font-extrabold uppercase tracking-wider transition-all duration-150 cursor-pointer w-full"
+                style={{
+                  fontSize: "10px",
+                  padding: "8px 10px",
+                  background: notificationEnabled ? "#059669" : "#dc2626",
+                  border: notificationEnabled ? "1px solid #10b981" : "1px solid #ef4444",
+                  color: "#fff",
+                  borderRadius: 0,
+                  letterSpacing: "0.07em",
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.background = notificationEnabled ? "#047857" : "#b91c1c";
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.background = notificationEnabled ? "#059669" : "#dc2626";
+                }}
+              >
+                <Bell size={11} />
+                {notificationEnabled ? "Alert On" : "Stock Alert"}
+              </button>
+            )}
           </div>
 
           {/* Subtle note */}

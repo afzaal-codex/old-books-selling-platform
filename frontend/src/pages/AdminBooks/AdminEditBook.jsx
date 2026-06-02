@@ -75,15 +75,15 @@ const AdminEditBook = () => {
       offersThisWeekExpiry: "",
       highDiscount: false,
       discountExpiresAt: "",
-      bindingType: "Paperback",
-      totalPages: "",
-      publisher: "",
-      publicationYear: "",
-      manageStock: true,
       antique: false,
       signed: false,
       signedBy: "",
       vintage: false,
+      bindingType: "Paperback",
+      totalPages: "",
+      publisher: "",
+      isbn: "",
+      publicationYear: "",
     });
 
   /* FETCH */
@@ -148,21 +148,6 @@ const AdminEditBook = () => {
             stock:
               book.stock || "",
 
-            manageStock:
-              book.manageStock !== undefined ? book.manageStock : true,
-            
-            antique:
-              book.antique || false,
-
-            signed:
-              book.signed || false,
-            
-            signedBy:
-              book.signedBy || "",
-            
-            vintage:
-              book.vintage || false,
-
             condition:
               book.condition ||
               "Used",
@@ -200,6 +185,18 @@ const AdminEditBook = () => {
               book.discountExpiresAt
                 ? new Date(book.discountExpiresAt).toISOString().slice(0, 16)
                 : "",
+
+            antique:
+              book.antique || false,
+
+            signed:
+              book.signed || false,
+
+            signedBy:
+              book.signedBy || "",
+
+            vintage:
+              book.vintage || false,
 
             bindingType:
               book.bindingType || "Paperback",
@@ -273,15 +270,12 @@ const AdminEditBook = () => {
 
   const handleImages =
     (e) => {
-      const files = Array.from(e.target.files);
-      const totalImages = existingImages.length + files.length;
-      if (totalImages > 10) {
-        toast.error("You can only have up to 10 images total");
-        const remainingSlots = Math.max(0, 10 - existingImages.length);
-        setImages(files.slice(0, remainingSlots));
-      } else {
-        setImages(files);
-      }
+
+      setImages(
+        Array.from(
+          e.target.files
+        )
+      );
     };
 
   /* REMOVE IMAGE */
@@ -540,28 +534,19 @@ const AdminEditBook = () => {
           />
 
           {/* STOCK */}
-          {formData.manageStock && (
-            <input
-              type="number"
-              name="stock"
-              placeholder="Stock"
-              value={formData.stock}
-              onChange={handleChange}
-              className="rounded-2xl border border-gray-200 px-5 py-4 outline-none"
-            />
-          )}
 
-          {/* SIGNED BY */}
-          {formData.signed && (
-            <input
-              type="text"
-              name="signedBy"
-              placeholder="Signed By"
-              value={formData.signedBy}
-              onChange={handleChange}
-              className="rounded-2xl border border-gray-200 px-5 py-4 outline-none"
-            />
-          )}
+          <input
+            type="number"
+            name="stock"
+            placeholder="Stock"
+            value={
+              formData.stock
+            }
+            onChange={
+              handleChange
+            }
+            className="rounded-2xl border border-gray-200 px-5 py-4 outline-none"
+          />
 
           {/* CONDITION */}
 
@@ -744,50 +729,6 @@ const AdminEditBook = () => {
           <label className="flex items-center gap-3 cursor-pointer text-gray-700 font-medium">
             <input
               type="checkbox"
-              name="manageStock"
-              checked={formData.manageStock}
-              onChange={handleChange}
-              className="h-4 w-4"
-            />
-            Manage Stock
-          </label>
-
-          <label className="flex items-center gap-3 cursor-pointer text-gray-700 font-medium">
-            <input
-              type="checkbox"
-              name="antique"
-              checked={formData.antique}
-              onChange={handleChange}
-              className="h-4 w-4"
-            />
-            Antique Book
-          </label>
-
-          <label className="flex items-center gap-3 cursor-pointer text-gray-700 font-medium">
-            <input
-              type="checkbox"
-              name="signed"
-              checked={formData.signed}
-              onChange={handleChange}
-              className="h-4 w-4"
-            />
-            Signed Book
-          </label>
-
-          <label className="flex items-center gap-3 cursor-pointer text-gray-700 font-medium">
-            <input
-              type="checkbox"
-              name="vintage"
-              checked={formData.vintage}
-              onChange={handleChange}
-              className="h-4 w-4"
-            />
-            Vintage Finds
-          </label>
-
-          <label className="flex items-center gap-3 cursor-pointer text-gray-700 font-medium">
-            <input
-              type="checkbox"
               name="featured"
               checked={
                 formData.featured
@@ -874,6 +815,50 @@ const AdminEditBook = () => {
             />
             High Discount
           </label>
+
+          <label className="flex items-center gap-3 cursor-pointer text-gray-700 font-medium">
+            <input
+              type="checkbox"
+              name="antique"
+              checked={formData.antique}
+              onChange={handleChange}
+              className="h-4 w-4"
+            />
+            Antique Book
+          </label>
+
+          <label className="flex items-center gap-3 cursor-pointer text-gray-700 font-medium">
+            <input
+              type="checkbox"
+              name="vintage"
+              checked={formData.vintage}
+              onChange={handleChange}
+              className="h-4 w-4"
+            />
+            Vintage Find
+          </label>
+
+          <label className="flex items-center gap-3 cursor-pointer text-gray-700 font-medium">
+            <input
+              type="checkbox"
+              name="signed"
+              checked={formData.signed}
+              onChange={handleChange}
+              className="h-4 w-4"
+            />
+            Signed Book
+          </label>
+
+          {formData.signed && (
+            <input
+              type="text"
+              name="signedBy"
+              placeholder="Signed by (e.g. Stephen King)"
+              value={formData.signedBy}
+              onChange={handleChange}
+              className="rounded-2xl border border-gray-200 px-5 py-2 outline-none text-xs text-black"
+            />
+          )}
         </div>
 
         {/* BUTTON */}

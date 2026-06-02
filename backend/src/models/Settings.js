@@ -12,6 +12,11 @@ const settingsSchema = new mongoose.Schema(
       default: "",
     },
 
+    showStock: {
+      type: Boolean,
+      default: true,
+    },
+
     socialLinks: {
       facebook: {
         type: String,
@@ -111,12 +116,6 @@ const settingsSchema = new mongoose.Schema(
       antiqueBooks: { type: Boolean, default: true },
       signedBooks: { type: Boolean, default: true },
       vintageFinds: { type: Boolean, default: true },
-    },
-
-    secondaryNav: {
-      featuredBooks: { type: Boolean, default: true },
-      bestSeller: { type: Boolean, default: true },
-      highDiscount: { type: Boolean, default: true },
     },
 
     heroSection: {

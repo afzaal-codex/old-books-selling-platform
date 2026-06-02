@@ -92,11 +92,6 @@ const bookSchema = new mongoose.Schema(
        INVENTORY
     ========================= */
 
-    manageStock: {
-      type: Boolean,
-      default: true,
-    },
-
     stock: {
       type: Number,
       default: 0,

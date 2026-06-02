@@ -1,6 +1,7 @@
-import { Heart, ShoppingCart, Share2 } from "lucide-react";
+import { Heart, ShoppingCart, Share2, ChevronLeft, ChevronRight } from "lucide-react";
 import { Link, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
+import { useState } from "react";
 import toast from "react-hot-toast";
 import { addToCart } from "../../store/slices/cartSlice";
 import { toggleWishlistItem, fetchWishlist } from "../../store/slices/wishlistSlice";
@@ -8,9 +9,12 @@ import { toggleWishlistItem, fetchWishlist } from "../../store/slices/wishlistSl
 const BookCard = ({ book, noBorder }) => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const [activeImgIdx, setActiveImgIdx] = useState(0);
 
   const { isAuthenticated } = useSelector((state) => state.auth);
   const { wishlist } = useSelector((state) => state.wishlist);
+  const { settings } = useSelector((state) => state.cms);
+  const showStockSetting = settings?.showStock !== false;
   const isWishlisted = wishlist?.books?.some((b) => b && (b._id || b) === book._id) || false;
 
   const hasDiscount = book.discountedPrice > 0 && book.discountedPrice < book.originalPrice;
@@ -159,12 +163,12 @@ const BookCard = ({ book, noBorder }) => {
             flexShrink: 0,
           }}
         >
-          {book.images?.[0] ? (
-            <div className="relative w-full h-full">
+          {book.images && book.images.length > 0 ? (
+            <div className="relative w-full h-full" style={{ aspectRatio: "2 / 3" }}>
               <img
-                src={book.images[0]}
+                src={book.images[activeImgIdx]}
                 alt={book.title}
-                className={`transition duration-500 group-hover:scale-105 ${book.images.length > 1 ? 'group-hover:opacity-0' : ''}`}
+                className="transition duration-500 group-hover:scale-105"
                 style={{
                   width: "100%",
                   height: "100%",
@@ -175,19 +179,41 @@ const BookCard = ({ book, noBorder }) => {
                 }}
               />
               {book.images.length > 1 && (
-                <img
-                  src={book.images[1]}
-                  alt={`${book.title} alternate view`}
-                  className="absolute inset-0 transition duration-500 opacity-0 group-hover:opacity-100 group-hover:scale-105"
-                  style={{
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    objectPosition: "center",
-                    display: "block",
-                    borderRadius: "4px",
-                  }}
-                />
+                <>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault(); e.stopPropagation();
+                      setActiveImgIdx((prev) => (prev === 0 ? book.images.length - 1 : prev - 1));
+                    }}
+                    className="absolute left-1 top-1/2 -translate-y-1/2 z-30 bg-black/60 hover:bg-black/90 text-white rounded-full p-1 border border-neutral-800 transition opacity-0 group-hover:opacity-100"
+                    style={{ cursor: "pointer", border: "none", display: "flex", alignItems: "center", justifyContent: "center" }}
+                  >
+                    <ChevronLeft size={12} />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault(); e.stopPropagation();
+                      setActiveImgIdx((prev) => (prev === book.images.length - 1 ? 0 : prev + 1));
+                    }}
+                    className="absolute right-1 top-1/2 -translate-y-1/2 z-30 bg-black/60 hover:bg-black/90 text-white rounded-full p-1 border border-neutral-800 transition opacity-0 group-hover:opacity-100"
+                    style={{ cursor: "pointer", border: "none", display: "flex", alignItems: "center", justifyContent: "center" }}
+                  >
+                    <ChevronRight size={12} />
+                  </button>
+                  {/* Indicator dots */}
+                  <div className="absolute bottom-1.5 left-1/2 -translate-x-1/2 flex gap-1 z-30 bg-black/45 px-1.5 py-0.5 rounded-full">
+                    {book.images.slice(0, 10).map((_, idx) => (
+                      <span
+                        key={idx}
+                        className={`w-1 h-1 rounded-full transition-all ${
+                          idx === activeImgIdx ? "bg-[var(--color-primary)] scale-125" : "bg-neutral-500"
+                        }`}
+                      />
+                    ))}
+                  </div>
+                </>
               )}
             </div>
           ) : (
@@ -255,6 +281,13 @@ const BookCard = ({ book, noBorder }) => {
           )}
         </div>
 
+        {book.signed && (
+          <div style={{ fontSize: "10px", color: "#c8860a", fontWeight: 750, marginTop: "2px", display: "flex", alignItems: "center", gap: "3px" }}>
+            <span>✍️ Signed by:</span>
+            <span style={{ color: "#ffffff" }}>{book.signedBy || "Author"}</span>
+          </div>
+        )}
+
         {/* DIVIDER */}
         <div style={{ height: "1px", background: "rgba(255,255,255,0.06)", margin: "4px 0" }} />
 
@@ -285,36 +318,38 @@ const BookCard = ({ book, noBorder }) => {
         <div style={{ height: "1px", background: "rgba(255,255,255,0.06)", margin: "4px 0" }} />
 
         {/* STOCK */}
-        <div className="flex items-center gap-1 flex-wrap" style={{ marginBottom: "4px" }}>
-          {book.stock <= 0 ? (
-            <span
-              style={{
-                fontSize: "8px", fontWeight: 700, color: "#ef4444",
-                background: "rgba(239,68,68,0.1)", padding: "2px 5px",
-                borderRadius: "2px", border: "1px solid rgba(239,68,68,0.3)",
-              }}
-            >
-              Out of Stock
-            </span>
-          ) : (
-            <>
+        {showStockSetting && (
+          <div className="flex items-center gap-1 flex-wrap" style={{ marginBottom: "4px" }}>
+            {book.stock <= 0 ? (
               <span
                 style={{
-                  fontSize: "8px", fontWeight: 700, color: "white",
-                  background: "#c8860a", padding: "2px 5px",
-                  borderRadius: "2px", border: "1px solid #c8860a",
+                  fontSize: "8px", fontWeight: 700, color: "#ef4444",
+                  background: "rgba(239,68,68,0.1)", padding: "2px 5px",
+                  borderRadius: "2px", border: "1px solid rgba(239,68,68,0.3)",
                 }}
               >
-                In Stock
+                Out of Stock
               </span>
-              {book.stock <= 5 && (
-                <span style={{ fontSize: "8px", color: "#22c55e", fontWeight: 600 }}>
-                  Only {book.stock} left
+            ) : (
+              <>
+                <span
+                  style={{
+                    fontSize: "8px", fontWeight: 700, color: "white",
+                    background: "#c8860a", padding: "2px 5px",
+                    borderRadius: "2px", border: "1px solid #c8860a",
+                  }}
+                >
+                  In Stock
                 </span>
-              )}
-            </>
-          )}
-        </div>
+                {book.stock <= 5 && (
+                  <span style={{ fontSize: "8px", color: "#22c55e", fontWeight: 600 }}>
+                    Only {book.stock} left
+                  </span>
+                )}
+              </>
+            )}
+          </div>
+        )}
 
       </div>
 

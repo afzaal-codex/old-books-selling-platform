@@ -319,17 +319,19 @@ const updateOrderStatus = async (req, res) => {
       order.paymentStatus = paymentStatus;
 
       const payment = await Payment.findOne({ order: order._id });
+      let verificationStatus = "Pending";
+      if (paymentStatus === "Paid") verificationStatus = "Approved";
+      else if (paymentStatus === "Failed") verificationStatus = "Rejected";
+
       if (payment) {
-        if (paymentStatus === "Paid") payment.verificationStatus = "Approved";
-        else if (paymentStatus === "Failed") payment.verificationStatus = "Rejected";
-        else if (paymentStatus === "Pending") payment.verificationStatus = "Pending";
+        payment.verificationStatus = verificationStatus;
         await payment.save();
-      } else if (paymentStatus === "Paid") {
+      } else {
         await Payment.create({
           order: order._id,
           transactionId: order.transactionId || `AUTO-${order.orderNumber}`,
-          paymentMethod: order.paymentMethod,
-          verificationStatus: "Approved"
+          paymentMethod: order.paymentMethod || "Bank Transfer",
+          verificationStatus
         });
       }
     }

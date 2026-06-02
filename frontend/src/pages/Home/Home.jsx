@@ -450,9 +450,9 @@ const Home = () => {
 
       <div className="container-custom">
 
-        {/* 3. NEW TREASURES SECTION (Formerly New Releases) */}
+        {/* 3. NEW RELEASE BOOKS SECTION */}
         {settings?.homepageSections?.newReleases !== false && newReleases.length > 0 && (
-          <NewRelease books={newReleases} title="New Treasures" />
+          <NewRelease books={newReleases} />
         )}
 
         {/* 3.5 PROMO BANNER SECTION */}
@@ -528,13 +528,13 @@ const Home = () => {
           </section>
         )}
 
-        {/* 7.1 ANTIQUE BOOKS SECTION */}
+        {/* ANTIQUE BOOKS SECTION */}
         {settings?.homepageSections?.antiqueBooks !== false && antiqueBooks.length > 0 && (
           <section className="hs-section">
             <div className="hs-head">
               <div className="hs-head__left">
                 <h2 className="hs-head__title">Antique Books</h2>
-                <p className="hs-head__sub">Timeless pieces of history</p>
+                <p className="hs-head__sub">Rare historical books and collector editions</p>
               </div>
               <Link to="/books?antique=true" className="hs-view-all">
                 See More <ArrowRight size={12} />
@@ -548,13 +548,13 @@ const Home = () => {
           </section>
         )}
 
-        {/* 7.2 SIGNED BOOKS SECTION */}
+        {/* SIGNED BOOKS SECTION */}
         {settings?.homepageSections?.signedBooks !== false && signedBooks.length > 0 && (
           <section className="hs-section">
             <div className="hs-head">
               <div className="hs-head__left">
                 <h2 className="hs-head__title">Signed Books</h2>
-                <p className="hs-head__sub">Exclusive autographed editions</p>
+                <p className="hs-head__sub">Exquisite copies signed by authors and legendary creators</p>
               </div>
               <Link to="/books?signed=true" className="hs-view-all">
                 See More <ArrowRight size={12} />
@@ -568,13 +568,13 @@ const Home = () => {
           </section>
         )}
 
-        {/* 7.3 VINTAGE FINDS SECTION */}
+        {/* VINTAGE FINDS SECTION */}
         {settings?.homepageSections?.vintageFinds !== false && vintageFinds.length > 0 && (
           <section className="hs-section">
             <div className="hs-head">
               <div className="hs-head__left">
                 <h2 className="hs-head__title">Vintage Finds</h2>
-                <p className="hs-head__sub">Rare and nostalgic editions</p>
+                <p className="hs-head__sub">Retro classics and nostalgic vintage books</p>
               </div>
               <Link to="/books?vintage=true" className="hs-view-all">
                 See More <ArrowRight size={12} />

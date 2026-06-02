@@ -4,10 +4,9 @@ import { motion, AnimatePresence } from "framer-motion";
 import axiosInstance from "../../utils/axiosInstance";
 import { useRequestBook } from "../../context/RequestBookContext";
 import { useSendGift } from "../../context/SendGiftContext";
-import { useSelector, useDispatch } from "react-redux";
-import { fetchSettings } from "../../store/slices/cmsSlice";
+import { useSelector } from "react-redux";
 
-const SecondaryNav = ({ categories, authors, featuredBooks, bestSellerBooks, loading, settings }) => {
+const SecondaryNav = ({ categories, authors, featuredBooks, bestSellerBooks, loading }) => {
   const { openRequestModal } = useRequestBook();
   const { openGiftModal }    = useSendGift();
   const navigate = useNavigate();
@@ -37,16 +36,19 @@ const SecondaryNav = ({ categories, authors, featuredBooks, bestSellerBooks, loa
     clearTimeout(timeoutRef.current);
   };
 
-  const secNav = settings?.secondaryNav || {};
-  
+  const { settings } = useSelector((state) => state.cms);
+  const showFeatured = settings?.homepageSections?.featuredBooks !== false;
+  const showBestseller = settings?.homepageSections?.bestSeller !== false;
+  const showHighDiscount = settings?.homepageSections?.highDiscount !== false;
+
   const staticLinks = [
-    { label: "All Books",      path: "/books",                  mega: null,         show: true },
-    { label: "Featured Books", path: "/books?featured=true",    mega: null,         show: secNav.featuredBooks !== false },
-    { label: "Best Sellers",   path: "/books?bestseller=true",  mega: null,         show: secNav.bestSeller !== false },
-    { label: "High Discounts", path: "/books?highDiscount=true", mega: null,         show: secNav.highDiscount !== false },
-    { label: "Categories",     path: "/categories",             mega: "categories", show: true },
-    { label: "Authors",        path: "/authors",                mega: "authors",    show: true },
-  ].filter(link => link.show);
+    { label: "All Books",      path: "/books",                  mega: null          },
+    showFeatured && { label: "Featured Books", path: "/books?featured=true",    mega: null          },
+    showBestseller && { label: "Best Sellers",   path: "/books?bestseller=true",  mega: null          },
+    showHighDiscount && { label: "High Discounts", path: "/books?highDiscount=true", mega: null          },
+    { label: "Categories",     path: "/categories",             mega: "categories"  },
+    { label: "Authors",        path: "/authors",                mega: "authors"     },
+  ].filter(Boolean);
 
   const getMegaContent = (key) => {
     if (key === "featured")    return featuredBooks;
@@ -242,16 +244,13 @@ const SecondaryNav = ({ categories, authors, featuredBooks, bestSellerBooks, loa
 };
 
 const Navbar = () => {
-  const dispatch = useDispatch();
   const [categories,      setCategories]      = useState([]);
   const [authors,         setAuthors]         = useState([]);
   const [featuredBooks,   setFeaturedBooks]   = useState([]);
   const [bestSellerBooks, setBestSellerBooks] = useState([]);
   const [loading,         setLoading]         = useState(false);
-  const { settings } = useSelector((state) => state.cms);
 
   useEffect(() => {
-    dispatch(fetchSettings());
     const fetchNavbarData = async () => {
       setLoading(true);
       try {
@@ -274,7 +273,7 @@ const Navbar = () => {
     fetchNavbarData();
   }, []);
 
-  const sharedData = { categories, authors, featuredBooks, bestSellerBooks, loading, settings };
+  const sharedData = { categories, authors, featuredBooks, bestSellerBooks, loading };
 
   return <SecondaryNav {...sharedData} />;
 };

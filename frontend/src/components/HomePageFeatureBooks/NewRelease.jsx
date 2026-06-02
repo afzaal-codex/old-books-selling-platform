@@ -442,7 +442,7 @@ const styles = `
   }
 `;
 
-export default function BookLeaseSection({ books, title }) {
+export default function BookLeaseSection({ books }) {
   const [idx, setIdx] = useState(0);
   const clipRef = useRef(null);
   const [cardWidth, setCardWidth] = useState(0);
@@ -547,7 +547,7 @@ export default function BookLeaseSection({ books, title }) {
               letterSpacing: "-0.03em",
               fontFamily: "'Playfair Display', Georgia, serif",
             }}>
-              {title || "New Releases"}
+              New Treasures
             </h1>
           </div>
         </div>
