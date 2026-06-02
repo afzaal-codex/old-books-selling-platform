@@ -458,6 +458,7 @@ const AdminCMS = () => {
           { id: "gateways", label: "Payment Wallets", icon: CreditCard },
           { id: "delivery", label: "Shipping Rates", icon: Truck },
           { id: "homepage", label: "Homepage CMS", icon: Settings },
+          { id: "secondaryNav", label: "Secondary Nav", icon: Settings },
           { id: "strip", label: "Discount Strip", icon: Sparkles },
           { id: "spotlight", label: "Spotlight Offer", icon: Sparkles },
           { id: "promobanner", label: "Promo Banner", icon: Sparkles },
@@ -823,27 +824,32 @@ const AdminCMS = () => {
                 />
               </div>
             </div>
-            <div className="mt-6 border-t border-neutral-900 pt-6">
-              <h4 className="font-bold text-white">Secondary Nav Items</h4>
+          </div>
+        )}
+
+        {activeTab === "secondaryNav" && (
+          <div className="bg-[var(--color-card-bg)] border border-[var(--color-border)] rounded-3xl p-6 space-y-6 shadow-md animate-fadeIn">
+            <div className="border-b border-neutral-900 pb-3">
+              <h3 className="font-bold text-lg text-white">Secondary Nav Settings</h3>
               <p className="mt-1 text-xs text-gray-500">
-                Choose which book flags appear in the desktop secondary navigation. Categories, Authors, All Books, and Gift Card stay fixed.
+                Choose which book flag links appear in the desktop secondary navigation. Categories, Authors, All Books, and Gift Card stay fixed.
               </p>
-              <div className="mt-4 grid gap-4 md:grid-cols-2">
-                {SECONDARY_NAV_OPTIONS.map((option) => (
-                  <div key={option.key} className="flex items-center justify-between p-4 bg-neutral-950/40 border border-neutral-900 rounded-2xl">
-                    <div className="space-y-0.5">
-                      <span className="font-semibold block text-gray-250">{option.label}</span>
-                      <span className="text-[10px] text-gray-500">Links to /books?{option.query}</span>
-                    </div>
-                    <input
-                      type="checkbox"
-                      checked={secondaryNav[option.key] !== false}
-                      onChange={(e) => setSecondaryNav((prev) => ({ ...prev, [option.key]: e.target.checked }))}
-                      className="w-5 h-5 rounded border-neutral-700 bg-neutral-900 text-[var(--color-primary)] focus:ring-[var(--color-primary)] cursor-pointer"
-                    />
+            </div>
+            <div className="grid gap-4 md:grid-cols-2 text-sm">
+              {SECONDARY_NAV_OPTIONS.map((option) => (
+                <div key={option.key} className="flex items-center justify-between p-4 bg-neutral-950/40 border border-neutral-900 rounded-2xl">
+                  <div className="space-y-0.5">
+                    <span className="font-semibold block text-gray-250">{option.label}</span>
+                    <span className="text-[10px] text-gray-500">Links to /books?{option.query}</span>
                   </div>
-                ))}
-              </div>
+                  <input
+                    type="checkbox"
+                    checked={secondaryNav[option.key] !== false}
+                    onChange={(e) => setSecondaryNav((prev) => ({ ...prev, [option.key]: e.target.checked }))}
+                    className="w-5 h-5 rounded border-neutral-700 bg-neutral-900 text-[var(--color-primary)] focus:ring-[var(--color-primary)] cursor-pointer"
+                  />
+                </div>
+              ))}
             </div>
           </div>
         )}
