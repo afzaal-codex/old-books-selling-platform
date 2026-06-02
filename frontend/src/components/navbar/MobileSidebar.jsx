@@ -33,6 +33,12 @@ const MobileSidebar = ({ isOpen, setIsOpen }) => {
   const { myOrders } = useSelector((state) => state.orders);
   const ordersCount = myOrders?.length ?? 0;
 
+  // ── CMS secondaryNav settings (same logic as SecondaryNav) ──
+  const { settings } = useSelector((state) => state.cms);
+  const secondaryNav = settings?.secondaryNav || {};
+  const isNavEnabled = (key, fallback = false) =>
+    secondaryNav[key] !== undefined ? secondaryNav[key] !== false : fallback;
+
   const [accordion,  setAccordion]  = useState(null);
   const [categories, setCategories] = useState([]);
   const [authors,    setAuthors]    = useState([]);
@@ -270,6 +276,7 @@ const MobileSidebar = ({ isOpen, setIsOpen }) => {
                 style={{ padding: "8px", gap: "0px" }}
               >
 
+                {/* All Books — hamesha dikhega */}
                 <button
                   onClick={() => go("/books")}
                   className="w-full text-left font-bold text-gray-300 hover:text-white transition-colors cursor-pointer"
@@ -277,27 +284,136 @@ const MobileSidebar = ({ isOpen, setIsOpen }) => {
                 >
                   All Books
                 </button>
+
+                {/* Featured Books */}
+                {isNavEnabled("featuredBooks", true) && (
+                  <>
+                    <Divider />
+                    <button
+                      onClick={() => go("/books?featured=true")}
+                      className="w-full text-left font-bold text-gray-300 hover:text-white transition-colors cursor-pointer"
+                      style={{ ...rowPad, fontSize: rowFs }}
+                    >
+                      Featured Books
+                    </button>
+                  </>
+                )}
+
+                {/* High Discount */}
+                {isNavEnabled("highDiscount", true) && (
+                  <>
+                    <Divider />
+                    <button
+                      onClick={() => go("/books?highDiscount=true")}
+                      className="w-full text-left font-bold text-gray-300 hover:text-white transition-colors cursor-pointer"
+                      style={{ ...rowPad, fontSize: rowFs }}
+                    >
+                      High Discount Books
+                    </button>
+                  </>
+                )}
+
+                {/* Trending This Week */}
+                {isNavEnabled("trendingThisWeek") && (
+                  <>
+                    <Divider />
+                    <button
+                      onClick={() => go("/books?trending=true")}
+                      className="w-full text-left font-bold text-gray-300 hover:text-white transition-colors cursor-pointer"
+                      style={{ ...rowPad, fontSize: rowFs }}
+                    >
+                      Trending This Week
+                    </button>
+                  </>
+                )}
+
+                {/* New Releases */}
+                {isNavEnabled("newReleases") && (
+                  <>
+                    <Divider />
+                    <button
+                      onClick={() => go("/books?newRelease=true")}
+                      className="w-full text-left font-bold text-gray-300 hover:text-white transition-colors cursor-pointer"
+                      style={{ ...rowPad, fontSize: rowFs }}
+                    >
+                      New Treasures
+                    </button>
+                  </>
+                )}
+
+                {/* Offers This Week */}
+                {isNavEnabled("offersThisWeek") && (
+                  <>
+                    <Divider />
+                    <button
+                      onClick={() => go("/books?offersThisWeek=true")}
+                      className="w-full text-left font-bold text-gray-300 hover:text-white transition-colors cursor-pointer"
+                      style={{ ...rowPad, fontSize: rowFs }}
+                    >
+                      Offers This Week
+                    </button>
+                  </>
+                )}
+
+                {/* Antique Books */}
+                {isNavEnabled("antiqueBooks") && (
+                  <>
+                    <Divider />
+                    <button
+                      onClick={() => go("/books?antique=true")}
+                      className="w-full text-left font-bold text-gray-300 hover:text-white transition-colors cursor-pointer"
+                      style={{ ...rowPad, fontSize: rowFs }}
+                    >
+                      Antique Books
+                    </button>
+                  </>
+                )}
+
+                {/* Signed Books */}
+                {isNavEnabled("signedBooks") && (
+                  <>
+                    <Divider />
+                    <button
+                      onClick={() => go("/books?signed=true")}
+                      className="w-full text-left font-bold text-gray-300 hover:text-white transition-colors cursor-pointer"
+                      style={{ ...rowPad, fontSize: rowFs }}
+                    >
+                      Signed Books
+                    </button>
+                  </>
+                )}
+
+                {/* Vintage Finds */}
+                {isNavEnabled("vintageFinds") && (
+                  <>
+                    <Divider />
+                    <button
+                      onClick={() => go("/books?vintage=true")}
+                      className="w-full text-left font-bold text-gray-300 hover:text-white transition-colors cursor-pointer"
+                      style={{ ...rowPad, fontSize: rowFs }}
+                    >
+                      Vintage Finds
+                    </button>
+                  </>
+                )}
+
+                {/* Recommended */}
+                {isNavEnabled("recommended") && (
+                  <>
+                    <Divider />
+                    <button
+                      onClick={() => go("/books?recommended=true")}
+                      className="w-full text-left font-bold text-gray-300 hover:text-white transition-colors cursor-pointer"
+                      style={{ ...rowPad, fontSize: rowFs }}
+                    >
+                      Recommended
+                    </button>
+                  </>
+                )}
+
                 <Divider />
 
-                <button
-                  onClick={() => go("/books?featured=true")}
-                  className="w-full text-left font-bold text-gray-300 hover:text-white transition-colors cursor-pointer"
-                  style={{ ...rowPad, fontSize: rowFs }}
-                >
-                  Featured Books
-                </button>
-                <Divider />
-
-                <button
-                  onClick={() => go("/books?highDiscount=true")}
-                  className="w-full text-left font-bold text-gray-300 hover:text-white transition-colors cursor-pointer"
-                  style={{ ...rowPad, fontSize: rowFs }}
-                >
-                  High Discount Books
-                </button>
-                <Divider />
-
-                {/* Categories */}
+                {/* Categories — accordion */}
                 <div className="flex flex-col">
                   <button
                     onClick={() => setAccordion((p) => (p === "categories" ? null : "categories"))}
@@ -342,9 +458,10 @@ const MobileSidebar = ({ isOpen, setIsOpen }) => {
                     )}
                   </AnimatePresence>
                 </div>
+
                 <Divider />
 
-                {/* Authors */}
+                {/* Authors — accordion */}
                 <div className="flex flex-col">
                   <button
                     onClick={() => setAccordion((p) => (p === "authors" ? null : "authors"))}
@@ -389,15 +506,19 @@ const MobileSidebar = ({ isOpen, setIsOpen }) => {
                     )}
                   </AnimatePresence>
                 </div>
+
                 <Divider />
 
-                <button
-                  onClick={() => go("/books?bestseller=true")}
-                  className="w-full text-left font-bold text-gray-300 hover:text-white transition-colors cursor-pointer"
-                  style={{ ...rowPad, fontSize: rowFs }}
-                >
-                  Best Sellers
-                </button>
+                {/* Best Sellers */}
+                {isNavEnabled("bestSeller", true) && (
+                  <button
+                    onClick={() => go("/books?bestseller=true")}
+                    className="w-full text-left font-bold text-gray-300 hover:text-white transition-colors cursor-pointer"
+                    style={{ ...rowPad, fontSize: rowFs }}
+                  >
+                    Best Sellers
+                  </button>
+                )}
 
               </div>
 
