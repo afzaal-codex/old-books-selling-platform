@@ -80,6 +80,9 @@ const getBooks = async (req, res) => {
 
     const query = {};
     const conditions = [];
+    if (!req.user?.isAdmin) {
+      conditions.push({ stock: { $gt: 0 } });
+    }
     const searchKeyword = keyword || search;
 
     let isBookWorldSearch = false;
@@ -333,7 +336,7 @@ const getSingleBook = async (req, res) => {
       return res.status(404).json({ success: false, message: "Book not found" });
     }
 
-    if (!req.user?.isAdmin && book.category && book.category.isActive === false) {
+    if (!req.user?.isAdmin && (book.stock <= 0 || (book.category && book.category.isActive === false))) {
       return res.status(404).json({ success: false, message: "Book not found" });
     }
 
@@ -528,6 +531,7 @@ const getFeaturedBooks = async (req, res) => {
       const inactiveCats = await Category.find({ isActive: false }).select("_id");
       const inactiveCatIds = inactiveCats.map((c) => c._id);
       filter.category = { $nin: inactiveCatIds };
+      filter.stock = { $gt: 0 };
     }
     const books = await Book.find(filter)
       .limit(8)
@@ -547,6 +551,7 @@ const getBestSellerBooks = async (req, res) => {
       const inactiveCats = await Category.find({ isActive: false }).select("_id");
       const inactiveCatIds = inactiveCats.map((c) => c._id);
       filter.category = { $nin: inactiveCatIds };
+      filter.stock = { $gt: 0 };
     }
     const books = await Book.find(filter)
       .limit(8)
@@ -568,6 +573,7 @@ const getHighDiscountBooks = async (req, res) => {
       const inactiveCats = await Category.find({ isActive: false }).select("_id");
       const inactiveCatIds = inactiveCats.map((c) => c._id);
       filter.category = { $nin: inactiveCatIds };
+      filter.stock = { $gt: 0 };
     }
     const books = await Book.find(filter)
       .populate("category")
