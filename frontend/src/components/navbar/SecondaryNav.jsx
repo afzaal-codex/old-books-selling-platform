@@ -37,15 +37,26 @@ const SecondaryNav = ({ categories, authors, featuredBooks, bestSellerBooks, loa
   };
 
   const { settings } = useSelector((state) => state.cms);
-  const showFeatured = settings?.homepageSections?.featuredBooks !== false;
-  const showBestseller = settings?.homepageSections?.bestSeller !== false;
-  const showHighDiscount = settings?.homepageSections?.highDiscount !== false;
+  const secondaryNav = settings?.secondaryNav || {};
+  const isNavEnabled = (key, fallback = false) =>
+    secondaryNav[key] !== undefined ? secondaryNav[key] !== false : fallback;
+
+  const configurableBookLinks = [
+    { key: "featuredBooks", label: "Featured Books", path: "/books?featured=true", fallback: true },
+    { key: "bestSeller", label: "Best Sellers", path: "/books?bestseller=true", fallback: true },
+    { key: "highDiscount", label: "High Discounts", path: "/books?highDiscount=true", fallback: true },
+    { key: "trendingThisWeek", label: "Trending This Week", path: "/books?trending=true" },
+    { key: "newReleases", label: "New Treasures", path: "/books?newRelease=true" },
+    { key: "offersThisWeek", label: "Offers This Week", path: "/books?offersThisWeek=true" },
+    { key: "antiqueBooks", label: "Antique Books", path: "/books?antique=true" },
+    { key: "signedBooks", label: "Signed Books", path: "/books?signed=true" },
+    { key: "vintageFinds", label: "Vintage Finds", path: "/books?vintage=true" },
+    { key: "recommended", label: "Recommended", path: "/books?recommended=true" },
+  ].filter((link) => isNavEnabled(link.key, link.fallback));
 
   const staticLinks = [
     { label: "All Books",      path: "/books",                  mega: null          },
-    showFeatured && { label: "Featured Books", path: "/books?featured=true",    mega: null          },
-    showBestseller && { label: "Best Sellers",   path: "/books?bestseller=true",  mega: null          },
-    showHighDiscount && { label: "High Discounts", path: "/books?highDiscount=true", mega: null          },
+    ...configurableBookLinks.map((link) => ({ ...link, mega: null })),
     { label: "Categories",     path: "/categories",             mega: "categories"  },
     { label: "Authors",        path: "/authors",                mega: "authors"     },
   ].filter(Boolean);

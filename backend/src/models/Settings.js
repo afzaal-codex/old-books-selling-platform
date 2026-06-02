@@ -118,6 +118,19 @@ const settingsSchema = new mongoose.Schema(
       vintageFinds: { type: Boolean, default: true },
     },
 
+    secondaryNav: {
+      featuredBooks: { type: Boolean, default: true },
+      bestSeller: { type: Boolean, default: true },
+      highDiscount: { type: Boolean, default: true },
+      trendingThisWeek: { type: Boolean, default: false },
+      newReleases: { type: Boolean, default: false },
+      offersThisWeek: { type: Boolean, default: false },
+      antiqueBooks: { type: Boolean, default: false },
+      signedBooks: { type: Boolean, default: false },
+      vintageFinds: { type: Boolean, default: false },
+      recommended: { type: Boolean, default: false },
+    },
+
     heroSection: {
       category: {
         type: mongoose.Schema.Types.ObjectId,

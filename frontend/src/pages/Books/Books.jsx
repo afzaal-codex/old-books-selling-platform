@@ -40,8 +40,24 @@ const DEFAULT_FILTERS = {
   search: "", searchBy: "title", category: "", author: "",
   condition: "", minPrice: "", maxPrice: "", rating: "",
   featured: "", bestseller: "", highDiscount: "",
+  trending: "", newRelease: "", offersThisWeek: "", antique: "",
+  signed: "", vintage: "", recommended: "",
   promo: "",
 };
+
+const NAV_FLAG_KEYS = [
+  "featured",
+  "bestseller",
+  "highDiscount",
+  "trending",
+  "newRelease",
+  "offersThisWeek",
+  "antique",
+  "signed",
+  "vintage",
+  "recommended",
+  "promo",
+];
 
 /* ─── Injected CSS ────────────────────────────────────────────────────────── */
 const css = `
@@ -379,6 +395,13 @@ const Books = () => {
     featured: searchParams.get("featured") || "",
     bestseller: searchParams.get("bestseller") || "",
     highDiscount: searchParams.get("highDiscount") || "",
+    trending: searchParams.get("trending") || "",
+    newRelease: searchParams.get("newRelease") || "",
+    offersThisWeek: searchParams.get("offersThisWeek") || "",
+    antique: searchParams.get("antique") || "",
+    signed: searchParams.get("signed") || "",
+    vintage: searchParams.get("vintage") || "",
+    recommended: searchParams.get("recommended") || "",
     promo: searchParams.get("promo") || "",
   });
   const [sort,         setSort]         = useState("");
@@ -432,6 +455,13 @@ const Books = () => {
     const queryFeatured = searchParams.get("featured") || "";
     const queryBestseller = searchParams.get("bestseller") || "";
     const queryHighDiscount = searchParams.get("highDiscount") || "";
+    const queryTrending = searchParams.get("trending") || "";
+    const queryNewRelease = searchParams.get("newRelease") || "";
+    const queryOffersThisWeek = searchParams.get("offersThisWeek") || "";
+    const queryAntique = searchParams.get("antique") || "";
+    const querySigned = searchParams.get("signed") || "";
+    const queryVintage = searchParams.get("vintage") || "";
+    const queryRecommended = searchParams.get("recommended") || "";
     const queryPromo = searchParams.get("promo") || "";
     setFilters((prev) => {
       if (
@@ -440,6 +470,13 @@ const Books = () => {
         prev.featured !== queryFeatured ||
         prev.bestseller !== queryBestseller ||
         prev.highDiscount !== queryHighDiscount ||
+        prev.trending !== queryTrending ||
+        prev.newRelease !== queryNewRelease ||
+        prev.offersThisWeek !== queryOffersThisWeek ||
+        prev.antique !== queryAntique ||
+        prev.signed !== querySigned ||
+        prev.vintage !== queryVintage ||
+        prev.recommended !== queryRecommended ||
         prev.promo !== queryPromo
       ) {
         return {
@@ -449,6 +486,13 @@ const Books = () => {
           featured: queryFeatured,
           bestseller: queryBestseller,
           highDiscount: queryHighDiscount,
+          trending: queryTrending,
+          newRelease: queryNewRelease,
+          offersThisWeek: queryOffersThisWeek,
+          antique: queryAntique,
+          signed: querySigned,
+          vintage: queryVintage,
+          recommended: queryRecommended,
           promo: queryPromo,
         };
       }
@@ -475,10 +519,9 @@ const Books = () => {
     if (filters.minPrice)  p.minPrice  = filters.minPrice;
     if (filters.maxPrice)  p.maxPrice  = filters.maxPrice;
     if (filters.rating)    p.rating    = filters.rating;
-    if (filters.featured)   p.featured   = filters.featured;
-    if (filters.bestseller) p.bestseller = filters.bestseller;
-    if (filters.highDiscount) p.highDiscount = filters.highDiscount;
-    if (filters.promo) p.promo = filters.promo;
+    NAV_FLAG_KEYS.forEach((key) => {
+      if (filters[key]) p[key] = filters[key];
+    });
     if (sort)              p.sort      = sort;
     dispatch(fetchBooks(p));
     /* sync URL */
@@ -489,10 +532,9 @@ const Books = () => {
         newParams.searchBy = filters.searchBy;
       }
     }
-    if (filters.featured)   newParams.featured = filters.featured;
-    if (filters.bestseller) newParams.bestseller = filters.bestseller;
-    if (filters.highDiscount) newParams.highDiscount = filters.highDiscount;
-    if (filters.promo) newParams.promo = filters.promo;
+    NAV_FLAG_KEYS.forEach((key) => {
+      if (filters[key]) newParams[key] = filters[key];
+    });
     setSearchParams(newParams, { replace: true });
   }, [filters, sort, dispatch]); // eslint-disable-line
 
@@ -532,6 +574,13 @@ const Books = () => {
     if (filters.featured)   list.push({ key:"featured",   label:"Featured",   value:"Yes" });
     if (filters.bestseller) list.push({ key:"bestseller", label:"Bestseller", value:"Yes" });
     if (filters.highDiscount) list.push({ key:"highDiscount", label:"High Discount", value:"Yes" });
+    if (filters.trending) list.push({ key:"trending", label:"Trending This Week", value:"Yes" });
+    if (filters.newRelease) list.push({ key:"newRelease", label:"New Treasures", value:"Yes" });
+    if (filters.offersThisWeek) list.push({ key:"offersThisWeek", label:"Offers This Week", value:"Yes" });
+    if (filters.antique) list.push({ key:"antique", label:"Antique Books", value:"Yes" });
+    if (filters.signed) list.push({ key:"signed", label:"Signed Books", value:"Yes" });
+    if (filters.vintage) list.push({ key:"vintage", label:"Vintage Finds", value:"Yes" });
+    if (filters.recommended) list.push({ key:"recommended", label:"Recommended", value:"Yes" });
     if (filters.promo) list.push({ key:"promo", label:"Promo Discount", value:"Active" });
     return list;
   }, [filters]);

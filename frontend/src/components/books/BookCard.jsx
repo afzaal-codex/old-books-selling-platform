@@ -15,11 +15,25 @@ const BookCard = ({ book, noBorder }) => {
 
   useEffect(() => {
     const handleResize = () => {
-      setMaxThumbs(window.innerWidth < 768 ? 5 : 6);
+      const nextMaxThumbs = window.innerWidth < 768 ? 5 : 6;
+      setMaxThumbs(nextMaxThumbs);
+      setThumbStartIndex((prev) => Math.min(prev, Math.max((book.images?.length || 0) - nextMaxThumbs, 0)));
     };
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  }, [book.images?.length]);
+
+  useEffect(() => {
+    setActiveImgIdx(0);
+    setThumbStartIndex(0);
+  }, [book._id]);
+
+  const moveThumbnails = (direction) => {
+    const lastStartIndex = Math.max((book.images?.length || 0) - maxThumbs, 0);
+    const newStartIndex = Math.min(Math.max(thumbStartIndex + direction, 0), lastStartIndex);
+    setThumbStartIndex(newStartIndex);
+    setActiveImgIdx(direction > 0 ? Math.min(newStartIndex + maxThumbs - 1, (book.images?.length || 1) - 1) : newStartIndex);
+  };
 
   const { isAuthenticated } = useSelector((state) => state.auth);
   const { wishlist } = useSelector((state) => state.wishlist);
@@ -216,57 +230,39 @@ const BookCard = ({ book, noBorder }) => {
             <>
               <button
                 type="button"
-                disabled={activeImgIdx === 0}
+                disabled={thumbStartIndex === 0}
                 onClick={(e) => {
                   e.preventDefault(); e.stopPropagation();
-                  const newIdx = Math.max(0, activeImgIdx - 1);
-                  setActiveImgIdx(newIdx);
-                  if (newIdx < thumbStartIndex) {
-                    setThumbStartIndex(newIdx);
-                  }
+                  moveThumbnails(-1);
                 }}
-                className={`absolute -left-5 md:-left-6 top-1/2 -translate-y-1/2 z-20 transition ${
-                  activeImgIdx === 0 ? "opacity-25 cursor-not-allowed" : "opacity-100 cursor-pointer hover:scale-110"
+                className={`absolute -left-4 md:-left-5 top-1/2 -translate-y-1/2 z-30 transition flex items-center justify-center rounded-full bg-neutral-950 border border-neutral-800/80 w-6 h-6 ${
+                  thumbStartIndex === 0 ? "opacity-20 cursor-not-allowed" : "opacity-100 cursor-pointer hover:bg-neutral-900 hover:scale-110"
                 }`}
                 style={{
-                  background: "none",
-                  border: "none",
-                  outline: "none",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
                   color: "#c8860a",
                   padding: 0,
+                  outline: "none",
                 }}
               >
-                <ChevronLeft size={18} strokeWidth={3} />
+                <ChevronLeft size={14} strokeWidth={3} />
               </button>
               <button
                 type="button"
-                disabled={activeImgIdx === book.images.length - 1}
+                disabled={thumbStartIndex >= book.images.length - maxThumbs}
                 onClick={(e) => {
                   e.preventDefault(); e.stopPropagation();
-                  const newIdx = Math.min(book.images.length - 1, activeImgIdx + 1);
-                  setActiveImgIdx(newIdx);
-                  if (newIdx >= thumbStartIndex + maxThumbs) {
-                    setThumbStartIndex(newIdx - maxThumbs + 1);
-                  }
+                  moveThumbnails(1);
                 }}
-                className={`absolute -right-5 md:-right-6 top-1/2 -translate-y-1/2 z-20 transition ${
-                  activeImgIdx === book.images.length - 1 ? "opacity-25 cursor-not-allowed" : "opacity-100 cursor-pointer hover:scale-110"
+                className={`absolute -right-4 md:-right-5 top-1/2 -translate-y-1/2 z-30 transition flex items-center justify-center rounded-full bg-neutral-950 border border-neutral-800/80 w-6 h-6 ${
+                  thumbStartIndex >= book.images.length - maxThumbs ? "opacity-20 cursor-not-allowed" : "opacity-100 cursor-pointer hover:bg-neutral-900 hover:scale-110"
                 }`}
                 style={{
-                  background: "none",
-                  border: "none",
-                  outline: "none",
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
                   color: "#c8860a",
                   padding: 0,
+                  outline: "none",
                 }}
               >
-                <ChevronRight size={18} strokeWidth={3} />
+                <ChevronRight size={14} strokeWidth={3} />
               </button>
             </>
           )}

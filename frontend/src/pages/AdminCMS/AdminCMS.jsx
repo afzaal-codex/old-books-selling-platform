@@ -9,6 +9,19 @@ import axiosInstance from "../../utils/axiosInstance";
 import ButtonLoader from "../../components/loaders/ButtonLoader";
 import { useSearchParams } from "react-router-dom";
 
+const SECONDARY_NAV_OPTIONS = [
+  { key: "featuredBooks", label: "Featured Books", query: "featured=true" },
+  { key: "bestSeller", label: "Best Sellers", query: "bestseller=true" },
+  { key: "highDiscount", label: "High Discounts", query: "highDiscount=true" },
+  { key: "trendingThisWeek", label: "Trending This Week", query: "trending=true" },
+  { key: "newReleases", label: "New Treasures", query: "newRelease=true" },
+  { key: "offersThisWeek", label: "Offers This Week", query: "offersThisWeek=true" },
+  { key: "antiqueBooks", label: "Antique Books", query: "antique=true" },
+  { key: "signedBooks", label: "Signed Books", query: "signed=true" },
+  { key: "vintageFinds", label: "Vintage Finds", query: "vintage=true" },
+  { key: "recommended", label: "Recommended", query: "recommended=true" },
+];
+
 const AdminCMS = () => {
   const dispatch = useDispatch();
   const { settings, loading } = useSelector((state) => state.cms);
@@ -93,6 +106,18 @@ const AdminCMS = () => {
   const [signedBooksSec, setSignedBooksSec] = useState(true);
   const [vintageFindsSec, setVintageFindsSec] = useState(true);
   const [showStock, setShowStock] = useState(true);
+  const [secondaryNav, setSecondaryNav] = useState({
+    featuredBooks: true,
+    bestSeller: true,
+    highDiscount: true,
+    trendingThisWeek: false,
+    newReleases: false,
+    offersThisWeek: false,
+    antiqueBooks: false,
+    signedBooks: false,
+    vintageFinds: false,
+    recommended: false,
+  });
 
   // Discount strip states
   const [stripText, setStripText] = useState("");
@@ -188,6 +213,17 @@ const AdminCMS = () => {
       setAntiqueBooksSec(hp.antiqueBooks !== false);
       setSignedBooksSec(hp.signedBooks !== false);
       setVintageFindsSec(hp.vintageFinds !== false);
+
+      const sn = settings.secondaryNav || {};
+      setSecondaryNav((prev) => ({
+        ...prev,
+        ...Object.fromEntries(
+          SECONDARY_NAV_OPTIONS.map((option) => [
+            option.key,
+            sn[option.key] !== undefined ? sn[option.key] !== false : prev[option.key],
+          ])
+        ),
+      }));
 
       const ds = settings.discountStrip || {};
       setStripText(ds.text || "");
@@ -286,6 +322,7 @@ const AdminCMS = () => {
         signedBooks: signedBooksSec,
         vintageFinds: vintageFindsSec,
       },
+      secondaryNav,
       discountStrip: {
         text: stripText,
         offerContent: stripOfferContent,
@@ -784,6 +821,28 @@ const AdminCMS = () => {
                   onChange={(e) => setShowStock(e.target.checked)}
                   className="w-5 h-5 rounded border-neutral-700 bg-neutral-900 text-[var(--color-primary)] focus:ring-[var(--color-primary)] cursor-pointer"
                 />
+              </div>
+            </div>
+            <div className="mt-6 border-t border-neutral-900 pt-6">
+              <h4 className="font-bold text-white">Secondary Nav Items</h4>
+              <p className="mt-1 text-xs text-gray-500">
+                Choose which book flags appear in the desktop secondary navigation. Categories, Authors, All Books, and Gift Card stay fixed.
+              </p>
+              <div className="mt-4 grid gap-4 md:grid-cols-2">
+                {SECONDARY_NAV_OPTIONS.map((option) => (
+                  <div key={option.key} className="flex items-center justify-between p-4 bg-neutral-950/40 border border-neutral-900 rounded-2xl">
+                    <div className="space-y-0.5">
+                      <span className="font-semibold block text-gray-250">{option.label}</span>
+                      <span className="text-[10px] text-gray-500">Links to /books?{option.query}</span>
+                    </div>
+                    <input
+                      type="checkbox"
+                      checked={secondaryNav[option.key] !== false}
+                      onChange={(e) => setSecondaryNav((prev) => ({ ...prev, [option.key]: e.target.checked }))}
+                      className="w-5 h-5 rounded border-neutral-700 bg-neutral-900 text-[var(--color-primary)] focus:ring-[var(--color-primary)] cursor-pointer"
+                    />
+                  </div>
+                ))}
               </div>
             </div>
           </div>
